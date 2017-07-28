@@ -23,4 +23,4 @@ antispam(bot, {
 ```
 That's it. enjoy not being raided :)
 
-If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com)
+If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
