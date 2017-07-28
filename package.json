@@ -1,0 +1,17 @@
+{
+  "name": "discord-anti-spam",
+  "version": "1.0.6",
+  "description": "A simple discord anti spam package",
+  "main": "anti_spam.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Discord",
+    "spam",
+    "anti-spam",
+    "discord.js"
+  ],
+  "author": "Michael Scofield",
+  "license": "ISC"
+}
