@@ -1,6 +1,6 @@
 {
   "name": "discord-anti-spam",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Simple discord anti spam package",
   "main": "anti_spam.js",
   "scripts": {
@@ -13,8 +13,8 @@
     "discord.js"
   ],
   "repository": {
-   "type": "git",
-   "url": "git+https://github.com/Michael-J-Scofield/discord-anti-spam.git"
+    "type": "git",
+    "url": "git+https://github.com/Michael-J-Scofield/discord-anti-spam.git"
   },
   "bugs": {
     "url": "https://github.com/Michael-J-Scofield/discord-anti-spam/issues"
