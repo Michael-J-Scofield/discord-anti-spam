@@ -1,7 +1,7 @@
 {
   "name": "discord-anti-spam",
-  "version": "1.0.8",
-  "description": "A simple discord anti spam package",
+  "version": "1.0.9",
+  "description": "Simple discord anti spam package",
   "main": "anti_spam.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
