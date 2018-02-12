@@ -20,6 +20,9 @@ module.exports = function (bot, options) {
   const maxDuplicatesBan = (options && options.duplicates || 10);
 
   bot.on('message', msg => {
+    
+    //Always return with an bot.....
+    if(msg.author.bot) return;
 
     if(msg.author.id != bot.user.id){
       var now = Math.floor(Date.now());
