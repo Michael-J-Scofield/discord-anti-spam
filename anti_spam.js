@@ -18,9 +18,10 @@ module.exports = function (bot, options) {
   const banMessage = (options && options.banMessage) || "has been banned for spamming, anyone else?";
   const maxDuplicatesWarning = (options && options.duplicates || 7);
   const maxDuplicatesBan = (options && options.duplicates || 10);
+  const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
 
   bot.on('message', msg => {
-    
+
     //Always return with an bot.....
     if(msg.author.bot) return;
 
@@ -96,7 +97,6 @@ module.exports = function (bot, options) {
     for (var i = 0; i < messagelog.length; i++) {
       if (messagelog[i].author == msg.author.id) {
         messagelog.splice(i);
-
       }
     }
 
@@ -104,7 +104,7 @@ module.exports = function (bot, options) {
 
     var user = msg.channel.guild.members.find(member => member.user.id === msg.author.id);
     if (user) {
-      user.ban().then((member) => {
+      user.ban(deleteMessagesAfterBanForPastDays).then((member) => {
         msg.channel.send(msg.author + " " +banMessage);
         return true;
      }).catch(() => {
