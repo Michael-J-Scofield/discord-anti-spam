@@ -20,7 +20,8 @@ antispam(bot, {
   banMessage: "has been banned for spamming, anyone else?", // Ban message, always tags the banned user in front of it.
   maxDuplicatesWarning: 7,// Maximum amount of duplicate messages a user can send in a timespan before getting warned
   maxDuplicatesBan: 10, // Maximum amount of duplicate messages a user can send in a timespan before getting banned
-  deleteMessagesAfterBanForPastDays: 7 // Delete the spammed messages after banning for the past x days.
+  deleteMessagesAfterBanForPastDays: 7, // Delete the spammed messages after banning for the past x days.
+  logChannel: "id of channel" //Leave empty for log messages to be posted in the same channel the message was removed from
 });
 
 ```
