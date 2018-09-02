@@ -156,7 +156,7 @@ module.exports = function (bot, options) {
         });
     }
     embed.setColor(0xf07a3a);
-    const channel = logChannel == "" ? msg.client.channels.get(logChannel) : msg.channel;
+    const channel = logChannel != "" ? msg.client.channels.get(logChannel) : msg.channel;
     channel.send(embed);
   }
 }
