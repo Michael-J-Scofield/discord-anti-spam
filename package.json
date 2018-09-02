@@ -21,5 +21,8 @@
   },
   "homepage": "https://github.com/Michael-J-Scofield/discord-anti-spam#readme",
   "author": "Michael Scofield",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
 }

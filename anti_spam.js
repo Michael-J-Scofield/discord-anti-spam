@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const authors = [];
 var warned = [];
 var banned = [];
