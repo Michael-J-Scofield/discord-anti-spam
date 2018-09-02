@@ -155,14 +155,7 @@ module.exports = function (bot, options) {
             }
         });
     }
-    if(data.image != null){
-        embed.setImage(data.image);
-    }
-    if(data.color != null){
-        embed.setColor(data.color);
-    } else {
-        embed.setColor(0xf07a3a);
-    }
+    embed.setColor(0xf07a3a);
     const channel = logChannel == "" ? msg.client.channels.get(logChannel) : msg.channel;
     channel.send(embed);
   }
