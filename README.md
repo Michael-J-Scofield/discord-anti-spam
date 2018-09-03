@@ -1,7 +1,7 @@
 <p align="center"><a href="https://nodei.co/npm/discord-anti-spam/"><img src="https://nodei.co/npm/discord-anti-spam.png"></a></p>
 
 # discord-anti-spam.js
-An extremely simple module to prevent spam on your discord server.
+An extremely simple module to prevent spam on your discord server based on the [project by [Michael-J-Scofield][https://github.com/Michael-J-Scofield/discord-anti-spam].
 
 ## Installation
 This module assumes you already have a basic [Discord.js](https://discord.js.org/#/) bot setup.
@@ -10,7 +10,7 @@ Once you've done this, setting the anti spam up will be very easy.
 And you can follow the code  below to get started!
 
 ```js
-var antispam = require("discord-anti-spam");
+var antispam = require("discord-spam-protector");
 
 antispam(bot, {
   warnBuffer: 3, //Maximum amount of messages allowed to send in the interval time before getting warned.
@@ -20,7 +20,8 @@ antispam(bot, {
   banMessage: "has been banned for spamming, anyone else?", // Ban message, always tags the banned user in front of it.
   maxDuplicatesWarning: 7,// Maximum amount of duplicate messages a user can send in a timespan before getting warned
   maxDuplicatesBan: 10, // Maximum amount of duplicate messages a user can send in a timespan before getting banned
-  deleteMessagesAfterBanForPastDays: 7 // Delete the spammed messages after banning for the past x days.
+  deleteMessagesAfterBanForPastDays: 7, // Delete the spammed messages after banning for the past x days.
+  logChannel: "id of channel" //Leave empty for log messages to be posted in the same channel the message was removed from
 });
 
 ```

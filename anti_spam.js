@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const authors = [];
 var warned = [];
 var banned = [];
@@ -19,6 +20,7 @@ module.exports = function (bot, options) {
   const maxDuplicatesWarning = (options && options.duplicates || 7);
   const maxDuplicatesBan = (options && options.duplicates || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
+  const logChannel = options.logChannel;
 
   bot.on('message', msg => {
 
@@ -84,7 +86,17 @@ module.exports = function (bot, options) {
    */
   function warn(msg, userid) {
     warned.push(msg.author.id);
-    msg.channel.send(msg.author + " " + warningMessage);
+    const userData = {name: msg.author.username, channel: msg.channel.name, client: msg.client}
+    msg.author.send(msg.author.username + ", " + warningMessage);
+    logEvent(userData.client, {
+      title: "User Warned",
+      desc: "A user has been warned via the anti-spam system. See below for details:",
+      fields: [
+        ["Username", userData.name, true],
+        ["Channel",userData.channel, true],
+        ["Reason", "The anti-spam system has observed this user sending spamm to the server and has been warned. If this behavior continues the user will be banned.", false]
+      ]
+    });
   }
 
   /**
@@ -104,14 +116,52 @@ module.exports = function (bot, options) {
 
     var user = msg.channel.guild.members.find(member => member.user.id === msg.author.id);
     if (user) {
-      user.ban(deleteMessagesAfterBanForPastDays).then((member) => {
-        msg.channel.send(msg.author + " " +banMessage);
+      msg.author.send(msg.author.username + ", " + banMessage);
+      const userData = {name: msg.author.username, channel: msg.channel.name, client: msg.client}
+      user.ban(deleteMessagesAfterBanForPastDays)
+      .then((member) => {
+        logEvent(msg.client, new {
+          title: "User Banned", 
+          desc: "A user has been banned via the anti-spam system. See below for details:",
+          fields: [
+            ["Username", userData.name, true],
+            ["Channel", userData.channel, true],
+            ["Reason", "The anti-spam system has observed this user repeately spamming the server. After being warned multiple times, they have been banned.", false]
+          ]
+        })
+        
         return true;
      }).catch(() => {
-        msg.channel.send("insufficient permission to kick " + msg.author + " for spamming.");
+        msg.channel.send("insufficient permission to ban " + msg.author + " for spamming.");
         return false;
      });
     }
   }
 
+  /**
+   * Post Log Using Embed
+   * @param {Object} msg
+   * @param {Object} data
+   */
+  function logEvent(client, data){
+    const embed = new Discord.RichEmbed();
+    if(data.title != null){
+        embed.setTitle(data.title);
+    }
+    if(data.desc != null){
+        embed.setDescription(data.desc);
+    }
+    if(data.fields != null){
+        data.fields.forEach(field => {
+            if(field.length == 3){
+                embed.addField(field[0], field[1], field[2]);
+            } else {
+                embed.addField(field[0], field[1]);
+            }
+        });
+    }
+    embed.setColor(0xf07a3a);
+    const channel = logChannel != "" ? client.channels.get(logChannel) : msg.channel;
+    channel.send(embed);
+  }
 }
