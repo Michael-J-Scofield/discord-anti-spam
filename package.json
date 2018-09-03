@@ -1,6 +1,6 @@
 {
   "name": "discord-spam-protector",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "Simple discord anti spam package",
   "main": "anti_spam.js",
   "scripts": {

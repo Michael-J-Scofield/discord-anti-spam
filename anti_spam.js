@@ -86,13 +86,14 @@ module.exports = function (bot, options) {
    */
   function warn(msg, userid) {
     warned.push(msg.author.id);
+    const userData = {name: msg.author.username, channel: msg.channel.name, client: msg.client}
     msg.author.send(msg.author.username + ", " + warningMessage);
-    logEvent(msg, {
+    logEvent(userData.client, {
       title: "User Warned",
       desc: "A user has been warned via the anti-spam system. See below for details:",
       fields: [
-        ["Username", msg.author.username, true],
-        ["Channel", msg.channel.name, true],
+        ["Username", userData.name, true],
+        ["Channel",userData.channel, true],
         ["Reason", "The anti-spam system has observed this user sending spamm to the server and has been warned. If this behavior continues the user will be banned.", false]
       ]
     });
@@ -115,17 +116,20 @@ module.exports = function (bot, options) {
 
     var user = msg.channel.guild.members.find(member => member.user.id === msg.author.id);
     if (user) {
-      user.ban(deleteMessagesAfterBanForPastDays).then((member) => {
-        logEvent(msg, new {
+      msg.author.send(msg.author.username + ", " + banMessage);
+      const userData = {name: msg.author.username, channel: msg.channel.name, client: msg.client}
+      user.ban(deleteMessagesAfterBanForPastDays)
+      .then((member) => {
+        logEvent(msg.client, new {
           title: "User Banned", 
           desc: "A user has been banned via the anti-spam system. See below for details:",
           fields: [
-            ["Username", msg.author.username, true],
-            ["Channel", msg.channel.name, true],
+            ["Username", userData.name, true],
+            ["Channel", userData.channel, true],
             ["Reason", "The anti-spam system has observed this user repeately spamming the server. After being warned multiple times, they have been banned.", false]
           ]
         })
-        msg.author.send(msg.author.username + ", " + banMessage);
+        
         return true;
      }).catch(() => {
         msg.channel.send("insufficient permission to ban " + msg.author + " for spamming.");
@@ -139,7 +143,7 @@ module.exports = function (bot, options) {
    * @param {Object} msg
    * @param {Object} data
    */
-  function logEvent(msg, data){
+  function logEvent(client, data){
     const embed = new Discord.RichEmbed();
     if(data.title != null){
         embed.setTitle(data.title);
@@ -157,7 +161,7 @@ module.exports = function (bot, options) {
         });
     }
     embed.setColor(0xf07a3a);
-    const channel = logChannel != "" ? msg.client.channels.get(logChannel) : msg.channel;
+    const channel = logChannel != "" ? client.channels.get(logChannel) : msg.channel;
     channel.send(embed);
   }
 }
