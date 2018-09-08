@@ -19,11 +19,13 @@ module.exports = function (bot, options) {
   const maxDuplicatesWarning = (options && options.duplicates || 7);
   const maxDuplicatesBan = (options && options.duplicates || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
+  const excesRoles = (options && options.excesRoles || null);
 
   bot.on('message', msg => {
 
     //Always return with an bot.....
-    if(msg.author.bot) return;
+    if(msg.author.bot) return; 
+    if(excesRoles.some(role => msg.member.roles.map(role => role.id).includes(role))) return; 
 
     if(msg.author.id != bot.user.id){
       var now = Math.floor(Date.now());
@@ -113,5 +115,4 @@ module.exports = function (bot, options) {
      });
     }
   }
-
 }
