@@ -2,7 +2,8 @@ const authors = [];
 var warned = [];
 var banned = [];
 var messagelog = [];
-
+const {Client} = require("discord.js")
+const bot = new Client()
 /**
  * Add simple spam protection to your discord server.
  * @param  {Bot} bot - The discord.js CLient/bot
@@ -19,12 +20,13 @@ module.exports = function (bot, options) {
   const maxDuplicatesWarning = (options && options.duplicates || 7);
   const maxDuplicatesBan = (options && options.duplicates || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
+  const excesRoles = (options && options.excesRoles || ['']);
 
   bot.on('message', msg => {
 
     //Always return with an bot.....
-    if(msg.author.bot) return;
-
+    if(msg.author.bot) return; 
+    if(excesRoles.length >= 18 && excesRoles.some(role => msg.member.roles.map(role => role.id).includes(role))) return;
     if(msg.author.id != bot.user.id){
       var now = Math.floor(Date.now());
       authors.push({
@@ -113,5 +115,4 @@ module.exports = function (bot, options) {
      });
     }
   }
-
 }
