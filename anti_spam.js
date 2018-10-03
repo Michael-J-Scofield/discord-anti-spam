@@ -19,11 +19,17 @@ module.exports = function (bot, options) {
   const maxDuplicatesWarning = (options && options.duplicates || 7);
   const maxDuplicatesBan = (options && options.duplicates || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
+  const exemptRoles = (options && options.exemptRoles) || []
+  const exemptUsers = (options && options.exemptUsers) || []
 
   bot.on('message', msg => {
 
     //Always return with an bot.....
     if(msg.author.bot) return;
+
+    // Return immediately if user is exempt
+    if(msg.member && msg.member.roles.some(r => exemptRoles.includes(r.name))) return;
+    if(exemptUsers.includes(msg.author.tag)) return;
 
     if(msg.author.id != bot.user.id){
       var now = Math.floor(Date.now());
