@@ -10,7 +10,7 @@ Once you've done this, setting the anti spam up will be very easy.
 And you can follow the code  below to get started!
 
 ```js
-var antispam = require("discord-anti-spam");
+const antispam = require("discord-anti-spam");
 
 antispam(bot, {
   warnBuffer: 3, //Maximum amount of messages allowed to send in the interval time before getting warned.

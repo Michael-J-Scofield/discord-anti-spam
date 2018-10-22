@@ -20,12 +20,12 @@ module.exports = function (bot, options) {
   const maxDuplicatesBan = (options && options.duplicates || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
 
-  bot.on('message', msg => {
+  bot.on("message", msg => {
 
-    //Always return with an bot.....
-    if(msg.author.bot) return;
+    // bots don't ban do they?
+    if (msg.author.bot) return;
 
-    if(msg.author.id != bot.user.id){
+    if ( (msg.author.id != bot.user.id) && msg.channel.guild) {
       var now = Math.floor(Date.now());
       authors.push({
         "time": now,
