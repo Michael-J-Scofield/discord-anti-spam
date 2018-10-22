@@ -22,16 +22,16 @@ module.exports = function (bot, options) {
   const exemptRoles = (options && options.exemptRoles) || []
   const exemptUsers = (options && options.exemptUsers) || []
 
-  bot.on('message', msg => {
+  bot.on("message", msg => {
 
-    //Always return with an bot.....
-    if(msg.author.bot) return;
+    // bots don't ban do they?
+    if (msg.author.bot) return;
 
     // Return immediately if user is exempt
     if(msg.member && msg.member.roles.some(r => exemptRoles.includes(r.name))) return;
     if(exemptUsers.includes(msg.author.tag)) return;
 
-    if(msg.author.id != bot.user.id){
+    if ( (msg.author.id != bot.user.id) && msg.channel.guild) {
       var now = Math.floor(Date.now());
       authors.push({
         "time": now,
