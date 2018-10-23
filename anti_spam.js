@@ -11,13 +11,13 @@ var messagelog = [];
  */
 module.exports = function (bot, options) {
   // Set options
-  const warnBuffer = (options && options.prefix) || 3;
-  const maxBuffer = (options && options.prefix) || 5;
+  const warnBuffer = (options && options.warnBuffer) || 3;
+  const maxBuffer = (options && options.maxBuffer) || 5;
   const interval = (options && options.interval) || 1000;
   const warningMessage = (options && options.warningMessage) || "stop spamming or I'll whack your head off.";
   const banMessage = (options && options.banMessage) || "has been banned for spamming, anyone else?";
-  const maxDuplicatesWarning = (options && options.duplicates || 7);
-  const maxDuplicatesBan = (options && options.duplicates || 10);
+  const maxDuplicatesWarning = (options && options. maxDuplicatesWarning || 7);
+  const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
   const exemptRoles = (options && options.exemptRoles) || []
   const exemptUsers = (options && options.exemptUsers) || []
@@ -57,7 +57,7 @@ module.exports = function (bot, options) {
         ban(msg, msg.author.id);
       }
 
-      matched = 0;
+      var matched = 0;
 
       for (var i = 0; i < authors.length; i++) {
         if (authors[i].time > now - interval) {
