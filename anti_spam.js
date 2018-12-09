@@ -1,50 +1,59 @@
-const authors = [];
+var authors = [];
 var warned = [];
 var banned = [];
-var messagelog = [];
+var messageLog = [];
 
-/**
- * Integrate Anti-Spam feature to your bot with a simple api.
- * @param  {Bot} bot - The discord.js CLient/bot
- * @param  {object} options - Optional (Custom configuarion options)
- * @return {[type]}         [description]
- */
 module.exports = async (client, options) => {
-  /* Option Definitons */
-  const warnBuffer = (options && options.warnBuffer) || 3;
-  const maxBuffer = (options && options.maxBuffer) || 5;
-  const interval = (options && options.interval) || 1000;
-  const warningMessage = (options && options.warningMessage) || "stop spamming or I'll whack your head off.";
-  const banMessage = (options && options.banMessage) || "has been banned for spamming, anyone else?";
-  const maxDuplicatesWarning = (options && options. maxDuplicatesWarning || 7);
-  const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10);
-  const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
-  const exemptRoles = (options && options.exemptRoles) || [];
-  const exemptUsers = (options && options.exemptUsers) || [];
+  /* Defining Functions */
+ 
+  // Ban the User by Id
+  const banUser = async (m, user) => {
+    for (var i = 0; i < messageLog.length; i++) {
+      if (messageLog[i].author === m.author.id) {
+        messageLog.splice(i);
+      }
+  } 
+    
+   // Warn the User
+   const warnUser = async (m, reply) => {
+    warned.push(m.author.id);
+    m.channel.send(`<!${m.author.id}>, ${reply}`); // Regular Mention Expression for Mentions
+   }
+  
+  /* Option Definitions */
+   
+  const warnBuffer = (options && options.warnBuffer) || 3; // Default Value: 3
+  const maxBuffer = (options && options.maxBuffer) || 5; // Default Value: 5
+  const interval = (options && options.interval) || 1000; //Default Time: 2000MS (2 Seconds in Miliseconds)
+  const warningMessage = (options && options.warningMessage) || "please stop spamming!"; // Default Message: "please stop spamming!" (@User please stop spamming!)
+  const banMessage = (options && options.banMessage) || "has been hit by ban hammer for spamming!"; // Default Message: "has been hit by ban hammer for spamming!" (@User has been hit by ban hammer for spamming!)
+  const maxDuplicatesWarning = (options && options. maxDuplicatesWarning || 7); // Default Value: 7
+  const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10); // Deafult Value: 7
+  const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7); // Default Value: 10
+  const exemptRoles = (options && options.exemptRoles) || []; // Default Value: Nothingness (None)
+  const exemptUsers = (options && options.exemptUsers) || []; // Default Value: Nothingness (N  one)
 
  client.on("message", async (message) => {
     if (message.author.bot) return;
-    if (message.channel.type !== "dm") return;
+    if (message.channel.type !== "text" || !message.member || !message.guild || !message.channel.guild) return;
    
-    // Return immediately if user is exempt
-    if(message.member && message.member.roles.some(r => exemptRoles.includes(r.name))) return;
-    if(exemptUsers.includes(message.author.tag)) return;
+    if (message.member.roles.some(r => exemptRoles.includes(r.name)) || exemptUsers.includes(message.author.tag)) return;
 
-    if ( (message.author.id != bot.user.id) && msg.channel.guild) {
-      var now = Math.floor(Date.now());
+    if (message.author.id !== client.user.id) {
+      let currentTime = Math.floor(Date.now());
       authors.push({
-        "time": now,
-        "author": msg.author.id
+        "time": currentTime,
+        "author": message.author.id
       });
-      messagelog.push({
-        "message": msg.content,
-        "author": msg.author.id
+      
+      messageLog.push({
+        "message": message.content,
+        "author": message.author.id
       });
-
-      // Check how many times the same message has been sent.
-      var msgMatch = 0;
-      for (var i = 0; i < messagelog.length; i++) {
-        if (messagelog[i].message == msg.content && (messagelog[i].author == msg.author.id) && (msg.author.id !== bot.user.id)) {
+      
+      let msgMatch = 0;
+      for (var i = 0; i < messageLog.length; i++) {
+        if (messageLog[i].message == msg.content && (messageLog[i].author == message.author.id) && (message.author.id !== client.user.id)) {
           msgMatch++;
         }
       }
@@ -59,7 +68,7 @@ module.exports = async (client, options) => {
       var matched = 0;
 
       for (var i = 0; i < authors.length; i++) {
-        if (authors[i].time > now - interval) {
+        if (authors[i].time > currentTime - interval) {
           matched++;
           if (matched == warnBuffer && !warned.includes(msg.author.id)) {
             warn(msg, msg.author.id);
@@ -75,8 +84,8 @@ module.exports = async (client, options) => {
           warned.splice(warned.indexOf(authors[i]));
           banned.splice(warned.indexOf(authors[i]));
         }
-        if (messagelog.length >= 200) {
-          messagelog.shift();
+        if (messageLog.length >= 200) {
+          messageLog.shift();
         }
       }
     }
@@ -99,9 +108,9 @@ module.exports = async (client, options) => {
    * @return {boolean} True or False
    */
   function ban(msg, userid) {
-    for (var i = 0; i < messagelog.length; i++) {
-      if (messagelog[i].author == msg.author.id) {
-        messagelog.splice(i);
+    for (var i = 0; i < messageLog.length; i++) {
+      if (messageLog[i].author == msg.author.id) {
+        messageLog.splice(i);
       }
     }
 
