@@ -4,13 +4,13 @@ var banned = [];
 var messagelog = [];
 
 /**
- * Add simple spam protection to your discord server.
+ * Integrate Anti-Spam feature to your bot with a simple api.
  * @param  {Bot} bot - The discord.js CLient/bot
  * @param  {object} options - Optional (Custom configuarion options)
  * @return {[type]}         [description]
  */
-module.exports = function (bot, options) {
-  // Set options
+module.exports = async (client, options) => {
+  /* Option Definitons */
   const warnBuffer = (options && options.warnBuffer) || 3;
   const maxBuffer = (options && options.maxBuffer) || 5;
   const interval = (options && options.interval) || 1000;
@@ -19,19 +19,18 @@ module.exports = function (bot, options) {
   const maxDuplicatesWarning = (options && options. maxDuplicatesWarning || 7);
   const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10);
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7);
-  const exemptRoles = (options && options.exemptRoles) || []
-  const exemptUsers = (options && options.exemptUsers) || []
+  const exemptRoles = (options && options.exemptRoles) || [];
+  const exemptUsers = (options && options.exemptUsers) || [];
 
-  bot.on("message", msg => {
-
-    // bots don't ban do they?
-    if (msg.author.bot) return;
-
+ client.on("message", async (message) => {
+    if (message.author.bot) return;
+    if (message.channel.type !== "dm") return;
+   
     // Return immediately if user is exempt
-    if(msg.member && msg.member.roles.some(r => exemptRoles.includes(r.name))) return;
-    if(exemptUsers.includes(msg.author.tag)) return;
+    if(message.member && message.member.roles.some(r => exemptRoles.includes(r.name))) return;
+    if(exemptUsers.includes(message.author.tag)) return;
 
-    if ( (msg.author.id != bot.user.id) && msg.channel.guild) {
+    if ( (message.author.id != bot.user.id) && msg.channel.guild) {
       var now = Math.floor(Date.now());
       authors.push({
         "time": now,
