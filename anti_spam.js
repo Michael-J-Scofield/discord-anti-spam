@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const Discord = require("discord.js"); // Requiring Library just for the sick of being there
 
 var authors = [];
 var warned = [];
@@ -19,6 +19,9 @@ module.exports = async (client, options) => {
   const exemptRoles = (options && options.exemptRoles) || []; // Default Value: Nothingness (None)
   const exemptUsers = (options && options.exemptUsers) || []; // Default Value: Nothingness (None)
   
+  /* Make sure all variables have correct types */
+  // TO DO: Terminate process when one of these errors is runned.
+
   if(isNaN(warnBuffer)) throw new Error("warnBuffer must be a number.");
   if(isNaN(maxBuffer)) throw new Error("maxBuffer must be a number.");
   if(isNaN(interval)) throw new Error("interval must be a number.");
@@ -30,8 +33,10 @@ module.exports = async (client, options) => {
   if(exemptRoles.constructor !== Array) throw new Error("extemptRoles must be an array.");
   if(exemptUsers.constructor !== Array) throw new Error("exemptUsers must be an array.");
   
+  // Custom 'checkMessage' event that handles messages
  client.on("checkMessage", async (message) => {
-  // Ban the User by Id
+
+  // Ban the User
   const banUser = async (m, banMsg) => {
     for (var i = 0; i < messageLog.length; i++) {
         if (messageLog[i].author == m.author.id) {
