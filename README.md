@@ -78,17 +78,29 @@ antispam(client, {
       });
 ```
 `antispam` - Variable that defines `require('discord-anti-spam')` 
+
 `<Client>` - Requiered, Discord.Client
+
 `warnBuffer` - Optional, Type: Integer
+
 `maxBuffer` - Optional, Type: Integer
+
 `interval` - Optional, Type: Integer
+
 `warningMessage` - Optonal, Type: String, Minimum 5 Characters
+
 `banMessage` - Optional, Type: String, Minimum 5 Characters
+
 `maxDuplicatesWarning` - Optional, Type: Integer
+
 `maxDuplicatesBan` - Optional, Type: Integer
+
 `deleteMessagesAfterBanForPastDays` - Optional, Type: Integer
+
 `exemptRoles` - Optional, Type: Array
+
 `exemptUsers`- Optional, Type: Array
+
 The module **will** throw errors for assigning incorect types to configuration values.
 
 
