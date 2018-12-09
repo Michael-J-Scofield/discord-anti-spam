@@ -53,16 +53,16 @@ module.exports = async (client, options) => {
       
       let msgMatch = 0;
       for (var i = 0; i < messageLog.length; i++) {
-        if (messageLog[i].message == msg.content && (messageLog[i].author == message.author.id) && (message.author.id !== client.user.id)) {
+        if (messageLog[i].message == message.content && (messageLog[i].author == message.author.id) && (message.author.id !== client.user.id)) {
           msgMatch++;
         }
       }
-      // Check matched count
-      if (msgMatch == maxDuplicatesWarning && !warned.includes(msg.author.id)) {
-        warn(msg, msg.author.id);
+      
+      if (msgMatch == maxDuplicatesWarning && !warned.includes(message.author.id)) {
+        warn(message, message.author.id);
       }
-      if (msgMatch == maxDuplicatesBan && !banned.includes(msg.author.id)) {
-        ban(msg, msg.author.id);
+      if (msgMatch == maxDuplicatesBan && !banned.includes(message.author.id)) {
+        ban(message, message.author.id);
       }
 
       var matched = 0;
@@ -70,16 +70,14 @@ module.exports = async (client, options) => {
       for (var i = 0; i < authors.length; i++) {
         if (authors[i].time > currentTime - interval) {
           matched++;
-          if (matched == warnBuffer && !warned.includes(msg.author.id)) {
-            warn(msg, msg.author.id);
-          }
-          else if (matched == maxBuffer) {
-            if (!banned.includes(msg.author.id)) {
-              ban(msg, msg.author.id);
+          if (matched == warnBuffer && !warned.includes(message.author.id)) {
+            warn(message, warningMessage);
+          } else if (matched == maxBuffer) {
+            if (!banned.includes(message.author.id)) {
+              ban(message, message.author.id);
             }
           }
-        }
-        else if (authors[i].time < now - interval) {
+        } else if (authors[i].time < now - interval) {
           authors.splice(i);
           warned.splice(warned.indexOf(authors[i]));
           banned.splice(warned.indexOf(authors[i]));
@@ -91,38 +89,15 @@ module.exports = async (client, options) => {
     }
   });
 
-  /**
-   * Warn a user
-   * @param  {Object} msg
-   * @param  {string} userid userid
-   */
-  function warn(msg, userid) {
-    warned.push(msg.author.id);
-    msg.channel.send(msg.author + " " + warningMessage);
-  }
+    banned.push(message.author.id);
 
-  /**
-   * Ban a user by the user id
-   * @param  {Object} msg
-   * @param  {string} userid userid
-   * @return {boolean} True or False
-   */
-  function ban(msg, userid) {
-    for (var i = 0; i < messageLog.length; i++) {
-      if (messageLog[i].author == msg.author.id) {
-        messageLog.splice(i);
-      }
-    }
-
-    banned.push(msg.author.id);
-
-    var user = msg.channel.guild.members.find(member => member.user.id === msg.author.id);
+    let user = message.channel.guild.members.get(message.author.id);
     if (user) {
-      user.ban(deleteMessagesAfterBanForPastDays).then((member) => {
-        msg.channel.send(msg.author + " " +banMessage);
+      user.(deleteMessagesAfterBanForPastDays).then((member) => {
+        message.channel.send(`<@!${message.author.id}>, ${banMessage}`);
         return true;
      }).catch(() => {
-        msg.channel.send("insufficient permission to kick " + msg.author + " for spamming.");
+        message.channel.send(`Oops, seems like i don't have sufficient permissions to ban <@!${message.author.id}>!`);
         return false;
      });
     }
