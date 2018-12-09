@@ -17,7 +17,7 @@ module.exports = async (client, options) => {
   const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10); // Deafult Value: 7
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7); // Default Value: 10
   const exemptRoles = (options && options.exemptRoles) || []; // Default Value: Nothingness (None)
-  const exemptUsers = (options && options.exemptUsers) || []; // Default Value: Nothingness (N  one)
+  const exemptUsers = (options && options.exemptUsers) || []; // Default Value: Nothingness (None)
 
  client.on("checkMessage", async (message) => {
   // Ban the User by Id
