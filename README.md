@@ -11,8 +11,8 @@ To install this module type in your console command below:
 npm i discord-anti-spam
 ```
 
-## Documentation
-In example below you can see where to place code, how to edit configuration, how to use default one, and obviosuly how to get it to work.
+## Example
+Example of a basic bot handles spam messages using this module.
 
 ```js
 const Discord = require('discord.js');
@@ -20,56 +20,78 @@ const antispam = require('discord-anti-spam'); // Requiring this module.
 const client = new Discord.Client();
 
 client.on('ready', () => {
-  // Start of module configuration
+  // Module Configuration Constructor
    antispam(client, {
         warnBuffer: 3, // Maximum ammount of messages allowed to send in the interval time before getting warned.
         maxBuffer: 5, // Maximum amount of messages allowed to send in the interval time before getting banned.
-        interval: 1000, // Amount of time in ms users can send the maxim amount of messages(maxBuffer) before getting banned. 
+        interval: 2000, // Amount of time in ms users can send the maxim amount of messages(maxBuffer) before getting banned. 
         warningMessage: "please stop spamming!", // Message users receive when warned. (message starts with '@User, ' so you only need to input continue of it.) 
         banMessage: "has been hit by ban hammer for spamming!", // Message sent in chat when user is banned. (message starts with '@User, ' so you only need to input continue of it.) 
         maxDuplicatesWarning: 7,// Maximum amount of duplicate messages a user can send in a timespan before getting warned.
         maxDuplicatesBan: 10, // Maximum amount of duplicate messages a user can send in a timespan before getting banned.
         deleteMessagesAfterBanForPastDays: 7, // Deletes the message history of the banned user in x days.
-        exemptRoles: [], // Name of roles (case sensitive) that are exempt from spam filter.
-        exemptUsers: [] // The Discord tags of the users (e.g: MrAugu#9016) (case sensitive) that are exempt from spam filter.
+        exemptRoles: ["Moderator"], // Name of roles (case sensitive) that are exempt from spam filter.
+        exemptUsers: ["MrAugu#9016"] // The Discord tags of the users (e.g: MrAugu#9016) (case sensitive) that are exempt from spam filter.
       });
-  // End of module configuration
-  
-  console.log(`Logged in as ${client.user.tag}!`);
+      
+  // Rest of your code
 });
 
 client.on('message', msg => {
-  client.emit('checkMessage', msg); // This runs the filter on any message bot receives in any guilds 
+  client.emit('checkMessage', msg); // This runs the filter on any message bot receives in any guilds.
+  
+  // Rest of your code
 }
 
 client.login('token');
 ```
-The example below contains default values. Any element of constructor is optional. If not specified, it will be replaced by its default value. In fact you only need `antispam(<Client>);` in ready event (<Client> is your client variable in example below was simply client) and `<Client>.emit('checkMessage', <Message>);`(<Client> was specified already. <Message>)
+Basically what that constructor does in this situation: The code above will allow to send maximum 3 messages in interval of the time, if more user gets warned. It will allow maximum 5 messages in an interval of 2000 Miliseconds (2 Seconds in Miliseconds), if more bot attempts to ban the user. The users will we warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer!`. Maximum number duplicated messages before user gets warned is 7. Maximum number duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete an equivalent of 7 days of messages by that user. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
 
-
-## Installation
-This module assumes you already have a basic [Discord.js](https://discord.js.org/#/) bot setup.
-
-Once you've done this, setting the anti spam up will be very easy.
-And you can follow the code  below to get started!
+## Documentation
 
 ```js
-const antispam = require("discord-anti-spam");
-
-antispam(bot, {
-  warnBuffer: 3, //Maximum amount of messages allowed to send in the interval time before getting warned.
-  maxBuffer: 5, // Maximum amount of messages allowed to send in the interval time before getting banned.
-  interval: 1000, // Amount of time in ms users can send a maximum of the maxBuffer variable before getting banned.
-  warningMessage: "stop spamming or I'll whack your head off.", // Warning message send to the user indicating they are going to fast.
-  banMessage: "has been banned for spamming, anyone else?", // Ban message, always tags the banned user in front of it.
-  maxDuplicatesWarning: 7,// Maximum amount of duplicate messages a user can send in a timespan before getting warned
-  maxDuplicatesBan: 10, // Maximum amount of duplicate messages a user can send in a timespan before getting banned
-  deleteMessagesAfterBanForPastDays: 7 // Delete the spammed messages after banning for the past x days.
-  exemptRoles: ["Admin", "Chat Moderator"] // The names of the roles which should not be spam-filtered
-  exemptUsers: ["user#1234"] // The Discord tags of the users who should not be spam-filtered
-});
-
+antispam(<Client>);
 ```
-That's it. enjoy not being raided :)
+This will configure module to run on its default configuration.
+`<Client>` - Variable that defines `new Discord.Client()`
+`antispam` - Variable that defines `require('discord-anti-spam')` 
+
+
+```js
+client.emit('checkMessage', <Message>)
+```
+`<Message>` - Variable that defines the message itself. (`client.on('message', async (msg) =>{})` in this situation msg is the <Message> variable.)
+This will basically send your message to module. In fact is REQUIERED for module to run.
+  
+```js
+antispam(client, {
+        warnBuffer: 3,
+        maxBuffer: 5,
+        interval: 2000,
+        warningMessage: "",
+        banMessage: "",
+        maxDuplicatesWarning: 7,
+        maxDuplicatesBan: 10,
+        deleteMessagesAfterBanForPastDays: 7,
+        exemptRoles: [],
+        exemptUsers: []
+      });
+```
+`antispam` - Variable that defines `require('discord-anti-spam')` 
+`<Client>` - Requiered, Discord.Client
+`warnBuffer` - Optional, Type: Integer
+`maxBuffer` - Optional, Type: Integer
+`interval` - Optional, Type: Integer
+`warningMessage` - Optonal, Type: String, Minimum 5 Characters
+`banMessage` - Optional, Type: String, Minimum 5 Characters
+`maxDuplicatesWarning` - Optional, Type: Integer
+`maxDuplicatesBan` - Optional, Type: Integer
+`deleteMessagesAfterBanForPastDays` - Optional, Type: Integer
+`exemptRoles` - Optional, Type: Array
+`exemptUsers`- Optional, Type: Array
+The module **will** throw errors for assigning incorect types to configuration values.
+
+
+That's pretty much all. <3
 
 If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
