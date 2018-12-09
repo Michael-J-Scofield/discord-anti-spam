@@ -77,33 +77,20 @@ antispam(client, {
         exemptUsers: []
       });
 ```
-`antispam` - Variable that defines `require('discord-anti-spam')` 
 
-`<Client>` - Requiered, Discord.Client
-
-`warnBuffer` - Optional, Type: Integer
-
-`maxBuffer` - Optional, Type: Integer
-
-`interval` - Optional, Type: Integer
-
-`warningMessage` - Optonal, Type: String, Minimum 5 Characters
-
-`banMessage` - Optional, Type: String, Minimum 5 Characters
-
-`maxDuplicatesWarning` - Optional, Type: Integer
-
-`maxDuplicatesBan` - Optional, Type: Integer
-
-`deleteMessagesAfterBanForPastDays` - Optional, Type: Integer
-
-`exemptRoles` - Optional, Type: Array
-
-`exemptUsers`- Optional, Type: Array
-
-The module **will** throw errors for assigning incorect types to configuration values.
-
-
-That's pretty much all. <3
-
+`antispam` - Variable that defines `require('discord-anti-spam')` <br>
+`<Client>` - Requiered, Discord.Client<br>
+`warnBuffer` - Optional, Type: Integer<br>
+`maxBuffer` - Optional, Type: Integer<br>
+`interval` - Optional, Type: Integer<br>
+`warningMessage` - Optonal, Type: String, Minimum 5 Characters<br>
+`banMessage` - Optional, Type: String, Minimum 5 Characters<br>
+`maxDuplicatesWarning` - Optional, Type: Integer<br>
+`maxDuplicatesBan` - Optional, Type: Integer<br>
+`deleteMessagesAfterBanForPastDays` - Optional, Type: Integer<br>
+`exemptRoles` - Optional, Type: Array<br>
+`exemptUsers`- Optional, Type: Array<br>
+The module **will** throw errors for assigning incorect types to configuration values.<br>
+<br>
+That's pretty much all. <3<br>
 If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
