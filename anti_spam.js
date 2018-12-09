@@ -18,7 +18,18 @@ module.exports = async (client, options) => {
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7); // Default Value: 10
   const exemptRoles = (options && options.exemptRoles) || []; // Default Value: Nothingness (None)
   const exemptUsers = (options && options.exemptUsers) || []; // Default Value: Nothingness (None)
-
+  
+  if(isNaN(warnBuffer)) throw new Error("warnBuffer must be a number.");
+  if(isNaN(maxBuffer)) throw new Error("maxBuffer must be a number.");
+  if(isNaN(interval)) throw new Error("interval must be a number.");
+  if(!isNaN(banMessage) || banMessage.length < 5) throw new Error("banMessage must be a string and have at least 5 charcters length.");
+  if(!isNaN(warningMessage) || warningMessage.length < 5) throw new Error("warningMessage must be a string and have at least 5 characters.");
+  if(isNaN(maxDuplicatesWarning)) throw new Error("maxDuplicatesWarning must be a number.")
+  if(isNaN(maxDuplicatesBan)) throw new Error("maxDuplicatesBan must be a number.");
+  if(isNaN(deleteMessagesAfterBanForPastDays)) throw new Error("deleteMessagesAfterBanForPastDays must be a number.");
+  if(exemptRoles.constructor !== Array) throw new Error("extemptRoles must be an array.");
+  if(exemptUsers.constructor !== Array) throw new Error("exemptUsers must be an array.");
+  
  client.on("checkMessage", async (message) => {
   // Ban the User by Id
   const banUser = async (m, banMsg) => {
