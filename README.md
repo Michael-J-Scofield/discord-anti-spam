@@ -54,15 +54,14 @@ antispam(<Client>);
 ```
 This will configure module to run on its default configuration.
 `<Client>` - Variable that defines `new Discord.Client()`
-`antispam` - Variable that defines `require('discord-anti-spam')` 
-
-
+`antispam` - Variable that defines `require('discord-anti-spam')` <br>
+<br>
 ```js
 client.emit('checkMessage', <Message>)
 ```
 `<Message>` - Variable that defines the message itself. (`client.on('message', async (msg) =>{})` in this situation msg is the <Message> variable.)
-This will basically send your message to module. In fact is REQUIERED for module to run.
-  
+This will basically send your message to module. In fact is REQUIERED for module to run.<br>
+<br>
 ```js
 antispam(client, {
         warnBuffer: 3,
@@ -77,7 +76,6 @@ antispam(client, {
         exemptUsers: []
       });
 ```
-
 `antispam` - Variable that defines `require('discord-anti-spam')` <br>
 `<Client>` - Requiered, Discord.Client<br>
 `warnBuffer` - Optional, Type: Integer<br>
@@ -90,7 +88,8 @@ antispam(client, {
 `deleteMessagesAfterBanForPastDays` - Optional, Type: Integer<br>
 `exemptRoles` - Optional, Type: Array<br>
 `exemptUsers`- Optional, Type: Array<br>
-The module **will** throw errors for assigning incorect types to configuration values.<br>
+<br>
+**NOTE:** The module **will** throw errors for assigning incorect types to configuration values.<br>
 <br>
 That's pretty much all. <3<br>
 If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
