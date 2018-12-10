@@ -8,7 +8,6 @@ var messageLog = [];
 module.exports = async (client, options) => {
   /* Option Definitions */
   
-  if(!options) throw new Error("Cannot find the configuration!");
   const warnBuffer = (options && options.warnBuffer) || 3; // Default Value: 3
   const maxBuffer = (options && options.maxBuffer) || 5; // Default Value: 5
   const interval = (options && options.interval) || 1000; //Default Time: 2000MS (2 Seconds in Miliseconds)
