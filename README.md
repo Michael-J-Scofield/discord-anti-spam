@@ -45,7 +45,7 @@ client.on('message', msg => {
 
 client.login('token');
 ```
-The code above will allow to send maximum 3 messages in interval of the time, if more user gets warned. It will allow maximum 5 messages in an interval of 2000 Miliseconds (2 Seconds in Miliseconds), if more bot attempts to ban the user. The users will we warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer!`. Maximum number duplicated messages before user gets warned is 7. Maximum number duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete an equivalent of 7 days of messages by that user. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
+The code above will allow to send maximum 3 messages in interval of the time, if more user gets warned. It will allow maximum 5 messages in an interval of 2000 Miliseconds (2 Seconds in Miliseconds), if more bot attempts to ban the user. The users will we warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer in for spamming!`. Maximum number duplicated messages before user gets warned is 7. Maximum number duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete an equivalent of 7 days of messages by that user. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
 
 ## Documentation
 
