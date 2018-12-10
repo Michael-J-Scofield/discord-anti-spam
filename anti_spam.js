@@ -7,13 +7,14 @@ var messageLog = [];
 
 module.exports = async (client, options) => {
   /* Option Definitions */
-   
+  
+  if(!options) throw new Error("Cannot find the configuration!");
   const warnBuffer = (options && options.warnBuffer) || 3; // Default Value: 3
   const maxBuffer = (options && options.maxBuffer) || 5; // Default Value: 5
   const interval = (options && options.interval) || 1000; //Default Time: 2000MS (2 Seconds in Miliseconds)
   const warningMessage = (options && options.warningMessage) || "please stop spamming!"; // Default Message: "please stop spamming!" (@User please stop spamming!)
   const banMessage = (options && options.banMessage) || "has been hit by ban hammer for spamming!"; // Default Message: "has been hit by ban hammer for spamming!" (@User has been hit by ban hammer for spamming!)
-  const maxDuplicatesWarning = (options && options. maxDuplicatesWarning || 7); // Default Value: 7
+  const maxDuplicatesWarning = (options && options.maxDuplicatesWarning || 7); // Default Value: 7
   const maxDuplicatesBan = (options && options. maxDuplicatesBan || 10); // Deafult Value: 7
   const deleteMessagesAfterBanForPastDays = (options && options.deleteMessagesAfterBanForPastDays || 7); // Default Value: 10
   const exemptRoles = (options && options.exemptRoles) || []; // Default Value: Nothingness (None)
@@ -35,7 +36,7 @@ module.exports = async (client, options) => {
   
   // Custom 'checkMessage' event that handles messages
  client.on("checkMessage", async (message) => {
-
+ 
   // Ban the User
   const banUser = async (m, banMsg) => {
     for (var i = 0; i < messageLog.length; i++) {
