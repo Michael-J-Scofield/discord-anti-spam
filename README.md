@@ -52,7 +52,7 @@ The code above will allow to send maximum 3 messages in interval of the time, if
 ```js
 antispam(<Client>);
 ```
-This will configure module to run on its default configuration.
+This will configure module to run on its default configuration.<br>
 `<Client>` - Variable that defines `new Discord.Client()`<br>
 `antispam` - Variable that defines `require('discord-anti-spam')` <br>
 <br>
