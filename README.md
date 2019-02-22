@@ -45,7 +45,7 @@ client.on('message', msg => {
 
 client.login('token');
 ```
-The code above will allow to send a maximum of 3 messages. It will allow a maximum of 5 messages in an interval of 2000 Milliseconds (2 Seconds in Milliseconds), if more bot attempts to ban the user. The users will be warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer in for spamming!`. Maximum number of duplicated messages before user gets warned is 7. Maximum number of duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete all messages from that user that have been sent in the past 7 days. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
+The code above will allow users to send a maximum of 3 messages. It will allow a maximum of 5 messages to be sent in an interval of 2000 Milliseconds (2 Seconds in Milliseconds), if more bot attempts to ban the user. The users will be warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer in for spamming!`. Maximum number of duplicated messages before user gets warned is 7. Maximum number of duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete all messages from that user that have been sent in the past 7 days. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
 
 ## Documentation
 
@@ -77,7 +77,7 @@ antispam(client, {
       });
 ```
 `antispam` - Variable that defines `require('discord-anti-spam')` <br>
-`<Client>` - Requiered, Discord.Client<br>
+`<Client>` - Required, Discord.Client<br>
 `warnBuffer` - Optional, Type: Integer<br>
 `maxBuffer` - Optional, Type: Integer<br>
 `interval` - Optional, Type: Integer<br>
