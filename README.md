@@ -6,13 +6,13 @@ A simple module with quick setup and different options to implement Anti-Spam sy
 **DISCLAMER:** You can only setup 1 set of configuration per client. (That means that you can't configure settings for each server for now. You can only modify in which guild checker is run and in which checker is not run.) 
 
 ## Installation
-To install this module type in your console command below:
+To install this module type the following command in your console:
 ```
 npm i discord-anti-spam
 ```
 
 ## Example
-Example of a basic bot handles spam messages using this module.
+Example of a basic bot handling spam messages using this module.
 
 ```js
 const Discord = require('discord.js');
@@ -45,7 +45,7 @@ client.on('message', msg => {
 
 client.login('token');
 ```
-The code above will allow to send maximum 3 messages in interval of the time, if more user gets warned. It will allow maximum 5 messages in an interval of 2000 Miliseconds (2 Seconds in Miliseconds), if more bot attempts to ban the user. The users will we warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer in for spamming!`. Maximum number duplicated messages before user gets warned is 7. Maximum number duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete an equivalent of 7 days of messages by that user. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
+The code above will allow users to send a maximum of 3 messages. It will allow a maximum of 5 messages to be sent in an interval of 2000 Milliseconds (2 Seconds in Milliseconds), if more bot attempts to ban the user. The users will be warned with message `@User, please stop spamming!`. If user gets banned others will be notified with message `@User has been hit by ban hammer in for spamming!`. Maximum number of duplicated messages before user gets warned is 7. Maximum number of duplicated messages before bot attempts to ban user is 10. If user gets banned, the bot will delete all messages from that user that have been sent in the past 7 days. The bot will ignore any people with a role named `Moderator` and bot will ignore people named `MrAugu#9016`.
 
 ## Documentation
 
@@ -77,7 +77,7 @@ antispam(client, {
       });
 ```
 `antispam` - Variable that defines `require('discord-anti-spam')` <br>
-`<Client>` - Requiered, Discord.Client<br>
+`<Client>` - Required, Discord.Client<br>
 `warnBuffer` - Optional, Type: Integer<br>
 `maxBuffer` - Optional, Type: Integer<br>
 `interval` - Optional, Type: Integer<br>
@@ -89,7 +89,7 @@ antispam(client, {
 `exemptRoles` - Optional, Type: Array<br>
 `exemptUsers`- Optional, Type: Array<br>
 <br>
-**NOTE:** The module **will** throw errors for assigning incorect types to configuration values.<br>
+**NOTE:** The module **will** throw errors for assigning incorrect types to configuration values.<br>
 <br>
-That's pretty much all. <3<br>
-If you have any issues, bugs or trouble setting the module up. feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
+That's pretty much all. &lt;3<br>
+If you have any issues, bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
