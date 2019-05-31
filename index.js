@@ -4,8 +4,9 @@ var users = [];
 var warnedUsers = [];
 var bannedUsers = [];
 var messageCache = [];
+const Events = require("events");
 
-class antiSpam {
+class antiSpam extends Events.EventEmitter {
   constructor(options) {
     this.warnThreshold = options.warnThreshold || 3;
     this.banThreshold = options.banThreshold || 5;
@@ -24,9 +25,10 @@ class antiSpam {
     this.client = options.client;
 
     if (!this.client) {
-      console.log("[FATAL]: client option isn't optional.");
-      process.exit(5);
+      this.emit("error", "options.client is not optional.");
     }
+
+    this.emit("ready");
   }
 
   message(message) {
@@ -34,7 +36,7 @@ class antiSpam {
     if (message.channel.type !== "text") return;
     if (!message.default || !message.deleted || !message.channel || !message.author || !message.content) return;
     if (!message.guild || !message.member) return;
-    if (message.author.id === )
+    if (this.client && this.client.user && message.author.id === this.client.user.id);
 
     var hasRoleExtempt = false;
     for (const role of message.member.roles) {
@@ -66,6 +68,7 @@ class antiSpam {
 
       try {
         msg.member.ban({ reason: "Spamming!", days: this.deleteMessagesAfterBanForPastDays });
+        this.emit("banAdd", msg.member);
       } catch (e) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
         msg.channel.send(`Could not ban **${msg.author.tag}** because \`${e}\`.`).catch(e => this.verbose === true ? console.log(e));
@@ -81,6 +84,7 @@ class antiSpam {
 
     const warnUser = (msg) => {
       warnedUsers.push(msg.author.id);
+      this.emit("warnAdd", message.member);
 
       var msgToSend = this.warnMessage;
       msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
@@ -103,9 +107,54 @@ class antiSpam {
     var messageMatches = 0;
 
     for (var i = 0; i < messageCache.length; i++) {
-      if (messageCache[i].message === message.content && messageCache[i].)
+      if (messageCache[i].message === message.content && messageCache[i].author === message.author) messageMatches++;
     }
 
+    if (messageMatches === maxDuplicatesWarning && !warnedUsers.includes(message.author.id)) {
+      warnUser(message);
+      this.emit("warnEmit", message.member);
+    }
+
+    if (messageMatches === maxDuplicatesBan && !bannedUsers.includes(message.author.id)) {
+      banUser(message);
+      this.emit("banEmit", message.member);
+    }
+
+    var spamMatches = 0;
+
+    for (var i = 0; i < authors.length; i++) {
+      if (authors[i].time > Date.now() - interval) {
+        spamMatches++;
+      }
+    }
+
+    if (spamMatches === warnThreshold && !warnedUsers.includes(message.author.id)) {
+      warnUser(message);
+      this.emit("warnEmit", message.member);
+    }
+
+    if (spamMatches === banThreshold && !bannedUsers.includes(message.author.id)) {
+      banUser(message);
+      this.emit("banEmit", message.member);
+    }
+  }
+
+  getData() {
+    return {
+      messageCache,
+      bannedUsers,
+      warnedUsers,
+      users
+    };
+  }
+
+  resetData() {
+    messageCache = [];
+    bannedUsers = [];
+    warnedUsers = [];
+    users = [];
+
+    this.emit("resetData");
   }
 }
 
