@@ -181,6 +181,7 @@ class antiSpam extends Events.EventEmitter {
     users = [];
 
     this.emit("resetData");
+    return true;
   }
 }
 
