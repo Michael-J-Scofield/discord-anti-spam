@@ -12,6 +12,7 @@ npm i discord-anti-spam
 ## Support Server
 Join our Support Server where we help you with issues regarding the module.
 <iframe src="https://discordapp.com/widget?id=583920432168828938&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
+<p>something</p>
 
 ## Bug Reports
 If you have any bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
