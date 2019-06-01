@@ -9,6 +9,14 @@ To install this module type the following command in your console:
 npm i discord-anti-spam
 ```
 
+## Support Server
+Join our Support Server where we help you with issues regarding the module.
+<iframe src="https://discordapp.com/widget?id=583920432168828938&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
+
+## Bug Reports
+If you have any bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
+
+
 ## Example
 Example of a basic bot handling spam messages using this module.
 
@@ -67,5 +75,3 @@ client.on("message", (msg) => {
 
 client.login("YOUR_SUPER_SECRET_TOKEN");
 ```
-
-If you have any issues, bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
