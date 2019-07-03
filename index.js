@@ -34,7 +34,9 @@ class antiSpam extends Events.EventEmitter {
     this.extemptRoles = options.extemptRoles || falsify;
     this.extemptUsers = options.exemptUsers || falsify;
     this.extemptGuilds = options.extemptGuilds || falsify;
-
+    this.ignoredUsers = options.ignoredUsers || [];
+    this.ignoredGuilds = options.ignoredGuilds || [];
+    
     if (!this.client) {
       console.log("[FATAL ERROR]: Discord Anti Spam - options.client is not optional.");
       process.exit(5);
@@ -44,9 +46,11 @@ class antiSpam extends Events.EventEmitter {
   message(message) {
     if (this.ignoreBots === true && message.author.bot) return;
     if (message.channel.type !== "text") return;
-    if (!message.guild || !message.member) return;
-    if (this.client && this.client.user && message.author.id === this.client.user.id);
-
+    if (!message.guild && message.member) return;
+    if (this.client && this.client.user && message.author.id === this.client.user.id) return;
+    if (this.ignoredGuilds.includes(message.guild.id)) return;
+    if (this.ignoredUsers.includes(message.author.id)) return;
+    
     var hasRoleExtempt = false;
     for (const role of message.member.roles) {
       if (hasRoleExtempt === true) return;
