@@ -58,6 +58,8 @@ const AntiSpam = new DiscordAntiSpam({
   ignoreBots: true, // Ignore bot messages 
   verbose: false, // Extended Logs from module
   client: client, // Client is your Discord.Client and is a required option.
+  ignoredUsers: [], // Array of string user IDs that are ignored
+  ignoredGuilds: [] // Array of string Guild IDs that are ignored
 });
 
 AntiSpam.on("warnEmit", (member) => console.log(`Attempt to warn ${member.user.tag}.`));
