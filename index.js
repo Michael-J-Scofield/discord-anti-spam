@@ -73,7 +73,7 @@ class antiSpam extends Events.EventEmitter {
 
       bannedUsers.push(msg.author.id);
 
-      if (!msg.author.bannable) {
+      if (!msg.member.bannable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
         msg.channel.send(`Could not ban **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
           if (this.verbose === true) {
