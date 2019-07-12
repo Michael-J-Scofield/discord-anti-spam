@@ -68,7 +68,7 @@ AntiSpam.on("banEmit", (member) => console.log(`Attempt to ban ${member.user.tag
 AntiSpam.on("banAdd", (member) => console.log(`${member.user.tag} has been banned.`));
 AntiSpam.on("dataReset", () => console.log("Module cache has been cleared."));
 
-client.on("ready", () => cosnole.log(`Logged in as ${client.user.tag}.`));
+client.on("ready", () => console.log(`Logged in as ${client.user.tag}.`));
 
 client.on("message", (msg) => {
   AntiSpam.message(msg);
