@@ -21,5 +21,15 @@
   },
   "homepage": "https://github.com/Michael-J-Scofield/discord-anti-spam#readme",
   "author": "Michael Scofield",
+  "contributors": [
+     "iWikipedia",
+     "MrAugu",
+     "Michael-J-Scofield",
+     "y21",
+     "thomas-crane",
+     "joker314",
+     "Kolkies",
+     "64ps"
+  ]
   "license": "MIT"
 }
