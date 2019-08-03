@@ -93,3 +93,14 @@ antispam(client, {
 <br>
 That's pretty much all. &lt;3<br>
 If you have any issues, bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
+
+## Contributors
+
+- [Michael-J-Scofield](https://github.com/Michael-J-Scofield)
+- [MrAugu](https://github.com/MrAugu)
+- [y21](https://github.com/y21)
+- [thomas-crane](https://github.com/thomas-crane)
+- [joker314](https://github.com/joker314)
+- [Kolkies](https://github.com/Kolkies)
+- [64ps](https://github.com/64ps)
+- [iWikipedia](https://github.com/iWikipedia)
