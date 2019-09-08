@@ -32,26 +32,8 @@ const AntiSpam = new DiscordAntiSpam({
   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
   maxDuplicatesBan: 10, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
-  exemptRoles: (role) => { // IMPORTANT: Promises won't work!!
-    if (role.name.toLowerCase() === "moderator") { // If role's name is moderator we return true, other case we return false
-      return true; // If function returns true, the user is bypassed
-    } else {
-      return false; 
-    }
-  },
-  exemptUsers: (member) => { // A guild member object.
-    if (member.user.id === "414764511489294347") { // If user's id is equal to 414764511489294347, we return true else false
-      return true; // If function returns true, the user is bypassed
-    } else {
-      return false;
-    }
-  },
-  exemptGuilds: (guild) => { // A guild object
-    if (guild.id === "583920432168828938") {  // If guild ID is 583920432168828938 we return true, else false
-      return true; // If function returns true, the user is bypassed
-     } else {
-      return false;
-     }
+  ignoredUsers: [], // array of ignored user ids
+  ignoredGuilds: [] // array of ignored guild ids
   },
   
   exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR", "MANAGE_GUILD", "BAN_MEMBERS"], // Bypass users with at least one of these permissions
