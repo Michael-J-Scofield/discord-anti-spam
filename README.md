@@ -36,7 +36,7 @@ const AntiSpam = new DiscordAntiSpam({
   
   ignoredUsers: [], // array of ignored user ids
   ignoredGuilds: [], // array of ignored guild ids
-  exemptUsers: (member) => member.user.createdTimestamp > 15552000000, // Bypass users if his account is more their 6 months old
+  exemptUsers: (member) => member.user.createdTimestamp > 15552000000, // Bypass users if their account is more their 6 months old
   exemptRoles: (role) => role.name === "Moderator", // Bypass users if they have a role named "Moderator"
   exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR", "MANAGE_GUILD", "BAN_MEMBERS"], // Bypass users with at least one of these permissions
 
