@@ -1,13 +1,14 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
-function falsify(something) {
+const falsify = () => {
   return false;
 }
 
-var users = [];
-var warnedUsers = [];
-var bannedUsers = [];
-var messageCache = [];
+let users = [],
+warnedUsers = [],
+bannedUsers = [],
+messageCache = [];
+
 const Events = require("events");
 
 class antiSpam extends Events.EventEmitter {
@@ -24,16 +25,13 @@ class antiSpam extends Events.EventEmitter {
     this.maxDuplicatesWarning = options.maxDuplicatesWarning || 7;
     this.maxDuplicatesBan = options.maxDuplicatesBan || 10;
     this.deleteMessagesAfterBanForPastDays = options.deleteMessagesAfterBanForPastDays || 1;
-    this.exemptRoles = options.exemptRoles;
-    this.exemptUsers = options.exemptUsers;
-    this.exemptGuilds = options.exemptGuilds;
+    this.exemptRoles = options.exemptRoles || falsify;
+    this.exemptUsers = options.exemptUsers || falsify;
+    this.exemptGuilds = options.exemptGuilds || falsify;
     this.exemptPermissions = options.exemptPermissions || [];
     this.ignoreBots = options.ignoreBots || true;
     this.verbose = options.verbose || false;
     this.client = options.client;
-    this.extemptRoles = options.extemptRoles || falsify;
-    this.extemptUsers = options.exemptUsers || falsify;
-    this.extemptGuilds = options.extemptGuilds || falsify;
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
     
@@ -51,21 +49,21 @@ class antiSpam extends Events.EventEmitter {
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
     
-    var hasRoleExtempt = false;
+    let hasRoleExempt = false;
     for (const role of message.member.roles) {
-      if (hasRoleExtempt === true) return;
-      if (this.extemptRoles && this.extemptRoles(role) === true) {
-        hasRoleExtempt = true;
+      if (hasRoleExempt === true) return;
+      if (this.exemptRoles && this.exemptRoles(role) === true) {
+        hasRoleExempt = true;
         return true;
       }
     }
 
-    if (hasRoleExtempt === true) return;
+    if (hasRoleExempt === true) return;
     if (this.exemptUsers && this.exemptUsers(message.member) === true) return;
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
 
     const banUser = (msg) => {
-      for (var i = 0; i < messageCache.length; i++) {
+      for (let i = 0; i < messageCache.length; i++) {
         if (messageCache[i].author == msg.author.id) {
           messageCache.splice(i);
         }
@@ -96,8 +94,7 @@ class antiSpam extends Events.EventEmitter {
         return false;
       }
 
-      var msgToSend = this.banMessage;
-      msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
+      let msgToSend = this.banMessage.replace(/{user_tag}/g, msg.author.tag);
 
       msg.channel.send(msgToSend).catch(e => {
         if (this.verbose === true) {
@@ -111,7 +108,7 @@ class antiSpam extends Events.EventEmitter {
       warnedUsers.push(msg.author.id);
       this.emit("warnAdd", message.member);
 
-      var msgToSend = this.warnMessage;
+      let msgToSend = this.warnMessage;
       msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
       msgToSend = msgToSend.replace(/{@user}/g, `<@${msg.author.id}>`);
 
@@ -134,9 +131,9 @@ class antiSpam extends Events.EventEmitter {
       "author": message.author.id
     });
 
-    var messageMatches = 0;
+    let messageMatches = 0;
 
-    for (var i = 0; i < messageCache.length; i++) {
+    for (let i = 0; i < messageCache.length; i++) {
       if (messageCache[i].message === message.content && messageCache[i].author === message.author) messageMatches++;
     }
 
@@ -150,9 +147,9 @@ class antiSpam extends Events.EventEmitter {
       this.emit("banEmit", message.member);
     }
 
-    var spamMatches = 0;
+    let spamMatches = 0;
 
-    for (var i = 0; i < users.length; i++) {
+    for (let i = 0; i < users.length; i++) {
       if (users[i].time > Date.now() - this.maxInterval) {
         spamMatches++;
       }
