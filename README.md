@@ -24,6 +24,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const DiscordAntiSpam = require("discord-anti-spam");
 const AntiSpam = new DiscordAntiSpam({
+
   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
   banThreshold: 5, // Amount of messages sent in a row that will cause a ban
   maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam. 
@@ -32,16 +33,16 @@ const AntiSpam = new DiscordAntiSpam({
   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
   maxDuplicatesBan: 10, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
-  ignoredUsers: [], // array of ignored user ids
-  ignoredGuilds: [] // array of ignored guild ids
-  },
   
+  ignoredUsers: [], // array of ignored user ids
+  ignoredGuilds: [], // array of ignored guild ids
+  exemptUsers: (member) => member.user.createdTimestamp > 15552000000, // Bypass users if his account is more their 6 months old
+  exemptRoles: (role) => role.name === "Moderator", // Bypass users if they have a role named "Moderator"
   exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR", "MANAGE_GUILD", "BAN_MEMBERS"], // Bypass users with at least one of these permissions
+
   ignoreBots: true, // Ignore bot messages 
   verbose: false, // Extended Logs from module
   client: client, // Client is your Discord.Client and is a required option.
-  ignoredUsers: [], // Array of string user IDs that are ignored
-  ignoredGuilds: [] // Array of string Guild IDs that are ignored
 });
 
 AntiSpam.on("warnEmit", (member) => console.log(`Attempt to warn ${member.user.tag}.`));
