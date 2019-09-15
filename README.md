@@ -33,7 +33,8 @@ const AntiSpam = new DiscordAntiSpam({
   maxDuplicatesBan: 10, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
   ignoredUsers: [], // Array of string user IDs that are ignored
-  ignoredGuilds: [] // Array of string Guild IDs that are ignored
+  ignoredGuilds: [] // Array of string Guild IDs that are ignored,
+  client: client // Client is your Discord.Client and is a required option.
 });
 
 AntiSpam.on("warnEmit", (member) => console.log(`Attempt to warn ${member.user.tag}.`));
