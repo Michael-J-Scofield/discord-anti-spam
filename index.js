@@ -4,11 +4,11 @@ function falsify(something) {
   return false;
 }
 
-var users = [];
-var warnedUsers = [];
-var bannedUsers = [];
-var messageCache = [];
 const Events = require("events");
+let users = [],
+    warnedUsers = [],
+    bannedUsers = [],
+    messageCache = [];
 
 class antiSpam extends Events.EventEmitter {
   constructor(options) {
@@ -33,7 +33,7 @@ class antiSpam extends Events.EventEmitter {
     this.client = options.client;
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
-    
+
     if (!this.client) {
       console.log("[FATAL ERROR]: Discord Anti Spam - options.client is not optional.");
       process.exit(5);
@@ -47,8 +47,14 @@ class antiSpam extends Events.EventEmitter {
     if (this.client && this.client.user && message.author.id === this.client.user.id) return;
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
-    
-    var hasRoleExempt = false;
+
+    for (const permission of this.exemptPermissions) {
+      if (message.member.hasPermission(permission)) {
+        return;
+      }
+    }
+
+    let hasRoleExempt = false;
     for (const role of message.member.roles) {
       if (hasRoleExempt === true) return;
       if (this.exemptRoles && this.exemptRoles(role) === true) {
@@ -62,7 +68,7 @@ class antiSpam extends Events.EventEmitter {
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
 
     const banUser = (msg) => {
-      for (var i = 0; i < messageCache.length; i++) {
+      for (let i = 0; i < messageCache.length; i++) {
         if (messageCache[i].author == msg.author.id) {
           messageCache.splice(i);
         }
@@ -93,7 +99,7 @@ class antiSpam extends Events.EventEmitter {
         return false;
       }
 
-      var msgToSend = this.banMessage;
+      let msgToSend = this.banMessage;
       msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
 
       msg.channel.send(msgToSend).catch(e => {
@@ -108,7 +114,7 @@ class antiSpam extends Events.EventEmitter {
       warnedUsers.push(msg.author.id);
       this.emit("warnAdd", message.member);
 
-      var msgToSend = this.warnMessage;
+      let msgToSend = this.warnMessage;
       msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
       msgToSend = msgToSend.replace(/{@user}/g, `<@${msg.author.id}>`);
 
@@ -131,9 +137,9 @@ class antiSpam extends Events.EventEmitter {
       "author": message.author.id
     });
 
-    var messageMatches = 0;
+    let messageMatches = 0;
 
-    for (var i = 0; i < messageCache.length; i++) {
+    for (let i = 0; i < messageCache.length; i++) {
       if (messageCache[i].message === message.content && messageCache[i].author === message.author) messageMatches++;
     }
 
@@ -147,9 +153,9 @@ class antiSpam extends Events.EventEmitter {
       this.emit("banEmit", message.member);
     }
 
-    var spamMatches = 0;
+    let spamMatches = 0;
 
-    for (var i = 0; i < users.length; i++) {
+    for (let i = 0; i < users.length; i++) {
       if (users[i].time > Date.now() - this.maxInterval) {
         spamMatches++;
       }
