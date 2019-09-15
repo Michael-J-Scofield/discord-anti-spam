@@ -25,14 +25,11 @@ const client = new Discord.Client();
 const DiscordAntiSpam = require("discord-anti-spam");
 const AntiSpam = new DiscordAntiSpam({
   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
-  kickThreshold: 5, // Amount of messages sent in a row that will cause a kick
   banThreshold: 7, // Amount of messages sent in a row that will cause a ban
   maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam.
   warnMessage: "{@user}, Please stop spamming.", // Message will be sent in chat upon warning.
-  kickMessage: "**{user_tag}** has been kicked for spamming.", // Message will be sent in chat upon kick.
   banMessage: "**{user_tag}** has been banned for spamming.", // Message will be sent in chat upon banning.
   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
-  maxDuplicatesKick: 10, // Amount of same messages sent that will be considered as duplicates that will cause a kick.
   maxDuplicatesBan: 15, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
   ignoredUsers: [], // array of ignored user ids
