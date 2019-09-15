@@ -134,7 +134,7 @@ class antiSpam extends Events.EventEmitter {
       }
 
       try {
-        msg.member.kick("Spaming!");
+        msg.member.kick("Spamming!");
         this.emit("kickAdd", msg.member);
       } catch (e) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`);
