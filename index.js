@@ -24,16 +24,13 @@ class antiSpam extends Events.EventEmitter {
     this.maxDuplicatesWarning = options.maxDuplicatesWarning || 7;
     this.maxDuplicatesBan = options.maxDuplicatesBan || 10;
     this.deleteMessagesAfterBanForPastDays = options.deleteMessagesAfterBanForPastDays || 1;
-    this.exemptRoles = options.exemptRoles;
-    this.exemptUsers = options.exemptUsers;
-    this.exemptGuilds = options.exemptGuilds;
+    this.exemptRoles = options.exemptRoles || falsify;
+    this.exemptUsers = options.exemptUsers || falsify;
+    this.exemptGuilds = options.exemptGuilds || falsify;
     this.exemptPermissions = options.exemptPermissions || [];
     this.ignoreBots = options.ignoreBots || true;
     this.verbose = options.verbose || false;
     this.client = options.client;
-    this.extemptRoles = options.extemptRoles || falsify;
-    this.extemptUsers = options.exemptUsers || falsify;
-    this.extemptGuilds = options.extemptGuilds || falsify;
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
     
@@ -51,16 +48,16 @@ class antiSpam extends Events.EventEmitter {
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
     
-    var hasRoleExtempt = false;
+    var hasRoleExempt = false;
     for (const role of message.member.roles) {
-      if (hasRoleExtempt === true) return;
-      if (this.extemptRoles && this.extemptRoles(role) === true) {
-        hasRoleExtempt = true;
+      if (hasRoleExempt === true) return;
+      if (this.exemptRoles && this.exemptRoles(role) === true) {
+        hasRoleExempt = true;
         return true;
       }
     }
 
-    if (hasRoleExtempt === true) return;
+    if (hasRoleExempt === true) return;
     if (this.exemptUsers && this.exemptUsers(message.member) === true) return;
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
 
