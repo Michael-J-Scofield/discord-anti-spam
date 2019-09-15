@@ -31,6 +31,7 @@ class antiSpam extends Events.EventEmitter {
     this.exemptRoles = options.exemptRoles || falsify;
     this.exemptUsers = options.exemptUsers || falsify;
     this.exemptGuilds = options.exemptGuilds || falsify;
+    this.exemptChannels = options.exemptChannels || falsify;
     this.exemptPermissions = options.exemptPermissions || [];
     this.ignoreBots = options.ignoreBots || true;
     this.verbose = options.verbose || false;
@@ -72,6 +73,7 @@ class antiSpam extends Events.EventEmitter {
     if (hasRoleExempt === true) return;
     if (this.exemptUsers && this.exemptUsers(message.member) === true) return;
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
+    if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
     const banUser = (msg) => {
       for (let i = 0; i < messageCache.length; i++) {
