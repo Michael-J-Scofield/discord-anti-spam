@@ -32,10 +32,6 @@ const AntiSpam = new DiscordAntiSpam({
   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
   maxDuplicatesBan: 10, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
-  ignoredUsers: [], // array of ignored user ids
-  ignoredGuilds: [] // array of ignored guild ids
-  },
-  
   exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR", "MANAGE_GUILD", "BAN_MEMBERS"], // Bypass users with at least one of these permissions
   ignoreBots: true, // Ignore bot messages 
   verbose: false, // Extended Logs from module
