@@ -37,6 +37,7 @@ class antiSpam extends Events.EventEmitter {
     this.client = options.client;
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
+    this.ignoredChannels = options.ignoredChannels || [];
 
     if (!this.client) {
       console.log("[FATAL ERROR]: Discord Anti Spam - options.client is not optional.");
@@ -51,6 +52,7 @@ class antiSpam extends Events.EventEmitter {
     if (this.client && this.client.user && message.author.id === this.client.user.id) return;
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
+    if (this.ignoredChannels.includes(message.author.id)) return;
 
     for (const permission of this.exemptPermissions) {
       if (message.member.hasPermission(permission)) {
