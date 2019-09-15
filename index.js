@@ -8,6 +8,7 @@ const Events = require("events");
 let users = [],
     warnedUsers = [],
     bannedUsers = [],
+    kickedUsers = [],
     messageCache = [];
 
 class antiSpam extends Events.EventEmitter {
@@ -18,11 +19,14 @@ class antiSpam extends Events.EventEmitter {
 
     this.warnThreshold = options.warnThreshold || 3;
     this.banThreshold = options.banThreshold || 5;
+    this.kickThreshold = options.kickThreshold || 5;
     this.maxInterval = options.maxInterval || 2000;
     this.warnMessage = options.warnMessage || "{@user}, Please stop spamming.";
     this.banMessage = options.banMessage || "**{user_tag}** has been banned for spamming.";
+    this.kickMessage = options.kickMessage || "**{user_tag}** has been kicked for spamming.";
     this.maxDuplicatesWarning = options.maxDuplicatesWarning || 7;
     this.maxDuplicatesBan = options.maxDuplicatesBan || 10;
+    this.maxDuplicatesKick = options.maxDuplicatesKick || 10;
     this.deleteMessagesAfterBanForPastDays = options.deleteMessagesAfterBanForPastDays || 1;
     this.exemptRoles = options.exemptRoles || falsify;
     this.exemptUsers = options.exemptUsers || falsify;
@@ -110,6 +114,49 @@ class antiSpam extends Events.EventEmitter {
       return true;
     };
 
+    const kickUser = (msg) => {
+      for (let i = 0; i < messageCache.length; i++) {
+        if (messageCache[i].author == msg.author.id) {
+          messageCache.splice(i);
+        }
+      }
+
+      kickedUsers.push(msg.author.id);
+
+      if (!msg.member.kickable) {
+        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
+        msg.channel.send(`Could not kick **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
+          if (this.verbose === true) {
+            console.log(e);
+          }
+        });
+        return false;
+      }
+
+      try {
+        msg.member.kick("Spamming!");
+        this.emit("kickAdd", msg.member);
+      } catch (e) {
+        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`);
+        msg.channel.send(`Could not kick **${msg.author.tag}**. because \`${e}\`.`).catch(e => {
+          if (this.verbose === true) {
+            console.log(e);
+          }
+        });
+        return false;
+      }
+
+      let msgToSend = this.kickMessage;
+      msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
+
+      msg.channel.send(msgToSend).catch(e => {
+        if (this.verbose === true) {
+          console.log(e);
+        }
+      });
+      return true;
+    };
+
     const warnUser = (msg) => {
       warnedUsers.push(msg.author.id);
       this.emit("warnAdd", message.member);
@@ -153,6 +200,11 @@ class antiSpam extends Events.EventEmitter {
       this.emit("banEmit", message.member);
     }
 
+    if (messageMatches === this.maxDuplicatesKick && !KickedUsers.includes(message.author.id)) {
+      kickUser(message);
+      this.emit("kickEmit", message.member);
+    }
+
     let spamMatches = 0;
 
     for (let i = 0; i < users.length; i++) {
@@ -170,12 +222,18 @@ class antiSpam extends Events.EventEmitter {
       banUser(message);
       this.emit("banEmit", message.member);
     }
+
+    if (spamMatches === this.kickThreshold && !kickedUsers.includes(message.author.id)) {
+      kickUser(message);
+      this.emit("kickEmit", message.member);
+    }
   }
 
   getData() {
     return {
       messageCache,
       bannedUsers,
+      kickedUsers,
       warnedUsers,
       users
     };
@@ -184,6 +242,7 @@ class antiSpam extends Events.EventEmitter {
   resetData() {
     messageCache = [];
     bannedUsers = [];
+    kickedUsers = [];
     warnedUsers = [];
     users = [];
 

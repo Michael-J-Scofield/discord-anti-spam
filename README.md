@@ -25,12 +25,12 @@ const client = new Discord.Client();
 const DiscordAntiSpam = require("discord-anti-spam");
 const AntiSpam = new DiscordAntiSpam({
   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
-  banThreshold: 5, // Amount of messages sent in a row that will cause a ban
+  banThreshold: 7, // Amount of messages sent in a row that will cause a ban
   maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam.
   warnMessage: "{@user}, Please stop spamming.", // Message will be sent in chat upon warning.
   banMessage: "**{user_tag}** has been banned for spamming.", // Message will be sent in chat upon banning.
   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
-  maxDuplicatesBan: 10, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
+  maxDuplicatesBan: 15, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
   ignoredUsers: [], // array of ignored user ids
   ignoredGuilds: [], // array of ignored guild ids
@@ -44,6 +44,8 @@ const AntiSpam = new DiscordAntiSpam({
 
 AntiSpam.on("warnEmit", (member) => console.log(`Attempt to warn ${member.user.tag}.`));
 AntiSpam.on("warnAdd", (member) => console.log(`${member.user.tag} has been warned.`));
+AntiSpam.on("kickEmit", (member) => console.log(`Attempt to kick ${member.user.tag}.`));
+AntiSpam.on("kickAdd", (member) => console.log(`${member.user.tag} has been kicked.`));
 AntiSpam.on("banEmit", (member) => console.log(`Attempt to ban ${member.user.tag}.`));
 AntiSpam.on("banAdd", (member) => console.log(`${member.user.tag} has been banned.`));
 AntiSpam.on("dataReset", () => console.log("Module cache has been cleared."));
