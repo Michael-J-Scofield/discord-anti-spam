@@ -27,12 +27,14 @@ class antiSpam extends Events.EventEmitter {
     this.exemptRoles = options.exemptRoles || falsify;
     this.exemptUsers = options.exemptUsers || falsify;
     this.exemptGuilds = options.exemptGuilds || falsify;
+    this.exemptChannels = options.exemptChannels || falsify;
     this.exemptPermissions = options.exemptPermissions || [];
     this.ignoreBots = options.ignoreBots || true;
     this.verbose = options.verbose || false;
     this.client = options.client;
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
+    this.ignoreChannels = options.ignoreChannels || [];
 
     if (!this.client) {
       console.log("[FATAL ERROR]: Discord Anti Spam - options.client is not optional.");
@@ -47,6 +49,7 @@ class antiSpam extends Events.EventEmitter {
     if (this.client && this.client.user && message.author.id === this.client.user.id) return;
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
+    if (this.ignoreChannels.includes(message.channel.id)) return;
 
     for (const permission of this.exemptPermissions) {
       if (message.member.hasPermission(permission)) {
@@ -66,6 +69,7 @@ class antiSpam extends Events.EventEmitter {
     if (hasRoleExempt === true) return;
     if (this.exemptUsers && this.exemptUsers(message.member) === true) return;
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
+    if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
     const banUser = (msg) => {
       for (let i = 0; i < messageCache.length; i++) {
