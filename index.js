@@ -1,7 +1,20 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
-function falsify(something) {
-  return false;
+/**
+ * This function always return false
+ */
+const falsify = () => false;
+
+/**
+ * This function formats a string by replacing some keywords with variables
+ * @param {string} string The non-formatted string
+ * @param {object} message The Discord Message object
+ * @returns {string} The formatted string
+ */
+const formatString = (string, message) => {
+  return string.replace(/{@user}/g, message.author.toString())
+  .replace(/{user_tag}/g, message.author.tag)
+  .replace(/{server_name}/g, message.guild.name);
 }
 
 const Events = require("events");
@@ -71,12 +84,9 @@ class antiSpam extends Events.EventEmitter {
     if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
     const banUser = (msg) => {
-      for (let i = 0; i < messageCache.length; i++) {
-        if (messageCache[i].author == msg.author.id) {
-          messageCache.splice(i);
-        }
-      }
-
+      // Removes the user messages from the message cache
+      messageCache = messageCache.filter((m) => m.author !== msg.author.id);
+      // Mark the user as banned
       bannedUsers.push(msg.author.id);
 
       if (!msg.member.bannable) {
@@ -102,8 +112,7 @@ class antiSpam extends Events.EventEmitter {
         return false;
       }
 
-      let msgToSend = this.banMessage;
-      msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
+      let msgToSend = formatString(this.banMessage, msg);
 
       msg.channel.send(msgToSend).catch(e => {
         if (this.verbose === true) {
@@ -114,12 +123,9 @@ class antiSpam extends Events.EventEmitter {
     };
 
     const kickUser = (msg) => {
-      for (let i = 0; i < messageCache.length; i++) {
-        if (messageCache[i].author == msg.author.id) {
-          messageCache.splice(i);
-        }
-      }
-
+      // Removes the user messages from the message cache
+      messageCache = messageCache.filter((m) => m.author !== msg.author.id);
+      // Mark the user as kicked
       kickedUsers.push(msg.author.id);
 
       if (!msg.member.kickable) {
@@ -145,8 +151,7 @@ class antiSpam extends Events.EventEmitter {
         return false;
       }
 
-      let msgToSend = this.kickMessage;
-      msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
+      let msgToSend = formatString(this.kickMessage, msg);
 
       msg.channel.send(msgToSend).catch(e => {
         if (this.verbose === true) {
@@ -157,12 +162,11 @@ class antiSpam extends Events.EventEmitter {
     };
 
     const warnUser = (msg) => {
+      // Mark the user as warned
       warnedUsers.push(msg.author.id);
       this.emit("warnAdd", message.member);
 
-      let msgToSend = this.warnMessage;
-      msgToSend = msgToSend.replace(/{user_tag}/g, msg.author.tag);
-      msgToSend = msgToSend.replace(/{@user}/g, `<@${msg.author.id}>`);
+      let msgToSend = formatString(this.warnMessage, msg);
 
       msg.channel.send(msgToSend).catch(e => {
         if (this.verbose === true) {
@@ -183,11 +187,7 @@ class antiSpam extends Events.EventEmitter {
       "author": message.author.id
     });
 
-    let messageMatches = 0;
-
-    for (let i = 0; i < messageCache.length; i++) {
-      if (messageCache[i].message === message.content && messageCache[i].author === message.author) messageMatches++;
-    }
+    let messageMatches = messageCache.filter((m) => m.content === message.content && m.author === message.author.id).length;
 
     if (messageMatches === this.maxDuplicatesWarning && !warnedUsers.includes(message.author.id)) {
       warnUser(message);
@@ -204,13 +204,7 @@ class antiSpam extends Events.EventEmitter {
       this.emit("kickEmit", message.member);
     }
 
-    let spamMatches = 0;
-
-    for (let i = 0; i < users.length; i++) {
-      if (users[i].time > Date.now() - this.maxInterval) {
-        spamMatches++;
-      }
-    }
+    let spamMatches = users.filter((u) => u.time > Date.now() - this.maxInterval && u.author === message.author.id).length;
 
     if (spamMatches === this.warnThreshold && !warnedUsers.includes(message.author.id)) {
       warnUser(message);
