@@ -194,7 +194,7 @@ class antiSpam extends Events.EventEmitter {
       this.emit("warnEmit", message.member);
     }
 
-    if (messageMatches === this.maxDuplicatesBan && !bannedUsers.includes(message.author.id)) {
+    if (messageMatches === this.maxDuplicatesBan) {
       banUser(message);
       this.emit("banEmit", message.member);
     }
@@ -211,7 +211,7 @@ class antiSpam extends Events.EventEmitter {
       this.emit("warnEmit", message.member);
     }
 
-    if (spamMatches === this.banThreshold && !bannedUsers.includes(message.author.id)) {
+    if (spamMatches === this.banThreshold) {
       banUser(message);
       this.emit("banEmit", message.member);
     }
