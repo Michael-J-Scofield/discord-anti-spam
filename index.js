@@ -183,7 +183,7 @@ class antiSpam extends Events.EventEmitter {
     });
 
     messageCache.push({
-      "message": message.content,
+      "content": message.content,
       "author": message.author.id
     });
 
