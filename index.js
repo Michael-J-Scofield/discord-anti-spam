@@ -199,7 +199,7 @@ class antiSpam extends Events.EventEmitter {
       this.emit("banEmit", message.member);
     }
 
-    if (messageMatches === this.maxDuplicatesKick && !KickedUsers.includes(message.author.id)) {
+    if (messageMatches === this.maxDuplicatesKick && !kickedUsers.includes(message.author.id)) {
       kickUser(message);
       this.emit("kickEmit", message.member);
     }
