@@ -36,6 +36,7 @@ const AntiSpam = new DiscordAntiSpam({
   ignoreBots: true, // Ignore bot messages
   verbose: false, // Extended Logs from module
   ignoredUsers: [], // Array of string user IDs that are ignored
+  ignoredRoles: [], // Array of string role IDs or role name that are ignored
   ignoredGuilds: [], // Array of string Guild IDs that are ignored
   ignoredChannels: [] // Array of string channels IDs that are ignored
 });
