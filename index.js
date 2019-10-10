@@ -61,7 +61,7 @@ class antiSpam extends Events.EventEmitter {
     if (message.client && message.client.user && message.author.id === message.client.user.id) return;
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
-    if (this.ignoredChannels.includes(message.author.id)) return;
+    if (this.ignoredChannels.includes(message.channel.id)) return;
 
     for (const permission of this.exemptPermissions) {
       if (message.member.hasPermission(permission)) {
