@@ -1,11 +1,11 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
 const Events = require("events");
-var users = [];
-var warnedUsers = [];
-var bannedUsers = [];
-var kickedUsers = [];
-var messageCache = [];
+var users = [],
+  warnedUsers = [],
+  bannedUsers = [],
+  kickedUsers = [],
+  messageCache = []
 
 class AntiSpam extends Events.EventEmitter {
   constructor(options) {
@@ -68,12 +68,11 @@ class AntiSpam extends Events.EventEmitter {
     if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
     const banUser = (msg) => {
-      // Removes the user messages from the message cache
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
-      if (!banEnabled) return;
-      // Mark the user as banned
       bannedUsers.push(msg.author.id);
-
+      
+      if (!banEnabled) return;
+      
       if (!msg.member.bannable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
         msg.channel.send(`Could not ban **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
@@ -109,9 +108,10 @@ class AntiSpam extends Events.EventEmitter {
 
     const kickUser = (msg) => {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
-      if (!kickEnabled) return;
       kickedUsers.push(msg.author.id);
 
+      if (!kickEnabled) return;
+      
       if (!msg.member.kickable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
         msg.channel.send(`Could not kick **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
