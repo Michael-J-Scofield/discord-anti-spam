@@ -5,7 +5,7 @@ var users = [],
   warnedUsers = [],
   bannedUsers = [],
   kickedUsers = [],
-  messageCache = []
+  messageCache = [];
 
 class AntiSpam extends Events.EventEmitter {
   constructor(options) {
