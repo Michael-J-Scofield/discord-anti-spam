@@ -1,30 +1,13 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
-/**
- * This function always return false
- */
-const falsify = () => false;
-
-/**
- * This function formats a string by replacing some keywords with variables
- * @param {string} string The non-formatted string
- * @param {object} message The Discord Message object
- * @returns {string} The formatted string
- */
-const formatString = (string, message) => {
-  return string.replace(/{@user}/g, message.author.toString())
-  .replace(/{user_tag}/g, message.author.tag)
-  .replace(/{server_name}/g, message.guild.name);
-}
-
 const Events = require("events");
-let users = [],
-    warnedUsers = [],
-    bannedUsers = [],
-    kickedUsers = [],
-    messageCache = [];
+var users = [];
+var warnedUsers = [];
+var bannedUsers = [];
+var kickedUsers = [];
+var messageCache = [];
 
-class antiSpam extends Events.EventEmitter {
+class AntiSpam extends Events.EventEmitter {
   constructor(options) {
     super(options);
 
@@ -51,7 +34,8 @@ class antiSpam extends Events.EventEmitter {
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
     this.ignoredChannels = options.ignoredChannels || [];
-
+    this.kickEnabled = options.kickEnabled || true;
+    this.banEnabled = options.banEnabled || true;
   }
 
   message(message) {
@@ -86,6 +70,7 @@ class antiSpam extends Events.EventEmitter {
     const banUser = (msg) => {
       // Removes the user messages from the message cache
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
+      if (!banEnabled) return;
       // Mark the user as banned
       bannedUsers.push(msg.author.id);
 
@@ -123,9 +108,8 @@ class antiSpam extends Events.EventEmitter {
     };
 
     const kickUser = (msg) => {
-      // Removes the user messages from the message cache
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
-      // Mark the user as kicked
+      if (!kickEnabled) return;
       kickedUsers.push(msg.author.id);
 
       if (!msg.member.kickable) {
@@ -244,4 +228,27 @@ class antiSpam extends Events.EventEmitter {
   }
 }
 
-module.exports = antiSpam;
+module.exports = AntiSpam;
+
+/**
+ * This function always return false
+ */
+
+function falsify () {
+ return false;
+}
+
+/**
+ * This function formats a string by replacing some keywords with variables
+ * @param {string} string The non-formatted string
+ * @param {object} message The Discord Message object
+ * @returns {string} The formatted string
+ */
+
+function formatString (string, message) {
+  return string.replace(/{@user}/g, message.author.toString())
+  .replace(/{user_tag}/g, message.author.tag)
+  .replace(/{server_name}/g, message.guild.name);
+}
+  
+  
