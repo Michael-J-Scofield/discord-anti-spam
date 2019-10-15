@@ -1,7 +1,7 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
 const Events = require("events");
-var users = [],
+let users = [],
   warnedUsers = [],
   bannedUsers = [],
   kickedUsers = [],
