@@ -1,30 +1,13 @@
 if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
-/**
- * This function always return false
- */
-const falsify = () => false;
-
-/**
- * This function formats a string by replacing some keywords with variables
- * @param {string} string The non-formatted string
- * @param {object} message The Discord Message object
- * @returns {string} The formatted string
- */
-const formatString = (string, message) => {
-  return string.replace(/{@user}/g, message.author.toString())
-  .replace(/{user_tag}/g, message.author.tag)
-  .replace(/{server_name}/g, message.guild.name);
-}
-
 const Events = require("events");
 let users = [],
-    warnedUsers = [],
-    bannedUsers = [],
-    kickedUsers = [],
-    messageCache = [];
+  warnedUsers = [],
+  bannedUsers = [],
+  kickedUsers = [],
+  messageCache = [];
 
-class antiSpam extends Events.EventEmitter {
+class AntiSpam extends Events.EventEmitter {
   constructor(options) {
     super(options);
 
@@ -51,7 +34,8 @@ class antiSpam extends Events.EventEmitter {
     this.ignoredUsers = options.ignoredUsers || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
     this.ignoredChannels = options.ignoredChannels || [];
-
+    this.kickEnabled = options.kickEnabled || true;
+    this.banEnabled = options.banEnabled || true;
   }
 
   message(message) {
@@ -84,11 +68,11 @@ class antiSpam extends Events.EventEmitter {
     if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
     const banUser = (msg) => {
-      // Removes the user messages from the message cache
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
-      // Mark the user as banned
       bannedUsers.push(msg.author.id);
-
+      
+      if (!banEnabled) return;
+      
       if (!msg.member.bannable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
         msg.channel.send(`Could not ban **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
@@ -123,11 +107,11 @@ class antiSpam extends Events.EventEmitter {
     };
 
     const kickUser = (msg) => {
-      // Removes the user messages from the message cache
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
-      // Mark the user as kicked
       kickedUsers.push(msg.author.id);
 
+      if (!kickEnabled) return;
+      
       if (!msg.member.kickable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
         msg.channel.send(`Could not kick **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
@@ -244,4 +228,27 @@ class antiSpam extends Events.EventEmitter {
   }
 }
 
-module.exports = antiSpam;
+module.exports = AntiSpam;
+
+/**
+ * This function always return false
+ */
+
+function falsify () {
+ return false;
+}
+
+/**
+ * This function formats a string by replacing some keywords with variables
+ * @param {string} string The non-formatted string
+ * @param {object} message The Discord Message object
+ * @returns {string} The formatted string
+ */
+
+function formatString (string, message) {
+  return string.replace(/{@user}/g, message.author.toString())
+  .replace(/{user_tag}/g, message.author.tag)
+  .replace(/{server_name}/g, message.guild.name);
+}
+  
+  
