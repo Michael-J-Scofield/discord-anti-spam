@@ -32,6 +32,7 @@ class AntiSpam extends Events.EventEmitter {
     this.ignoreBots = options.ignoreBots || true;
     this.verbose = options.verbose || false;
     this.ignoredUsers = options.ignoredUsers || [];
+    this.ignoredRoles = options.ignoredRoles || [];
     this.ignoredGuilds = options.ignoredGuilds || [];
     this.ignoredChannels = options.ignoredChannels || [];
     this.kickEnabled = options.kickEnabled || true;
@@ -45,6 +46,7 @@ class AntiSpam extends Events.EventEmitter {
     if (message.client && message.client.user && message.author.id === message.client.user.id) return;
     if (this.ignoredGuilds.includes(message.guild.id)) return;
     if (this.ignoredUsers.includes(message.author.id)) return;
+    if (message.member.roles.some((role) => this.ignoredRoles.includes(role.id) || this.ignoredRoles.includes(role.name))) return;
     if (this.ignoredChannels.includes(message.channel.id)) return;
 
     for (const permission of this.exemptPermissions) {
