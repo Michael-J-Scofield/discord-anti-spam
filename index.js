@@ -36,7 +36,8 @@ class AntiSpam extends Events.EventEmitter {
     this.ignoredGuilds = options.ignoredGuilds || [];
     this.ignoredChannels = options.ignoredChannels || [];
     this.kickEnabled = options.kickEnabled || true;
-    this.banEnabled = options.banEnabled || true;
+    this.banEnabled = options.
+      || true;
   }
 
   message(message) {
@@ -73,7 +74,7 @@ class AntiSpam extends Events.EventEmitter {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       bannedUsers.push(msg.author.id);
       
-      if (!banEnabled) return;
+      if (!this.banEnabled) return;
       
       if (!msg.member.bannable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
@@ -112,7 +113,7 @@ class AntiSpam extends Events.EventEmitter {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       kickedUsers.push(msg.author.id);
 
-      if (!kickEnabled) return;
+      if (!this.kickEnabled) return;
       
       if (!msg.member.kickable) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
