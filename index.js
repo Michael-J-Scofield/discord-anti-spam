@@ -36,8 +36,7 @@ class AntiSpam extends Events.EventEmitter {
     this.ignoredGuilds = options.ignoredGuilds || [];
     this.ignoredChannels = options.ignoredChannels || [];
     this.kickEnabled = options.kickEnabled || true;
-    this.banEnabled = options.
-      || true;
+    this.banEnabled = options.banEnabled || true;
   }
 
   message(message) {
