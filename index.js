@@ -1,4 +1,4 @@
-if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
+if (Number(process.version.split(".")[0].match(/[0-9]+/)) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
 const Events = require("events");
 const defaultOptions = {
