@@ -39,7 +39,7 @@ class AntiSpam extends Events.EventEmitter {
     this.banEnabled = options.banEnabled || true;
   }
 
-  message(message) {
+  async message(message) {
     if (this.ignoreBots === true && message.author.bot) return;
     if (message.channel.type !== "text") return;
     if (!message.guild && message.member) return;
@@ -69,7 +69,7 @@ class AntiSpam extends Events.EventEmitter {
     if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
     if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
 
-    const banUser = (msg) => {
+    const banUser = async (msg) => {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       bannedUsers.push(msg.author.id);
       
@@ -86,7 +86,7 @@ class AntiSpam extends Events.EventEmitter {
       }
 
       try {
-        msg.member.ban({ reason: "Spamming!", days: this.deleteMessagesAfterBanForPastDays });
+        await msg.member.ban({ reason: "Spamming!", days: this.deleteMessagesAfterBanForPastDays });
         this.emit("banAdd", msg.member);
       } catch (e) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
@@ -108,7 +108,7 @@ class AntiSpam extends Events.EventEmitter {
       return true;
     };
 
-    const kickUser = (msg) => {
+    const kickUser = async (msg) => {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       kickedUsers.push(msg.author.id);
 
@@ -125,7 +125,7 @@ class AntiSpam extends Events.EventEmitter {
       }
 
       try {
-        msg.member.kick("Spamming!");
+        await msg.member.kick("Spamming!");
         this.emit("kickAdd", msg.member);
       } catch (e) {
         if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`);
@@ -181,12 +181,12 @@ class AntiSpam extends Events.EventEmitter {
     }
 
     if (messageMatches === this.maxDuplicatesBan) {
-      banUser(message);
+      await banUser(message);
       this.emit("banEmit", message.member);
     }
 
     if (messageMatches === this.maxDuplicatesKick && !kickedUsers.includes(message.author.id)) {
-      kickUser(message);
+      await kickUser(message);
       this.emit("kickEmit", message.member);
     }
 
@@ -198,12 +198,12 @@ class AntiSpam extends Events.EventEmitter {
     }
 
     if (spamMatches === this.banThreshold) {
-      banUser(message);
+      await banUser(message);
       this.emit("banEmit", message.member);
     }
 
     if (spamMatches === this.kickThreshold && !kickedUsers.includes(message.author.id)) {
-      kickUser(message);
+      await kickUser(message);
       this.emit("kickEmit", message.member);
     }
   }
