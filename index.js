@@ -71,14 +71,14 @@ class AntiSpam extends Events.EventEmitter {
         await msg.member.ban({ reason: "Spamming!", days: options.deleteMessagesAfterBanForPastDays });
         this.emit("banAdd", msg.member);
       } catch (e) {
-        if (this.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
+        if (options.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
         await msg.channel.send(`Could not ban **${msg.author.tag}** because of an error: \`${e}\`.`).catch(e => {
           if (options.verbose) console.error(e);
         });
         return false;
       }
 
-      let msgToSend = formatString(this.banMessage, msg);
+      let msgToSend = formatString(options.banMessage, msg);
 
       await msg.channel.send(msgToSend).catch(e => {
         if (options.verbose) console.error(e);
@@ -109,7 +109,7 @@ class AntiSpam extends Events.EventEmitter {
         return false;
       }
 
-      let msgToSend = formatString(this.kickMessage, msg);
+      let msgToSend = formatString(options.kickMessage, msg);
 
       await msg.channel.send(msgToSend).catch(e => {
         if (options.verbose) console.error(e);
