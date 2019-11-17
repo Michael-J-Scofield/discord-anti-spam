@@ -51,7 +51,7 @@ class AntiSpam extends Events.EventEmitter {
     if (message.channel.type === "dm") return;
     if (message.guild && !message.member) message.member = await message.guild.fetchMember(message.author);
     if (message.member.roles.some(role => options.ignoredRoles.includes(role.id) || options.ignoredRoles.includes(role.name))) return;
-    if (options.exemptPermissions.some(permission => message.member.hasPermission(permission)) return;
+    if (options.exemptPermissions.some(permission => message.member.hasPermission(permission))) return;
 
     if (typeof options.exemptRole === "function" && message.member.roles.some(role => options.exemptRole(role)) return;
     if (typeof options.exemptUser === "function" && options.exemptUser(message.author)) return;
