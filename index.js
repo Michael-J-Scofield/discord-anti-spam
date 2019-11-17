@@ -1,6 +1,32 @@
-if (Number(process.version.slice(1).split(".")[0]) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
+if (Number(process.version.split(".")[0].match(/[0-9]+/)) < 10) throw new Error("Node 10.0.0 or higher is required. Update Node on your system.");
 
 const Events = require("events");
+const defaultOptions = {
+  warnThreshold: 3,
+  banThreshold: 5,
+  kickThreshold: 5,
+  maxInterval: 2000,
+  warnMessage: "{@user}, Please stop spamming.",
+  banMessage: "**{user_tag}** has been banned for spamming.",
+  kickMessage: "**{user_tag}** has been kicked for spamming.",
+  maxDuplicatesWarning: 7,
+  maxDuplicatesBan: 10,
+  maxDuplicatesKick: 10,
+  deleteMessagesAfterBanForPastDays: 1,
+  exemptRole: null,
+  exemptUser: null,
+  exemptGuild: null,
+  exemptChannel: null,
+  exemptPermissions: [],
+  ignoreBots: true,
+  verbose: false,
+  ignoredUsers: [],
+  ignoredRoles: [],
+  ignoredGuilds: [],
+  ignoredChannels: [],
+  kickEnabled: true,
+  banEnabled: true
+};
 let users = [],
   warnedUsers = [],
   bannedUsers = [],
@@ -8,141 +34,85 @@ let users = [],
   messageCache = [];
 
 class AntiSpam extends Events.EventEmitter {
-  constructor(options) {
+  constructor(options = {}) {
+    for(const key in defaultOptions) {
+      if(!options.hasOwnProperty(key) || typeof options[key] === "undefined" || options[key] === null)
+        options[key] = defaultOptions[key];
+    }
     super(options);
-
-    if (!options) options = {};
-
-    this.warnThreshold = options.warnThreshold || 3;
-    this.banThreshold = options.banThreshold || 5;
-    this.kickThreshold = options.kickThreshold || 5;
-    this.maxInterval = options.maxInterval || 2000;
-    this.warnMessage = options.warnMessage || "{@user}, Please stop spamming.";
-    this.banMessage = options.banMessage || "**{user_tag}** has been banned for spamming.";
-    this.kickMessage = options.kickMessage || "**{user_tag}** has been kicked for spamming.";
-    this.maxDuplicatesWarning = options.maxDuplicatesWarning || 7;
-    this.maxDuplicatesBan = options.maxDuplicatesBan || 10;
-    this.maxDuplicatesKick = options.maxDuplicatesKick || 10;
-    this.deleteMessagesAfterBanForPastDays = options.deleteMessagesAfterBanForPastDays || 1;
-    this.exemptRoles = options.exemptRoles || falsify;
-    this.exemptUsers = options.exemptUsers || falsify;
-    this.exemptGuilds = options.exemptGuilds || falsify;
-    this.exemptChannels = options.exemptChannels || falsify;
-    this.exemptPermissions = options.exemptPermissions || [];
-    this.ignoreBots = options.ignoreBots || true;
-    this.verbose = options.verbose || false;
-    this.ignoredUsers = options.ignoredUsers || [];
-    this.ignoredRoles = options.ignoredRoles || [];
-    this.ignoredGuilds = options.ignoredGuilds || [];
-    this.ignoredChannels = options.ignoredChannels || [];
-    this.kickEnabled = options.kickEnabled || true;
-    this.banEnabled = options.banEnabled || true;
+    this.options = options;
   }
 
-  message(message) {
-    if (this.ignoreBots === true && message.author.bot) return;
-    if (message.channel.type !== "text") return;
-    if (!message.guild && message.member) return;
-    if (message.client && message.client.user && message.author.id === message.client.user.id) return;
-    if (this.ignoredGuilds.includes(message.guild.id)) return;
-    if (this.ignoredUsers.includes(message.author.id)) return;
-    if (message.member.roles.some((role) => this.ignoredRoles.includes(role.id) || this.ignoredRoles.includes(role.name))) return;
-    if (this.ignoredChannels.includes(message.channel.id)) return;
+  async message(message) {
+    const { options } = this;
+    if (message.guild.ownerID === message.author.id || options.ignoreBots && message.author.bot || message.author.id === message.client.user.id) return;
+    if (options.ignoredGuilds.includes(message.guild.id) || options.ignoredUsers.includes(message.author.id)) return;
+    if (options.ignoredChannels.includes(message.channel.id)) return;
+    if (message.channel.type === "dm") return;
+    if (message.guild && !message.member) message.member = await message.guild.fetchMember(message.author);
+    if (message.member.roles.some(role => options.ignoredRoles.includes(role.id) || options.ignoredRoles.includes(role.name))) return;
+    if (options.exemptPermissions.some(permission => message.member.hasPermission(permission)) return;
 
-    for (const permission of this.exemptPermissions) {
-      if (message.member.hasPermission(permission)) {
-        return;
-      }
-    }
+    if (typeof options.exemptRole === "function" && message.member.roles.some(role => options.exemptRole(role)) return;
+    if (typeof options.exemptUser === "function" && options.exemptUser(message.author)) return;
+    if (typeof options.exemptGuild === "function" && options.exemptGuild(message.guild)) return;
+    if (typeof options.exemptChannel === "function" && options.exemptChannel(message.channel)) return;
 
-    let hasRoleExempt = false;
-    for (const role of message.member.roles) {
-      if (hasRoleExempt === true) return;
-      if (this.exemptRoles && this.exemptRoles(role) === true) {
-        hasRoleExempt = true;
-        return true;
-      }
-    }
-
-    if (hasRoleExempt === true) return;
-    if (this.exemptUsers && this.exemptUsers(message.member) === true) return;
-    if (this.exemptGuilds && this.exemptGuilds(message.guild) === true) return;
-    if (this.exemptChannels && this.exemptChannels(message.channel) === true) return;
-
-    const banUser = (msg) => {
+    const banUser = async (msg) => {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       bannedUsers.push(msg.author.id);
       
-      if (!banEnabled) return;
-      
       if (!msg.member.bannable) {
-        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
-        msg.channel.send(`Could not ban **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
-          if (this.verbose === true) {
-            console.log(e);
-          }
-        });
+        if (options.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`);
         return false;
       }
 
       try {
-        msg.member.ban({ reason: "Spamming!", days: this.deleteMessagesAfterBanForPastDays });
+        await msg.member.ban({ reason: "Spamming!", days: options.deleteMessagesAfterBanForPastDays });
         this.emit("banAdd", msg.member);
       } catch (e) {
-        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
-        msg.channel.send(`Could not ban **${msg.author.tag}** because \`${e}\`.`).catch(e => {
-          if (this.verbose === true) {
-            console.log(e);
-          }
+        if (options.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`);
+        await msg.channel.send(`Could not ban **${msg.author.tag}** because of an error: \`${e}\`.`).catch(e => {
+          if (options.verbose) console.error(e);
         });
         return false;
       }
 
-      let msgToSend = formatString(this.banMessage, msg);
+      let msgToSend = formatString(options.banMessage, msg);
 
-      msg.channel.send(msgToSend).catch(e => {
-        if (this.verbose === true) {
-          console.log(e);
-        }
+      await msg.channel.send(msgToSend).catch(e => {
+        if (options.verbose) console.error(e);
       });
       return true;
     };
 
-    const kickUser = (msg) => {
+    const kickUser = async (msg) => {
       messageCache = messageCache.filter((m) => m.author !== msg.author.id);
       kickedUsers.push(msg.author.id);
 
-      if (!kickEnabled) return;
-      
       if (!msg.member.kickable) {
-        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
-        msg.channel.send(`Could not kick **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
-          if (this.verbose === true) {
-            console.log(e);
-          }
+        if (options.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`);
+        await msg.channel.send(`Could not kick **${msg.author.tag}** because of inpropper permissions.`).catch(e => {
+          if (options.verbose) console.error(e);
         });
         return false;
       }
 
       try {
-        msg.member.kick("Spamming!");
+        await msg.member.kick("Spamming!");
         this.emit("kickAdd", msg.member);
       } catch (e) {
-        if (this.verbose == true) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`);
-        msg.channel.send(`Could not kick **${msg.author.tag}**. because \`${e}\`.`).catch(e => {
-          if (this.verbose === true) {
-            console.log(e);
-          }
+        if (options.verbose) console.log(`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`);
+        await msg.channel.send(`Could not kick **${msg.author.tag}** because of an error: \`${e}\`.`).catch(e => {
+          if (options.verbose) console.error(e);
         });
         return false;
       }
 
-      let msgToSend = formatString(this.kickMessage, msg);
+      let msgToSend = formatString(options.kickMessage, msg);
 
-      msg.channel.send(msgToSend).catch(e => {
-        if (this.verbose === true) {
-          console.log(e);
-        }
+      await msg.channel.send(msgToSend).catch(e => {
+        if (options.verbose) console.error(e);
       });
       return true;
     };
@@ -154,61 +124,43 @@ class AntiSpam extends Events.EventEmitter {
 
       let msgToSend = formatString(this.warnMessage, msg);
 
-      msg.channel.send(msgToSend).catch(e => {
-        if (this.verbose === true) {
-          console.log(e);
-        }
+      await msg.channel.send(msgToSend).catch(e => {
+        if (options.verbose) console.error(e);
       });
 
       return true;
     };
 
     users.push({
-      "time": Date.now(),
-      "author": message.author.id
+      time: Date.now(),
+      author: message.author.id
     });
 
     messageCache.push({
-      "content": message.content,
-      "author": message.author.id
+      content: message.content,
+      author: message.author.id
     });
 
     let messageMatches = messageCache.filter((m) => m.content === message.content && m.author === message.author.id).length;
+    let spamMatches = users.filter((u) => u.time > Date.now() - options.maxInterval && u.author === message.author.id).length;
 
-    if (messageMatches === this.maxDuplicatesWarning && !warnedUsers.includes(message.author.id)) {
+    if (!warnedUsers.includes(message.author.id) && (spamMatches === options.warnThreshold || messageMatches === options.maxDuplicatesWarning)) {
       warnUser(message);
       this.emit("warnEmit", message.member);
     }
 
-    if (messageMatches === this.maxDuplicatesBan) {
-      banUser(message);
-      this.emit("banEmit", message.member);
-    }
-
-    if (messageMatches === this.maxDuplicatesKick && !kickedUsers.includes(message.author.id)) {
-      kickUser(message);
+    if (options.kickEnabled && !kickedUsers.includes(message.author.id) && (spamMatches === options.kickThreshold || messageMatches === options.maxDuplicatesKick)) {
+      await kickUser(message);
       this.emit("kickEmit", message.member);
     }
 
-    let spamMatches = users.filter((u) => u.time > Date.now() - this.maxInterval && u.author === message.author.id).length;
-
-    if (spamMatches === this.warnThreshold && !warnedUsers.includes(message.author.id)) {
-      warnUser(message);
-      this.emit("warnEmit", message.member);
-    }
-
-    if (spamMatches === this.banThreshold) {
-      banUser(message);
+    if (options.banEnabled && spamMatches === options.banThreshold || messageMatches === options.maxDuplicatesBan) {
+      await banUser(message);
       this.emit("banEmit", message.member);
-    }
-
-    if (spamMatches === this.kickThreshold && !kickedUsers.includes(message.author.id)) {
-      kickUser(message);
-      this.emit("kickEmit", message.member);
     }
   }
 
-  getData() {
+  get data() {
     return {
       messageCache,
       bannedUsers,
@@ -231,14 +183,6 @@ class AntiSpam extends Events.EventEmitter {
 }
 
 module.exports = AntiSpam;
-
-/**
- * This function always return false
- */
-
-function falsify () {
- return false;
-}
 
 /**
  * This function formats a string by replacing some keywords with variables
