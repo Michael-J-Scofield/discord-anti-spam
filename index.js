@@ -117,7 +117,7 @@ class AntiSpam extends Events.EventEmitter {
       return true;
     };
 
-    const warnUser = (msg) => {
+    const warnUser = async (msg) => {
       // Mark the user as warned
       warnedUsers.push(msg.author.id);
       this.emit("warnAdd", message.member);
