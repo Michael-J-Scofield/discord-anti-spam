@@ -194,7 +194,7 @@ class AntiSpam extends Events.EventEmitter {
 			warnedUsers.push(msg.author.id);
 			this.emit('warnAdd', message.member);
 
-			let msgToSend = formatString(this.warnMessage, msg);
+			let msgToSend = formatString(options.warnMessage, msg);
 
 			await msg.channel.send(msgToSend).catch((e) => {
 				if (options.verbose) console.error(e);
