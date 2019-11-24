@@ -210,10 +210,10 @@ class AntiSpam extends EventEmitter {
 			author: message.author.id
 		});
 
-		let messageMatches = data.messageCache.filter(
+		const messageMatches = data.messageCache.filter(
 			m => m.content === message.content && m.author === message.author.id
 		).length;
-		let spamMatches = data.users.filter(
+		const spamMatches = data.users.filter(
 			u =>
 				u.time > Date.now() - options.maxInterval &&
 				u.author === message.author.id
