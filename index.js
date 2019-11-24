@@ -58,7 +58,7 @@ class AntiSpam extends EventEmitter {
 			message.author.id === message.client.user.id ||
 			message.guild.ownerID === message.author.id
 		)
-			return;
+			return false;
 
 		const { options, data } = this;
 		if (!message.member)
@@ -69,7 +69,7 @@ class AntiSpam extends EventEmitter {
 				message.member.hasPermission(permission)
 			)
 		)
-			return;
+			return false;
 
 		if (
 			message.member.roles.some(role =>
@@ -88,7 +88,7 @@ class AntiSpam extends EventEmitter {
 				? options.ignoredChannels(message.channel)
 				: options.ignoredChannels.includes(message.channel.id))
 		)
-			return;
+			return false;
 
 		const banUser = async () => {
 			data.messageCache = data.messageCache.filter(
@@ -193,7 +193,7 @@ class AntiSpam extends EventEmitter {
 
 		data.users.push({
 			time: Date.now(),
-			author: message.author.id
+			id: message.author.id
 		});
 
 		data.messageCache.push({
@@ -206,8 +206,7 @@ class AntiSpam extends EventEmitter {
 		).length;
 		const spamMatches = data.users.filter(
 			u =>
-				u.time > Date.now() - options.maxInterval &&
-				u.author === message.author.id
+				u.time > Date.now() - options.maxInterval && u.id === message.author.id
 		).length;
 
 		if (
@@ -221,6 +220,7 @@ class AntiSpam extends EventEmitter {
 				message.member,
 				messageMatches === options.maxDuplicatesWarning
 			);
+			return true;
 		}
 
 		if (
@@ -234,6 +234,7 @@ class AntiSpam extends EventEmitter {
 				message.member,
 				messageMatches === options.maxDuplicatesKick
 			);
+			return true;
 		}
 
 		if (
@@ -246,7 +247,10 @@ class AntiSpam extends EventEmitter {
 				message.member,
 				messageMatches === options.maxDuplicatesBan
 			);
+			return true;
 		}
+
+		return false;
 	}
 
 	resetData() {
