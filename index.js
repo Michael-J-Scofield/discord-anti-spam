@@ -104,34 +104,34 @@ class AntiSpam extends EventEmitter {
 		)
 			return;
 
-		const banUser = async msg => {
+		const banUser = async () => {
 			data.messageCache = data.messageCache.filter(
-				m => m.author !== msg.author.id
+				m => m.author !== message.author.id
 			);
-			data.bannedUsers.push(msg.author.id);
+			data.bannedUsers.push(message.author.id);
 
-			if (!msg.member.bannable) {
+			if (!message.member.bannable) {
 				if (options.verbose)
 					console.log(
-						`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, insufficient permissions.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, insufficient permissions.`
 					);
 				return false;
 			}
 
 			try {
-				await msg.member.ban({
+				await message.member.ban({
 					reason: 'Spamming!',
 					days: options.deleteMessagesAfterBanForPastDays
 				});
-				this.emit('banAdd', msg.member);
+				this.emit('banAdd', message.member);
 			} catch (e) {
 				if (options.verbose)
 					console.log(
-						`**${msg.author.tag}** (ID: ${msg.author.id}) could not be banned, ${e}.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, ${e}.`
 					);
-				await msg.channel
+				await message.channel
 					.send(
-						`Could not ban **${msg.author.tag}** because of an error: \`${e}\`.`
+						`Could not ban **${message.author.tag}** because of an error: \`${e}\`.`
 					)
 					.catch(e => {
 						if (options.verbose) console.error(e);
@@ -139,28 +139,28 @@ class AntiSpam extends EventEmitter {
 				return false;
 			}
 
-			let msgToSend = formatString(options.banMessage, msg);
+			let msgToSend = formatString(options.banMessage, message);
 
-			await msg.channel.send(msgToSend).catch(e => {
+			await message.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 			return true;
 		};
 
-		const kickUser = async msg => {
+		const kickUser = async () => {
 			data.messageCache = data.messageCache.filter(
-				m => m.author !== msg.author.id
+				m => m.author !== message.author.id
 			);
-			data.kickedUsers.push(msg.author.id);
+			data.kickedUsers.push(message.author.id);
 
-			if (!msg.member.kickable) {
+			if (!message.member.kickable) {
 				if (options.verbose)
 					console.log(
-						`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, insufficient permissions.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, insufficient permissions.`
 					);
-				await msg.channel
+				await message.channel
 					.send(
-						`Could not kick **${msg.author.tag}** because of inpropper permissions.`
+						`Could not kick **${message.author.tag}** because of inpropper permissions.`
 					)
 					.catch(e => {
 						if (options.verbose) console.error(e);
@@ -169,16 +169,16 @@ class AntiSpam extends EventEmitter {
 			}
 
 			try {
-				await msg.member.kick('Spamming!');
-				this.emit('kickAdd', msg.member);
+				await message.member.kick('Spamming!');
+				this.emit('kickAdd', message.member);
 			} catch (e) {
 				if (options.verbose)
 					console.log(
-						`**${msg.author.tag}** (ID: ${msg.author.id}) could not be kicked, ${e}.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, ${e}.`
 					);
-				await msg.channel
+				await message.channel
 					.send(
-						`Could not kick **${msg.author.tag}** because of an error: \`${e}\`.`
+						`Could not kick **${message.author.tag}** because of an error: \`${e}\`.`
 					)
 					.catch(e => {
 						if (options.verbose) console.error(e);
@@ -186,22 +186,22 @@ class AntiSpam extends EventEmitter {
 				return false;
 			}
 
-			let msgToSend = formatString(options.kickMessage, msg);
+			let msgToSend = formatString(options.kickMessage, message);
 
-			await msg.channel.send(msgToSend).catch(e => {
+			await message.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 			return true;
 		};
 
-		const warnUser = async msg => {
+		const warnUser = async () => {
 			// Mark the user as warned
-			data.warnedUsers.push(msg.author.id);
+			data.warnedUsers.push(message.author.id);
 			this.emit('warnAdd', message.member);
 
-			let msgToSend = formatString(options.warnMessage, msg);
+			let msgToSend = formatString(options.warnMessage, message);
 
-			await msg.channel.send(msgToSend).catch(e => {
+			await message.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 
