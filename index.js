@@ -3,7 +3,7 @@ if (Number(process.version.split('.')[0].match(/[0-9]+/)) < 10)
 		'Node 10.0.0 or higher is required. Update Node on your system.'
 	);
 
-const Events = require('events');
+const { EventEmitter } = require('events');
 const defaultOptions = {
 	warnThreshold: 3,
 	banThreshold: 5,
@@ -36,7 +36,7 @@ let users = [],
 	kickedUsers = [],
 	messageCache = [];
 
-class AntiSpam extends Events.EventEmitter {
+class AntiSpam extends EventEmitter {
 	constructor(options = {}) {
 		for (const key in defaultOptions) {
 			if (
