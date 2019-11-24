@@ -27,6 +27,7 @@ const defaultOptions = {
 	ignoredRoles: [],
 	ignoredGuilds: [],
 	ignoredChannels: [],
+	warnEnabled: true,
 	kickEnabled: true,
 	banEnabled: true
 };
@@ -109,28 +110,29 @@ class AntiSpam extends EventEmitter {
 					reason: 'Spamming!',
 					days: options.deleteMessagesAfterBanForPastDays
 				});
+				await message.channel
+					.send(formatString(options.banMessage, message))
+					.catch(e => {
+						if (options.verbose) console.error(e);
+					});
 				this.emit('banAdd', message.member);
-			} catch (e) {
+				return true;
+			} catch (error) {
+				const emitted = this.emit('error', message, error, 'ban');
+				if (emitted) return false;
 				if (options.verbose)
 					console.log(
-						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, ${e}.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, ${error}.`
 					);
 				await message.channel
 					.send(
-						`Could not ban **${message.author.tag}** because of an error: \`${e}\`.`
+						`Could not ban **${message.author.tag}** because of an error: \`${error}\`.`
 					)
 					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
 				return false;
 			}
-
-			await message.channel
-				.send(formatString(options.banMessage, message))
-				.catch(e => {
-					if (options.verbose) console.error(e);
-				});
-			return true;
 		};
 
 		const kickUser = async () => {
@@ -149,28 +151,29 @@ class AntiSpam extends EventEmitter {
 
 			try {
 				await message.member.kick('Spamming!');
+				await message.channel
+					.send(formatString(options.kickMessage, message))
+					.catch(e => {
+						if (options.verbose) console.error(e);
+					});
 				this.emit('kickAdd', message.member);
-			} catch (e) {
+				return true;
+			} catch (error) {
+				const emitted = this.emit('error', message, error, 'kick');
+				if (emitted) return false;
 				if (options.verbose)
 					console.log(
-						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, ${e}.`
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, ${error}.`
 					);
 				await message.channel
 					.send(
-						`Could not kick **${message.author.tag}** because of an error: \`${e}\`.`
+						`Could not kick **${message.author.tag}** because of an error: \`${error}\`.`
 					)
 					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
 				return false;
 			}
-
-			await message.channel
-				.send(formatString(options.kickMessage, message))
-				.catch(e => {
-					if (options.verbose) console.error(e);
-				});
-			return true;
 		};
 
 		const warnUser = async () => {
@@ -210,26 +213,37 @@ class AntiSpam extends EventEmitter {
 			(spamMatches === options.warnThreshold ||
 				messageMatches === options.maxDuplicatesWarning)
 		) {
-			warnUser(message);
-			this.emit('warnEmit', message.member);
+			if (data.warnEnabled) warnUser(message);
+			this.emit(
+				'spamThresholdWarn',
+				message.member,
+				messageMatches === options.maxDuplicatesWarning
+			);
 		}
 
 		if (
-			options.kickEnabled &&
-			!data.kickedUsers.includes(message.author.id) &&
-			(spamMatches === options.kickThreshold ||
-				messageMatches === options.maxDuplicatesKick)
+			!data.kickedUsers.includes(message.author.id) ||
+			spamMatches === options.kickThreshold ||
+			messageMatches === options.maxDuplicatesKick
 		) {
-			await kickUser(message);
-			this.emit('kickEmit', message.member);
+			if (data.kickEnabled) await kickUser(message);
+			this.emit(
+				'spamThresholdKick',
+				message.member,
+				messageMatches === options.maxDuplicatesKick
+			);
 		}
 
 		if (
-			(options.banEnabled && spamMatches === options.banThreshold) ||
+			spamMatches === options.banThreshold ||
 			messageMatches === options.maxDuplicatesBan
 		) {
-			await banUser(message);
-			this.emit('banEmit', message.member);
+			if (options.banEnabled) await banUser(message);
+			this.emit(
+				'spamThresholdBan',
+				message.member,
+				messageMatches === options.maxDuplicatesBan
+			);
 		}
 	}
 
