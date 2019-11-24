@@ -8,7 +8,9 @@ import {
 	Client,
 	GuildMember,
 	Message,
-	DiscordAPIError
+	DiscordAPIError,
+	RichEmbed,
+	RichEmbedOptions
 } from 'discord.js';
 declare module 'discord-anti-spam' {
 	export = class AntiSpam extends EventEmitter {
@@ -58,9 +60,9 @@ declare module 'discord-anti-spam' {
 		banThreshold?: number;
 		kickThreshold?: number;
 		maxInterval?: number;
-		warnMessage?: string;
-		banMessage?: string;
-		kickMessage?: string;
+		warnMessage?: string | RichEmbed;
+		banMessage?: string | RichEmbed;
+		kickMessage?: string | RichEmbed;
 		maxDuplicatesWarning?: number;
 		maxDuplicatesBan?: number;
 		maxDuplicatesKick?: number;
