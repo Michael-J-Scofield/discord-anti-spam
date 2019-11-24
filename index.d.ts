@@ -5,7 +5,6 @@ import {
 	User,
 	Guild,
 	TextChannel,
-	Client,
 	GuildMember,
 	Message,
 	DiscordAPIError,
@@ -16,7 +15,6 @@ declare module 'discord-anti-spam' {
 		constructor(options?: AntiSpamOptions);
 		public options: AntiSpamOptions;
 		public data: AntiSpamData;
-		public client?: Client;
 
 		public message(message: Message): Promise<boolean>;
 		public resetData(): AntiSpamData;
@@ -54,7 +52,6 @@ declare module 'discord-anti-spam' {
 	};
 
 	type AntiSpamOptions = {
-		client?: Client;
 		warnThreshold?: number;
 		banThreshold?: number;
 		kickThreshold?: number;

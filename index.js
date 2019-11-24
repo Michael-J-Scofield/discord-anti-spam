@@ -30,10 +30,6 @@ const defaultOptions = {
 class AntiSpam extends EventEmitter {
 	constructor(options = {}) {
 		super();
-		if (options.client) {
-			this.client = options.client;
-			options.client = undefined;
-		}
 		for (const key in defaultOptions) {
 			if (
 				!options.hasOwnProperty(key) ||
