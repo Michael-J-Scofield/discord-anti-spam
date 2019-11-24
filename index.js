@@ -139,11 +139,11 @@ class AntiSpam extends EventEmitter {
 				return false;
 			}
 
-			let msgToSend = formatString(options.banMessage, message);
-
-			await message.channel.send(msgToSend).catch(e => {
-				if (options.verbose) console.error(e);
-			});
+			await message.channel
+				.send(formatString(options.banMessage, message))
+				.catch(e => {
+					if (options.verbose) console.error(e);
+				});
 			return true;
 		};
 
@@ -179,24 +179,23 @@ class AntiSpam extends EventEmitter {
 				return false;
 			}
 
-			let msgToSend = formatString(options.kickMessage, message);
-
-			await message.channel.send(msgToSend).catch(e => {
-				if (options.verbose) console.error(e);
-			});
+			await message.channel
+				.send(formatString(options.kickMessage, message))
+				.catch(e => {
+					if (options.verbose) console.error(e);
+				});
 			return true;
 		};
 
 		const warnUser = async () => {
-			// Mark the user as warned
 			data.warnedUsers.push(message.author.id);
 			this.emit('warnAdd', message.member);
 
-			let msgToSend = formatString(options.warnMessage, message);
-
-			await message.channel.send(msgToSend).catch(e => {
-				if (options.verbose) console.error(e);
-			});
+			await message.channel
+				.send(formatString(options.warnMessage, message))
+				.catch(e => {
+					if (options.verbose) console.error(e);
+				});
 
 			return true;
 		};
