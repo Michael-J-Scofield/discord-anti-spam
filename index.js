@@ -155,7 +155,7 @@ class AntiSpam extends Events.EventEmitter {
 					);
 				await msg.channel
 					.send(
-						`Could not kick **${msg.author.tag}** because of inpropper permissions.`
+						`Could not kick **${msg.author.tag}** because of improper permissions.`
 					)
 					.catch((e) => {
 						if (options.verbose) console.error(e);
