@@ -16,10 +16,6 @@ const defaultOptions = {
 	maxDuplicatesBan: 10,
 	maxDuplicatesKick: 10,
 	deleteMessagesAfterBanForPastDays: 1,
-	exemptRole: null,
-	exemptUser: null,
-	exemptGuild: null,
-	exemptChannel: null,
 	exemptPermissions: [],
 	ignoreBots: true,
 	verbose: false,
@@ -34,6 +30,10 @@ const defaultOptions = {
 class AntiSpam extends EventEmitter {
 	constructor(options = {}) {
 		super();
+		if (options.client) {
+			this.client = client;
+			options.client = undefined;
+		}
 		for (const key in defaultOptions) {
 			if (
 				!options.hasOwnProperty(key) ||
@@ -65,29 +65,28 @@ class AntiSpam extends EventEmitter {
 			message.member = await message.guild.fetchMember(message.author);
 		if (
 			(options.ignoreBots && message.author.bot) ||
-			options.ignoredGuilds.includes(message.guild.id) ||
-			options.ignoredUsers.includes(message.author.id) ||
-			options.ignoredChannels.includes(message.channel.id) ||
 			options.exemptPermissions.some(permission =>
 				message.member.hasPermission(permission)
-			) ||
-			message.member.roles.some(
-				role =>
-					options.ignoredRoles.includes(role.id) ||
-					options.ignoredRoles.includes(role.name)
 			)
 		)
 			return;
 
 		if (
-			(typeof options.exemptRole === 'function' &&
-				message.member.roles.some(role => options.exemptRole(role))) ||
-			(typeof options.exemptUser === 'function' &&
-				options.exemptUser(message.author)) ||
-			(typeof options.exemptGuild === 'function' &&
-				options.exemptGuild(message.guild)) ||
-			(typeof options.exemptChannel === 'function' &&
-				options.exemptChannel(message.channel))
+			message.member.roles.some(role =>
+				typeof options.ignoredRoles === 'function'
+					? options.ignoredRoles(role)
+					: options.ignoredRoles.includes(role.id) ||
+					  options.ignoredRoles.includes(role.name)
+			) ||
+			(typeof options.ignoredUsers === 'function'
+				? options.ignoredUsers(message.author)
+				: options.ignoredUsers.includes(message.author.id)) ||
+			(typeof options.ignoredGuilds === 'function'
+				? options.ignoredGuilds(message.guild)
+				: options.ignoredGuilds.includes(message.guild.id)) ||
+			(typeof options.ignoredChannels === 'function'
+				? options.ignoredChannels(message.channel)
+				: options.ignoredChannels.includes(message.channel.id))
 		)
 			return;
 
