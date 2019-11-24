@@ -1,4 +1,5 @@
 node_modules
 bot.js
 package-lock.json
+.prettierrc
 .DS_Store
