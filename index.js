@@ -229,9 +229,9 @@ module.exports = AntiSpam;
 
 /**
  * This function formats a string by replacing some keywords with variables
- * @param {string|RichEmbed} string The non-formatted string
+ * @param {string|RichEmbed} string The non-formatted string or RichEmbed
  * @param {object} message The Discord Message object
- * @returns {string} The formatted string
+ * @returns {string|RichEmbed} The formatted string
  */
 function format(string, message) {
 	if (typeof string === 'string')
@@ -241,7 +241,7 @@ function format(string, message) {
 			.replace(/{server_name}/g, message.guild.name);
 	const embed = new RichEmbed(string);
 	if (embed.description) embed.setDescription(format(embed.description, message));
-	if (embed.title) embed.setTitle(format(title, message));
+	if (embed.title) embed.setTitle(format(embed.title, message));
 	if (embed.footer && embed.footer.text) embed.footer.text = format(embed.footer.text, message);
 	if (embed.author && embed.author.name) embed.author.name = format(embed.author.name, message);
 	return embed;
