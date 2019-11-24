@@ -2,7 +2,7 @@ if (Number(process.version.split('.')[0].match(/[0-9]+/)) < 10)
 	throw new Error(
 		'Node 10.0.0 or higher is required. Update Node on your system.'
 	);
-
+const { RichEmbed } = require('discord.js');
 const { EventEmitter } = require('events');
 const defaultOptions = {
 	warnThreshold: 3,
@@ -109,11 +109,12 @@ class AntiSpam extends EventEmitter {
 					reason: 'Spamming!',
 					days: options.deleteMessagesAfterBanForPastDays
 				});
-				await message.channel
-					.send(formatString(options.banMessage, message))
-					.catch(e => {
-						if (options.verbose) console.error(e);
-					});
+				if (options.banMessage)
+					await message.channel
+						.send(format(options.banMessage, message))
+						.catch(e => {
+							if (options.verbose) console.error(e);
+						});
 				this.emit('banAdd', message.member);
 				return true;
 			} catch (error) {
@@ -150,11 +151,12 @@ class AntiSpam extends EventEmitter {
 
 			try {
 				await message.member.kick('Spamming!');
-				await message.channel
-					.send(formatString(options.kickMessage, message))
-					.catch(e => {
-						if (options.verbose) console.error(e);
-					});
+				if (options.kickMessage)
+					await message.channel
+						.send(format(options.kickMessage, message))
+						.catch(e => {
+							if (options.verbose) console.error(e);
+						});
 				this.emit('kickAdd', message.member);
 				return true;
 			} catch (error) {
@@ -179,11 +181,12 @@ class AntiSpam extends EventEmitter {
 			data.warnedUsers.push(message.author.id);
 			this.emit('warnAdd', message.member);
 
-			await message.channel
-				.send(formatString(options.warnMessage, message))
-				.catch(e => {
-					if (options.verbose) console.error(e);
-				});
+			if (options.warnMessage)
+				await message.channel
+					.send(format(options.warnMessage, message))
+					.catch(e => {
+						if (options.verbose) console.error(e);
+					});
 
 			return true;
 		};
@@ -260,13 +263,23 @@ module.exports = AntiSpam;
 
 /**
  * This function formats a string by replacing some keywords with variables
- * @param {string} string The non-formatted string
+ * @param {string|RichEmbed} string The non-formatted string
  * @param {object} message The Discord Message object
  * @returns {string} The formatted string
  */
-function formatString(string, message) {
-	return string
-		.replace(/{@user}/g, message.author.toString())
-		.replace(/{user_tag}/g, message.author.tag)
-		.replace(/{server_name}/g, message.guild.name);
+function format(string, message) {
+	if (typeof string === 'string')
+		return string
+			.replace(/{@user}/g, message.author.toString())
+			.replace(/{user_tag}/g, message.author.tag)
+			.replace(/{server_name}/g, message.guild.name);
+	const embed = new RichEmbed(string);
+	if (embed.description)
+		embed.setDescription(format(embed.description, message));
+	if (embed.title) embed.setTitle(format(title, message));
+	if (embed.footer && embed.footer.text)
+		embed.footer.text = format(embed.footer.text, message);
+	if (embed.author && embed.author.name)
+		embed.author.name = format(embed.author.name, message);
+	return embed;
 }
