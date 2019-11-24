@@ -69,14 +69,14 @@ class AntiSpam extends Events.EventEmitter {
 			message.member = await message.guild.fetchMember(message.author);
 		if (
 			message.member.roles.some(
-				(role) =>
+				role =>
 					options.ignoredRoles.includes(role.id) ||
 					options.ignoredRoles.includes(role.name)
 			)
 		)
 			return;
 		if (
-			options.exemptPermissions.some((permission) =>
+			options.exemptPermissions.some(permission =>
 				message.member.hasPermission(permission)
 			)
 		)
@@ -84,7 +84,7 @@ class AntiSpam extends Events.EventEmitter {
 
 		if (
 			typeof options.exemptRole === 'function' &&
-			message.member.roles.some((role) => options.exemptRole(role))
+			message.member.roles.some(role => options.exemptRole(role))
 		)
 			return;
 		if (
@@ -103,8 +103,8 @@ class AntiSpam extends Events.EventEmitter {
 		)
 			return;
 
-		const banUser = async (msg) => {
-			messageCache = messageCache.filter((m) => m.author !== msg.author.id);
+		const banUser = async msg => {
+			messageCache = messageCache.filter(m => m.author !== msg.author.id);
 			bannedUsers.push(msg.author.id);
 
 			if (!msg.member.bannable) {
@@ -130,7 +130,7 @@ class AntiSpam extends Events.EventEmitter {
 					.send(
 						`Could not ban **${msg.author.tag}** because of an error: \`${e}\`.`
 					)
-					.catch((e) => {
+					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
 				return false;
@@ -138,14 +138,14 @@ class AntiSpam extends Events.EventEmitter {
 
 			let msgToSend = formatString(options.banMessage, msg);
 
-			await msg.channel.send(msgToSend).catch((e) => {
+			await msg.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 			return true;
 		};
 
-		const kickUser = async (msg) => {
-			messageCache = messageCache.filter((m) => m.author !== msg.author.id);
+		const kickUser = async msg => {
+			messageCache = messageCache.filter(m => m.author !== msg.author.id);
 			kickedUsers.push(msg.author.id);
 
 			if (!msg.member.kickable) {
@@ -157,7 +157,7 @@ class AntiSpam extends Events.EventEmitter {
 					.send(
 						`Could not kick **${msg.author.tag}** because of inpropper permissions.`
 					)
-					.catch((e) => {
+					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
 				return false;
@@ -175,7 +175,7 @@ class AntiSpam extends Events.EventEmitter {
 					.send(
 						`Could not kick **${msg.author.tag}** because of an error: \`${e}\`.`
 					)
-					.catch((e) => {
+					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
 				return false;
@@ -183,20 +183,20 @@ class AntiSpam extends Events.EventEmitter {
 
 			let msgToSend = formatString(options.kickMessage, msg);
 
-			await msg.channel.send(msgToSend).catch((e) => {
+			await msg.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 			return true;
 		};
 
-		const warnUser = async (msg) => {
+		const warnUser = async msg => {
 			// Mark the user as warned
 			warnedUsers.push(msg.author.id);
 			this.emit('warnAdd', message.member);
 
 			let msgToSend = formatString(options.warnMessage, msg);
 
-			await msg.channel.send(msgToSend).catch((e) => {
+			await msg.channel.send(msgToSend).catch(e => {
 				if (options.verbose) console.error(e);
 			});
 
@@ -214,10 +214,10 @@ class AntiSpam extends Events.EventEmitter {
 		});
 
 		let messageMatches = messageCache.filter(
-			(m) => m.content === message.content && m.author === message.author.id
+			m => m.content === message.content && m.author === message.author.id
 		).length;
 		let spamMatches = users.filter(
-			(u) =>
+			u =>
 				u.time > Date.now() - options.maxInterval &&
 				u.author === message.author.id
 		).length;
