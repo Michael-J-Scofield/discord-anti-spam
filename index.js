@@ -52,23 +52,24 @@ class AntiSpam extends EventEmitter {
 	}
 
 	async message(message) {
+		if (
+			message.channel.type === 'dm' ||
+			message.author.id === message.client.user.id ||
+			message.guild.ownerID === message.author.id
+		)
+			return;
+
 		const { options, data } = this;
-		if (
-			message.guild.ownerID === message.author.id ||
-			(options.ignoreBots && message.author.bot) ||
-			message.author.id === message.client.user.id
-		)
-			return;
-		if (
-			options.ignoredGuilds.includes(message.guild.id) ||
-			options.ignoredUsers.includes(message.author.id)
-		)
-			return;
-		if (options.ignoredChannels.includes(message.channel.id)) return;
-		if (message.channel.type === 'dm') return;
-		if (message.guild && !message.member)
+		if (!message.member)
 			message.member = await message.guild.fetchMember(message.author);
 		if (
+			(options.ignoreBots && message.author.bot) ||
+			options.ignoredGuilds.includes(message.guild.id) ||
+			options.ignoredUsers.includes(message.author.id) ||
+			options.ignoredChannels.includes(message.channel.id) ||
+			options.exemptPermissions.some(permission =>
+				message.member.hasPermission(permission)
+			) ||
 			message.member.roles.some(
 				role =>
 					options.ignoredRoles.includes(role.id) ||
@@ -76,31 +77,16 @@ class AntiSpam extends EventEmitter {
 			)
 		)
 			return;
-		if (
-			options.exemptPermissions.some(permission =>
-				message.member.hasPermission(permission)
-			)
-		)
-			return;
 
 		if (
-			typeof options.exemptRole === 'function' &&
-			message.member.roles.some(role => options.exemptRole(role))
-		)
-			return;
-		if (
-			typeof options.exemptUser === 'function' &&
-			options.exemptUser(message.author)
-		)
-			return;
-		if (
-			typeof options.exemptGuild === 'function' &&
-			options.exemptGuild(message.guild)
-		)
-			return;
-		if (
-			typeof options.exemptChannel === 'function' &&
-			options.exemptChannel(message.channel)
+			(typeof options.exemptRole === 'function' &&
+				message.member.roles.some(role => options.exemptRole(role))) ||
+			(typeof options.exemptUser === 'function' &&
+				options.exemptUser(message.author)) ||
+			(typeof options.exemptGuild === 'function' &&
+				options.exemptGuild(message.guild)) ||
+			(typeof options.exemptChannel === 'function' &&
+				options.exemptChannel(message.channel))
 		)
 			return;
 
