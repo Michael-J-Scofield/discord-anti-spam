@@ -24,11 +24,11 @@ declare module 'discord-anti-spam' {
 		public on(
 			event: 'banAdd' | 'kickAdd' | 'warnAdd',
 			listener: (member: GuildMember) => any
-		);
+		): this;
 		public on(
 			event: 'spamThresholdBan' | 'spamThresholdKick' | 'spamThresholdWarn',
 			listener: (member: GuildMember, duplicateMessages: boolean) => any
-		);
+		): this;
 		public on(
 			event: 'error',
 			listener: (
@@ -36,7 +36,7 @@ declare module 'discord-anti-spam' {
 				error: DiscordAPIError,
 				type: 'ban' | 'kick'
 			) => any
-		);
+		): this;
 	};
 
 	type AntiSpamData = {
