@@ -214,7 +214,7 @@ class AntiSpam extends EventEmitter {
 			(spamMatches === options.warnThreshold ||
 				messageMatches === options.maxDuplicatesWarning)
 		) {
-			if (data.warnEnabled) warnUser(message);
+			if (options.warnEnabled) warnUser(message);
 			this.emit(
 				'spamThresholdWarn',
 				message.member,
@@ -224,11 +224,11 @@ class AntiSpam extends EventEmitter {
 		}
 
 		if (
-			!data.kickedUsers.includes(message.author.id) ||
-			spamMatches === options.kickThreshold ||
-			messageMatches === options.maxDuplicatesKick
+			!data.kickedUsers.includes(message.author.id) &&
+			(spamMatches === options.kickThreshold ||
+				messageMatches === options.maxDuplicatesKick)
 		) {
-			if (data.kickEnabled) await kickUser(message);
+			if (options.kickEnabled) await kickUser(message);
 			this.emit(
 				'spamThresholdKick',
 				message.member,
