@@ -17,7 +17,7 @@ declare module 'discord-anti-spam' {
 		public data: AntiSpamData;
 		public client?: Client;
 
-		public message(): Promise<boolean>;
+		public message(message: Message): Promise<boolean>;
 		public resetData(): AntiSpamData;
 
 		public on(
