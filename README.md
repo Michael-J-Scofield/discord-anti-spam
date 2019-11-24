@@ -29,7 +29,6 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const DiscordAntiSpam = require('discord-anti-spam');
 const AntiSpam = new DiscordAntiSpam({
-	client,
 	warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
 	banThreshold: 7, // Amount of messages sent in a row that will cause a ban
 	maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam.
