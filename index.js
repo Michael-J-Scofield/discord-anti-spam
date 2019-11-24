@@ -30,14 +30,9 @@ const defaultOptions = {
 	kickEnabled: true,
 	banEnabled: true
 };
-let users = [],
-	warnedUsers = [],
-	bannedUsers = [],
-	kickedUsers = [],
-	messageCache = [];
-
 class AntiSpam extends EventEmitter {
 	constructor(options = {}) {
+		super();
 		for (const key in defaultOptions) {
 			if (
 				!options.hasOwnProperty(key) ||
@@ -46,12 +41,18 @@ class AntiSpam extends EventEmitter {
 			)
 				options[key] = defaultOptions[key];
 		}
-		super(options);
 		this.options = options;
+		this.data = {
+			messageCache: [],
+			bannedUsers: [],
+			kickedUsers: [],
+			warnedUsers: [],
+			users: []
+		};
 	}
 
 	async message(message) {
-		const { options } = this;
+		const { options, data } = this;
 		if (
 			message.guild.ownerID === message.author.id ||
 			(options.ignoreBots && message.author.bot) ||
@@ -104,8 +105,10 @@ class AntiSpam extends EventEmitter {
 			return;
 
 		const banUser = async msg => {
-			messageCache = messageCache.filter(m => m.author !== msg.author.id);
-			bannedUsers.push(msg.author.id);
+			data.messageCache = data.messageCache.filter(
+				m => m.author !== msg.author.id
+			);
+			data.bannedUsers.push(msg.author.id);
 
 			if (!msg.member.bannable) {
 				if (options.verbose)
@@ -145,8 +148,10 @@ class AntiSpam extends EventEmitter {
 		};
 
 		const kickUser = async msg => {
-			messageCache = messageCache.filter(m => m.author !== msg.author.id);
-			kickedUsers.push(msg.author.id);
+			data.messageCache = data.messageCache.filter(
+				m => m.author !== msg.author.id
+			);
+			data.kickedUsers.push(msg.author.id);
 
 			if (!msg.member.kickable) {
 				if (options.verbose)
@@ -191,7 +196,7 @@ class AntiSpam extends EventEmitter {
 
 		const warnUser = async msg => {
 			// Mark the user as warned
-			warnedUsers.push(msg.author.id);
+			data.warnedUsers.push(msg.author.id);
 			this.emit('warnAdd', message.member);
 
 			let msgToSend = formatString(options.warnMessage, msg);
@@ -203,27 +208,27 @@ class AntiSpam extends EventEmitter {
 			return true;
 		};
 
-		users.push({
+		data.users.push({
 			time: Date.now(),
 			author: message.author.id
 		});
 
-		messageCache.push({
+		data.messageCache.push({
 			content: message.content,
 			author: message.author.id
 		});
 
-		let messageMatches = messageCache.filter(
+		let messageMatches = data.messageCache.filter(
 			m => m.content === message.content && m.author === message.author.id
 		).length;
-		let spamMatches = users.filter(
+		let spamMatches = data.users.filter(
 			u =>
 				u.time > Date.now() - options.maxInterval &&
 				u.author === message.author.id
 		).length;
 
 		if (
-			!warnedUsers.includes(message.author.id) &&
+			!data.warnedUsers.includes(message.author.id) &&
 			(spamMatches === options.warnThreshold ||
 				messageMatches === options.maxDuplicatesWarning)
 		) {
@@ -233,7 +238,7 @@ class AntiSpam extends EventEmitter {
 
 		if (
 			options.kickEnabled &&
-			!kickedUsers.includes(message.author.id) &&
+			!data.kickedUsers.includes(message.author.id) &&
 			(spamMatches === options.kickThreshold ||
 				messageMatches === options.maxDuplicatesKick)
 		) {
@@ -250,25 +255,13 @@ class AntiSpam extends EventEmitter {
 		}
 	}
 
-	get data() {
-		return {
-			messageCache,
-			bannedUsers,
-			kickedUsers,
-			warnedUsers,
-			users
-		};
-	}
-
 	resetData() {
-		messageCache = [];
-		bannedUsers = [];
-		kickedUsers = [];
-		warnedUsers = [];
-		users = [];
-
-		this.emit('resetData');
-		return true;
+		this.data.messageCache = [];
+		this.data.bannedUsers = [];
+		this.data.kickedUsers = [];
+		this.data.warnedUsers = [];
+		this.data.users = [];
+		return this.data;
 	}
 }
 
@@ -280,7 +273,6 @@ module.exports = AntiSpam;
  * @param {object} message The Discord Message object
  * @returns {string} The formatted string
  */
-
 function formatString(string, message) {
 	return string
 		.replace(/{@user}/g, message.author.toString())
