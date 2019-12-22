@@ -8,7 +8,8 @@ import {
 	GuildMember,
 	Message,
 	DiscordAPIError,
-	RichEmbed
+	RichEmbed,
+	Role
 } from 'discord.js';
 declare module 'discord-anti-spam' {
 	export = class AntiSpam extends EventEmitter {
