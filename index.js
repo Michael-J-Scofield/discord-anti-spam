@@ -1,18 +1,54 @@
 if (Number(process.version.split('.')[0].match(/[0-9]+/)) < 10)
 	throw new Error('Node 10.0.0 or higher is required. Update Node on your system.');
-const { RichEmbed } = require('discord.js');
+const { RichEmbed, GuildMember, Message } = require('discord.js');
 const { EventEmitter } = require('events');
-const defaultOptions = {
+
+/**
+ * Options for AntiSpam instance
+ * 
+ * @typedef {Object} AntiSpamOptions
+ * 
+ * @property {number} [warnThreshold=3] Amount of messages sent in a row that will cause a warning.
+ * @property {number} [kickThreshold=5] Amount of messages sent in a row that will cause a kick.
+ * @property {number} [warnThreshold=7] Amount of messages sent in a row that will cause a ban.
+ * 
+ * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
+ * 
+ * @property {string|RichEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in chat upon warning a user.
+ * @property {string|RichEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
+ * @property {string|RichEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in chat upon banning a user.
+ * 
+ * @property {number} [maxDuplicatesWarning=7] Amount of duplicate messages that trigger a warning.
+ * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
+ * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
+ * 
+ * @property {number} [deleteMessagesAfterBanForPastDays=1] Amount of days in which old messages will be deleted. (1-7)
+ *
+ * @property {Array<string>} [exemptPermissions=[]] Bypass users with at least one of these permissions
+ * @property {boolean} [ignoreBots=true] Whether bot messages are ignored
+ * @property {boolean} [verbose=false] Extended Logs from module (recommended)
+ * 
+ * @property {Array<string>|function} [ignoredUsers=[]] Array of string user IDs that are ignored
+ * @property {Array<string>|function} [ignoredRoles=[]] Array of string role IDs or role name that are ignored
+ * @property {Array<string>|function} [ignoredGuilds=[]] Array of string Guild IDs that are ignored
+ * @property {Array<string>|function} [ignoredChannels=[]] Array of string channels IDs that are ignored
+ * 
+ * @property {boolean} [warnEnabled=true] If false, the bot won't warn users
+ * @property {boolean} [kickEnabled=true] If false, the bot won't kick users
+ * @property {boolean} [banEnabled=true] If false, the bot won't ban users
+ * 
+ */
+const clientOptions = {
 	warnThreshold: 3,
-	banThreshold: 5,
 	kickThreshold: 5,
+	banThreshold: 7,
 	maxInterval: 2000,
 	warnMessage: '{@user}, Please stop spamming.',
-	banMessage: '**{user_tag}** has been banned for spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
+	banMessage: '**{user_tag}** has been banned for spamming.',
 	maxDuplicatesWarning: 7,
-	maxDuplicatesBan: 10,
 	maxDuplicatesKick: 10,
+	maxDuplicatesBan: 10,
 	deleteMessagesAfterBanForPastDays: 1,
 	exemptPermissions: [],
 	ignoreBots: true,
@@ -25,16 +61,56 @@ const defaultOptions = {
 	kickEnabled: true,
 	banEnabled: true
 };
+
+/**
+ * Cache data for the Anti Spam instance.
+ * @typedef {object} AntiSpamData
+ * 
+ * @property {Array<object>} messageCache Array which contains the message cache
+ * @property {Array<object>} users Array which contains the dates on which each user's message was sent 
+ * 
+ * @property {Array<Snowflake>} warnedUsers Array of warned users
+ * @property {Array<Snowflake>} kickedUsers Array of kicked users
+ * @property {Array<Snowflake>} bannedUsers Array of banned users
+ * 
+ */
+
+/**
+ * Anti Spam instance.
+ * 
+ * @param {AntiSpamOptions} [options] Client options.
+ * 
+ * @property {AntiSpamData} data Anti Spam cache data.
+ * 
+ * @example
+ * const antiSpam = new AntiSpam({
+ *   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
+ *   banThreshold: 7, // Amount of messages sent in a row that will cause a ban.
+ *   maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam.
+ *   warnMessage: "{@user}, Please stop spamming.", // Message will be sent in chat upon warning.
+ *   banMessage: "**{user_tag}** has been banned for spamming.", // Message will be sent in chat upon banning.
+ *   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
+ *   maxDuplicatesBan: 15, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
+ *   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
+ *   exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR", "MANAGE_GUILD", "BAN_MEMBERS"], // Bypass users with at least one of these permissions
+ *   ignoreBots: true, // Ignore bot messages.
+ *   verbose: false, // Extended Logs from module.
+ *   ignoredUsers: [], // Array of string user IDs that are ignored.
+ *   ignoredRoles: [], // Array of string role IDs or role name that are ignored.
+ *   ignoredGuilds: [], // Array of string Guild IDs that are ignored.
+ *   ignoredChannels: [] // Array of string channels IDs that are ignored.
+ * });
+ */
 class AntiSpam extends EventEmitter {
 	constructor(options = {}) {
 		super();
-		for (const key in defaultOptions) {
+		for (const key in clientOptions) {
 			if (
 				!options.hasOwnProperty(key) ||
 				typeof options[key] === 'undefined' ||
 				options[key] === null
 			)
-				options[key] = defaultOptions[key];
+				options[key] = clientOptions[key];
 		}
 		this.options = options;
 		this.data = {
@@ -46,6 +122,18 @@ class AntiSpam extends EventEmitter {
 		};
 	}
 
+	/**
+	 * Checks a message.
+	 * 
+	 * @param {Message} message The message to check.
+	 * 
+	 * @returns {boolean} Whether the message has triggered a threshold.
+	 * 
+	 * @example
+	 * client.on('message', (msg) => {
+	 * 	antiSpam.message(msg);
+	 * });
+	 */
 	async message(message) {
 		if (
 			message.channel.type === 'dm' ||
@@ -222,15 +310,90 @@ class AntiSpam extends EventEmitter {
 		return false;
 	}
 
+	/**
+	 * Resets the cache data of the Anti Spam instance.
+	 * @private
+	 * 
+	 * @returns {AntiSpamData} The cache that was just cleared.
+	 * 
+	 * @example
+	 * antiSpam.resetData().then((data) => {
+	 *   console.log("Cleared a total of "+data.messageCache+" cached messages.");
+	 * });
+	 */
 	resetData() {
+		let data = this.data;
 		this.data.messageCache = [];
 		this.data.bannedUsers = [];
 		this.data.kickedUsers = [];
 		this.data.warnedUsers = [];
 		this.data.users = [];
-		return this.data;
+		return data;
 	}
 }
+
+/**
+ * Emitted when a member is warned.
+ * @event AntiSpam#warnAdd
+ * 
+ * @param {GuildMember} member The warned member.
+ * 
+ * @example
+ * antiSpam.on("warnAdd", (member) => console.log(`${member.user.tag} has been warned.`));
+ */
+
+/**
+ * Emitted when a member is kicked.
+ * @event AntiSpam#kickAdd
+ * 
+ * @param {GuildMember} member The kicked member.
+ * 
+ * @example
+ * antiSpam.on("kickAdd", (member) => console.log(`${member.user.tag} has been kicked.`));
+ */
+
+/**
+ * Emitted when a member is banned.
+ * @event AntiSpam#banAdd
+ * 
+ * @param {GuildMember} member The banned member.
+ * 
+ * @example
+ * antiSpam.on("banAdd", (member) => console.log(`${member.user.tag} has been banned.`));
+ */
+
+/**
+ * Emitted when a member reaches the warn threshold.
+ * @event AntiSpam#spamThresholdWarn
+ * 
+ * @param {GuildMember} member The member who reached the warn threshold.
+ * @param {boolean} duplicate Whether the member reached the warn threshold by spamming the same message.
+ * 
+ * @example
+ * antiSpam.on("spamThresholdWarn", (member) => console.log(`${member.user.tag} has reached the warn threshold.`));
+ */
+
+/**
+ * Emitted when a member reaches the kick threshold.
+ * @event AntiSpam#spamThresholdKick
+ * 
+ * @param {GuildMember} member The member who reached the kick threshold.
+ * @param {boolean} duplicate Whether the member reached the kick threshold by spamming the same message.
+ * 
+ * @example
+ * antiSpam.on("spamThresholdKick", (member) => console.log(`${member.user.tag} has reached the kick threshold.`));
+ */
+
+/**
+ * Emitted when a member reaches the ban threshold.
+ * @event AntiSpam#spamThresholdBan
+ * 
+ * @param {GuildMember} member The member who reached the ban threshold.
+ * @param {boolean} duplicate Whether the member reached the ban threshold by spamming the same message.
+ * 
+ * @example
+ * antiSpam.on("spamThresholdBan", (member) => console.log(`${member.user.tag} has reached the ban threshold.`));
+ */
 
 module.exports = AntiSpam;
 

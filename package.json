@@ -1,10 +1,11 @@
 {
   "name": "discord-anti-spam",
-  "version": "2.1.1",
+  "version": "2.2.1",
   "description": "An easy to setup package that help you integration of anti-spam feature in your discord bot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
   },
   "keywords": [
     "discord",
@@ -29,5 +30,9 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^11.5.1"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.3",
+    "minami": "^1.2.3"
   }
 }

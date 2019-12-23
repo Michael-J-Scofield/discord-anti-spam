@@ -12,7 +12,9 @@ import {
 	Role
 } from 'discord.js';
 declare module 'discord-anti-spam' {
-	export = class AntiSpam extends EventEmitter {
+	const _default: AntiSpam;
+	export default _default;
+	class AntiSpam extends EventEmitter {
 		constructor(options?: AntiSpamOptions);
 		public options: AntiSpamOptions;
 		public data: AntiSpamData;
@@ -36,7 +38,7 @@ declare module 'discord-anti-spam' {
 				type: 'ban' | 'kick'
 			) => any
 		): this;
-	};
+	}
 
 	type AntiSpamData = {
 		messageCache: {
