@@ -216,9 +216,9 @@ class AntiSpam extends EventEmitter {
 					console.log(
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, insufficient permissions.`
 					);
-				await msg.channel
+				await message.channel
 					.send(
-						`Could not kick **${msg.author.tag}** because of improper permissions.`
+						`Could not kick **${message.author.tag}** because of improper permissions.`
 					)
 					.catch((e) => {
 						if (options.verbose) console.error(e);
