@@ -182,6 +182,13 @@ class AntiSpam extends EventEmitter {
 					console.log(
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, insufficient permissions.`
 					);
+				await message.channel
+					.send(
+						`Could not ban **${message.author.tag}** because of improper permissions.`
+					)
+					.catch((e) => {
+						if (options.verbose) console.error(e);
+					});
 				return false;
 			}
 
