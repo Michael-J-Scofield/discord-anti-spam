@@ -13,6 +13,7 @@ const { EventEmitter } = require('events');
  * @property {number} [warnThreshold=7] Amount of messages sent in a row that will cause a ban.
  * 
  * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
+ * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
  * 
  * @property {string|RichEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in chat upon warning a user.
  * @property {string|RichEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
@@ -43,6 +44,7 @@ const clientOptions = {
 	kickThreshold: 5,
 	banThreshold: 7,
 	maxInterval: 2000,
+	maxDuplicatesInterval: 2000,
 	warnMessage: '{@user}, Please stop spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
 	banMessage: '**{user_tag}** has been banned for spamming.',
@@ -67,7 +69,6 @@ const clientOptions = {
  * @typedef {object} AntiSpamData
  * 
  * @property {Array<object>} messageCache Array which contains the message cache
- * @property {Array<object>} users Array which contains the dates on which each user's message was sent 
  * 
  * @property {Array<Snowflake>} warnedUsers Array of warned users
  * @property {Array<Snowflake>} kickedUsers Array of kicked users
@@ -138,7 +139,7 @@ class AntiSpam extends EventEmitter {
 		if (
 			message.channel.type === 'dm' ||
 			message.author.id === message.client.user.id ||
-			message.guild.ownerID === message.author.id
+			message.guild.ownerID !== message.author.id
 		)
 			return false;
 
@@ -262,21 +263,20 @@ class AntiSpam extends EventEmitter {
 			return true;
 		};
 
-		data.users.push({
-			time: Date.now(),
-			id: message.author.id
-		});
-
 		data.messageCache.push({
 			content: message.content,
-			author: message.author.id
+			author: message.author.id,
+			time: Date.now()
 		});
 
 		const messageMatches = data.messageCache.filter(
-			m => m.content === message.content && m.author === message.author.id
+			m => 	m.time > Date.now() - options.maxDuplicatesInterval &&
+					m.content === message.content &&
+					m.author === message.author.id
 		).length;
-		const spamMatches = data.users.filter(
-			u => u.time > Date.now() - options.maxInterval && u.id === message.author.id
+		const spamMatches = data.messageCache.filter(
+			m => 	m.time > Date.now() - options.maxDuplicatesInterval &&
+					m.author === message.author.id
 		).length;
 
 		if (
@@ -297,13 +297,21 @@ class AntiSpam extends EventEmitter {
 			(spamMatches === options.kickThreshold || messageMatches === options.maxDuplicatesKick)
 		) {
 			if (options.kickEnabled) await kickUser(message);
-			this.emit('spamThresholdKick', message.member, messageMatches === options.maxDuplicatesKick);
+			this.emit(
+				'spamThresholdKick',
+				message.member,
+				messageMatches === options.maxDuplicatesKick
+			);
 			return true;
 		}
 
 		if (spamMatches === options.banThreshold || messageMatches === options.maxDuplicatesBan) {
 			if (options.banEnabled) await banUser(message);
-			this.emit('spamThresholdBan', message.member, messageMatches === options.maxDuplicatesBan);
+			this.emit(
+				'spamThresholdBan',
+				message.member,
+				messageMatches === options.maxDuplicatesBan
+			);
 			return true;
 		}
 
@@ -327,7 +335,6 @@ class AntiSpam extends EventEmitter {
 		this.data.bannedUsers = [];
 		this.data.kickedUsers = [];
 		this.data.warnedUsers = [];
-		this.data.users = [];
 		return data;
 	}
 }

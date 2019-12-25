@@ -44,10 +44,7 @@ declare module 'discord-anti-spam' {
 		messageCache: {
 			content: string;
 			author: Snowflake;
-		}[];
-		users: {
 			time: number;
-			id: Snowflake;
 		}[];
 		bannedUsers: Snowflake[];
 		kickedUsers: Snowflake[];
