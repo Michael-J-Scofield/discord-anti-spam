@@ -20,6 +20,10 @@ const { version } = require('discord.js');
  * @property {string|RichEmbed|MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
  * @property {string|RichEmbed|MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in chat upon banning a user.
  * 
+ * @property {boolean} [errorMessages=true] Whether the error messages, when the bot doesn't have enough permissions, must be sent or not
+ * @property {string|RichEmbed|MessageEmbed} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to kick the member.
+ * @property {string|RichEmbed|MessageEmbed} [banErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to ban the member.
+ * 
  * @property {number} [maxDuplicatesWarning=7] Amount of duplicate messages that trigger a warning.
  * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
  * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
@@ -49,6 +53,9 @@ const clientOptions = {
 	warnMessage: '{@user}, Please stop spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
 	banMessage: '**{user_tag}** has been banned for spamming.',
+	errorMessages: true,
+	kickErrorMessage: "Could not kick **{user_tag}** because of improper permissions.",
+	banErrorMessage: "Could not ban **{user_tag}** because of improper permissions.",
 	maxDuplicatesWarning: 7,
 	maxDuplicatesKick: 10,
 	maxDuplicatesBan: 10,
@@ -182,13 +189,12 @@ class AntiSpam extends EventEmitter {
 					console.log(
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, insufficient permissions.`
 					);
-				await message.channel
-					.send(
-						`Could not ban **${message.author.tag}** because of improper permissions.`
-					)
-					.catch((e) => {
-						if (options.verbose) console.error(e);
-					});
+				if (options.errorMessages)
+					await message.channel
+						.send(format(options.banErrorMessage, message))
+						.catch((e) => {
+							if (options.verbose) console.error(e);
+						});
 				return false;
 			}
 
@@ -211,7 +217,7 @@ class AntiSpam extends EventEmitter {
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be banned, ${error}.`
 					);
 				await message.channel
-					.send(`Could not ban **${message.author.tag}** because of an error: \`${error}\`.`)
+					.send(format(options.banErrorMessage, message))
 					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
@@ -228,13 +234,12 @@ class AntiSpam extends EventEmitter {
 					console.log(
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, insufficient permissions.`
 					);
-				await message.channel
-					.send(
-						`Could not kick **${message.author.tag}** because of improper permissions.`
-					)
-					.catch((e) => {
-						if (options.verbose) console.error(e);
-					});
+				if (options.errorMessages)
+					await message.channel
+						.send(format(options.kickMessage, message))
+						.catch((e) => {
+							if (options.verbose) console.error(e);
+						});
 				return false;
 			}
 
@@ -254,7 +259,7 @@ class AntiSpam extends EventEmitter {
 						`**${message.author.tag}** (ID: ${message.author.id}) could not be kicked, ${error}.`
 					);
 				await message.channel
-					.send(`Could not kick **${message.author.tag}** because of an error: \`${error}\`.`)
+					.send(format(options.kickMessage, message))
 					.catch(e => {
 						if (options.verbose) console.error(e);
 					});
