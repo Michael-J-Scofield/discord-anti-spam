@@ -418,6 +418,20 @@ class AntiSpam extends EventEmitter {
  * antiSpam.on("spamThresholdBan", (member) => console.log(`${member.user.tag} has reached the ban threshold.`));
  */
 
+ /**
+  * Emitted when the bot could not kick or ban a member.
+  * @event AntiSpam#error
+  * 
+  * @param {Message} message The Discord message
+  * @param {error} error The error
+  * @param {string} type The sanction type: 'kick' or 'ban'
+  * 
+  * @example
+  * antiSpam.on("error", (message, error, type) => {
+  * 	console.log(`${message.member.tag} couldn't receive the sanction '${type}', error: ${error}`);
+  * });
+  */
+
 module.exports = AntiSpam;
 
 /**
