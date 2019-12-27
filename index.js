@@ -153,7 +153,6 @@ class AntiSpam extends EventEmitter {
 		const { options, data } = this;
 		if (version.split('.')[0] !== '12' && !message.member)
 			message.member = await message.guild.fetchMember(message.author);
-		}
 		if (
 			(options.ignoreBots && message.author.bot) ||
 			options.exemptPermissions.some(permission => message.member.hasPermission(permission))
