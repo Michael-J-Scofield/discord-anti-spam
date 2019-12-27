@@ -1,8 +1,7 @@
 if (Number(process.version.split('.')[0].match(/[0-9]+/)) < 10)
 	throw new Error('Node 10.0.0 or higher is required. Update Node on your system.');
-const { RichEmbed, GuildMember, Message, MessageEmbed } = require('discord.js');
+const { RichEmbed, GuildMember, Message, MessageEmbed, version } = require('discord.js');
 const { EventEmitter } = require('events');
-const { version } = require('discord.js');
 
 /**
  * Options for AntiSpam instance
@@ -152,10 +151,8 @@ class AntiSpam extends EventEmitter {
 			return false;
 
 		const { options, data } = this;
-		if (!message.member){
-			if(version === "12.0.0-dev") message.member = await message.guild.members.fetch(message.author);
-			else message.member = await message.guild.fetchMember(message.author);
-		}
+		if (version.split('.')[0] !== '12' && !message.member)
+			message.member = await message.guild.fetchMember(message.author);
 		if (
 			(options.ignoreBots && message.author.bot) ||
 			options.exemptPermissions.some(permission => message.member.hasPermission(permission))
@@ -341,12 +338,11 @@ class AntiSpam extends EventEmitter {
 	 * @returns {AntiSpamData} The cache that was just cleared.
 	 * 
 	 * @example
-	 * antiSpam.resetData().then((data) => {
-	 *   console.log("Cleared a total of "+data.messageCache+" cached messages.");
-	 * });
+	 * const data = antiSpam.resetData();
+	 * console.log(`Cleared a total of ${data.messageCache.length} cached messages.`);
 	 */
 	resetData() {
-		let data = this.data;
+		const data = Object.create(this.data);
 		this.data.messageCache = [];
 		this.data.bannedUsers = [];
 		this.data.kickedUsers = [];
@@ -428,7 +424,7 @@ class AntiSpam extends EventEmitter {
   * 
   * @example
   * antiSpam.on("error", (message, error, type) => {
-  * 	console.log(`${message.member.tag} couldn't receive the sanction '${type}', error: ${error}`);
+  * 	console.log(`${message.author.tag} couldn't receive the sanction '${type}', error: ${error}`);
   * });
   */
 
@@ -446,7 +442,7 @@ function format(string, message) {
 			.replace(/{@user}/g, message.author.toString())
 			.replace(/{user_tag}/g, message.author.tag)
 			.replace(/{server_name}/g, message.guild.name);
-	const embed = version === "12.0.0-dev" ? new RichEmbed(string) : new MessageEmbed(string);
+	const embed = version.split('.')[0] !== '12' ? new RichEmbed(string) : new MessageEmbed(string);
 	if (embed.description) embed.setDescription(format(embed.description, message));
 	if (embed.title) embed.setTitle(format(embed.title, message));
 	if (embed.footer && embed.footer.text) embed.footer.text = format(embed.footer.text, message);
