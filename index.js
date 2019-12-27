@@ -339,12 +339,11 @@ class AntiSpam extends EventEmitter {
 	 * @returns {AntiSpamData} The cache that was just cleared.
 	 * 
 	 * @example
-	 * antiSpam.resetData().then((data) => {
-	 *   console.log("Cleared a total of "+data.messageCache+" cached messages.");
-	 * });
+	 * const data = antiSpam.resetData();
+	 * console.log(`Cleared a total of ${data.messageCache.length} cached messages.`);
 	 */
 	resetData() {
-		let data = this.data;
+		const data = Object.create(this.data);
 		this.data.messageCache = [];
 		this.data.bannedUsers = [];
 		this.data.kickedUsers = [];
@@ -426,7 +425,7 @@ class AntiSpam extends EventEmitter {
   * 
   * @example
   * antiSpam.on("error", (message, error, type) => {
-  * 	console.log(`${message.member.tag} couldn't receive the sanction '${type}', error: ${error}`);
+  * 	console.log(`${message.author.tag} couldn't receive the sanction '${type}', error: ${error}`);
   * });
   */
 
