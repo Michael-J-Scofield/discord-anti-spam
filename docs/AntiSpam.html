@@ -556,9 +556,8 @@
 <div class="section-examples">
 <h5>Example</h5>
 
-    <pre class="prettyprint"><code>antiSpam.resetData().then((data) => {
-  console.log("Cleared a total of "+data.messageCache+" cached messages.");
-});</code></pre>
+    <pre class="prettyprint"><code>const data = antiSpam.resetData();
+console.log(`Cleared a total of ${data.messageCache.length} cached messages.`);</code></pre>
 
 </div>
 
@@ -893,7 +892,7 @@
 <h5>Example</h5>
 
     <pre class="prettyprint"><code>antiSpam.on("error", (message, error, type) => {
-	console.log(`${message.member.tag} couldn't receive the sanction '${type}', error: ${error}`);
+	console.log(`${message.author.tag} couldn't receive the sanction '${type}', error: ${error}`);
 });</code></pre>
 
 </div>
