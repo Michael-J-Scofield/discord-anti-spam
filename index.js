@@ -135,7 +135,7 @@ class AntiSpam extends EventEmitter {
 	 * 
 	 * @param {Message} message The message to check.
 	 * 
-	 * @returns {boolean} Whether the message has triggered a threshold.
+	 * @returns {Promise<boolean>} Whether the message has triggered a threshold.
 	 * 
 	 * @example
 	 * client.on('message', (msg) => {
