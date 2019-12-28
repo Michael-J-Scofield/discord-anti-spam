@@ -166,7 +166,7 @@ class AntiSpam extends EventEmitter {
 					: options.ignoredRoles.includes(role.id) || options.ignoredRoles.includes(role.name)
 			) ||
 			(typeof options.ignoredUsers === 'function'
-				? options.ignoredUsers(message.author)
+				? options.ignoredUsers(message.member)
 				: options.ignoredUsers.includes(message.author.id)) ||
 			(typeof options.ignoredGuilds === 'function'
 				? options.ignoredGuilds(message.guild)
