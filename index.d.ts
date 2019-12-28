@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import {
 	PermissionResolvable,
 	Snowflake,
-	User,
 	Guild,
 	TextChannel,
 	GuildMember,
@@ -66,7 +65,7 @@ declare module 'discord-anti-spam' {
 		exemptPermissions?: PermissionResolvable[];
 		ignoreBots?: boolean;
 		verbose?: boolean;
-		ignoredUsers?: Snowflake[] | ((user: User) => boolean);
+		ignoredUsers?: Snowflake[] | ((member: GuildMember) => boolean);
 		ignoredRoles?: (Snowflake | string)[] | ((role: Role) => boolean);
 		ignoredGuilds?: Snowflake[] | ((guild: Guild) => boolean);
 		ignoredChannels?: Snowflake[] | ((channel: TextChannel) => boolean);
