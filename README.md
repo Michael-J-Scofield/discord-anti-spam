@@ -44,7 +44,7 @@ const antiSpam = new AntiSpam({
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}.`));
 
-client.on('message', antiSpam.message(message)); 
+client.on('message', (message) => antiSpam.message(message)); 
 
 client.login('YOUR_SUPER_SECRET_TOKEN');
 ```
