@@ -32,6 +32,7 @@ const { EventEmitter } = require('events');
  * @property {Array<string>} [exemptPermissions=[]] Bypass users with at least one of these permissions
  * @property {boolean} [ignoreBots=true] Whether bot messages are ignored
  * @property {boolean} [verbose=false] Extended Logs from module (recommended)
+ * @property {boolean} [debug=false] Whether to run the module in debug mode
  * 
  * @property {Array<string>|function} [ignoredUsers=[]] Array of string user IDs that are ignored
  * @property {Array<string>|function} [ignoredRoles=[]] Array of string role IDs or role name that are ignored
@@ -62,6 +63,7 @@ const clientOptions = {
 	exemptPermissions: [],
 	ignoreBots: true,
 	verbose: false,
+	debug: false,
 	ignoredUsers: [],
 	ignoredRoles: [],
 	ignoredGuilds: [],
@@ -143,14 +145,14 @@ class AntiSpam extends EventEmitter {
 	 * });
 	 */
 	async message(message) {
+		const { options, data } = this;
 		if (
 			message.channel.type === 'dm' ||
 			message.author.id === message.client.user.id ||
-			message.guild.ownerID === message.author.id
+			(message.guild.ownerID === message.author.id && !options.debug)
 		)
 			return false;
 
-		const { options, data } = this;
 		if (version.split('.')[0] !== '12' && !message.member)
 			message.member = await message.guild.fetchMember(message.author);
 		if (
