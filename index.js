@@ -285,7 +285,7 @@ class AntiSpam extends EventEmitter {
 		});
 
 		const messageMatches = data.messageCache.filter(
-			m => 	m.time > Date.now() - options.maxDuplicatesInterval &&
+			m => 	m.time > Date.now() - options.maxInterval &&
 					m.content === message.content &&
 					m.author === message.author.id
 		).length;
