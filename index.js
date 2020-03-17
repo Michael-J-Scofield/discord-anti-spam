@@ -3,6 +3,8 @@ if (Number(process.version.split('.')[0].match(/[0-9]+/)) < 10)
 const { RichEmbed, GuildMember, Message, MessageEmbed, version } = require('discord.js');
 const { EventEmitter } = require('events');
 
+const v11 = version.split(".")[0] === "11";
+
 /**
  * Options for AntiSpam instance
  * 
@@ -154,7 +156,7 @@ class AntiSpam extends EventEmitter {
 			return false;
 
 		if (version.split('.')[0] !== '12' && !message.member)
-			message.member = await message.guild.fetchMember(message.author);
+			message.member = await (v11 ? message.guild.fetchMember(message.author) : message.guild.members.fetch(message.author));
 		if (
 			(options.ignoreBots && message.author.bot) ||
 			options.exemptPermissions.some(permission => message.member.hasPermission(permission))
@@ -162,7 +164,7 @@ class AntiSpam extends EventEmitter {
 			return false;
 
 		if (
-			message.member.roles.some(role =>
+			(v11 ? message.member.roles : message.members.roles.cache).some(role =>
 				typeof options.ignoredRoles === 'function'
 					? options.ignoredRoles(role)
 					: options.ignoredRoles.includes(role.id) || options.ignoredRoles.includes(role.name)

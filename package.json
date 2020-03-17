@@ -28,9 +28,6 @@
   "homepage": "https://github.com/Michael-J-Scofield/discord-anti-spam#readme",
   "author": "Michael Scofield",
   "license": "MIT",
-  "dependencies": {
-    "discord.js": "^11.5.1"
-  },
   "devDependencies": {
     "jsdoc": "^3.6.3",
     "minami": "^1.2.3"
