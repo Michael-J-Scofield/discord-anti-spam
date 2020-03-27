@@ -164,7 +164,7 @@ class AntiSpam extends EventEmitter {
 			return false;
 
 		if (
-			(v11 ? message.member.roles : message.members.roles.cache).some(role =>
+			(v11 ? message.member.roles : message.member.roles.cache).some(role =>
 				typeof options.ignoredRoles === 'function'
 					? options.ignoredRoles(role)
 					: options.ignoredRoles.includes(role.id) || options.ignoredRoles.includes(role.name)
