@@ -1,6 +1,6 @@
 {
   "name": "discord-anti-spam",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "An easy to setup package that help you integration of anti-spam feature in your discord bot.",
   "main": "index.js",
   "scripts": {
