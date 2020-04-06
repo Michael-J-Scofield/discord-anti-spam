@@ -261,7 +261,7 @@ class AntiSpam extends EventEmitter {
 			}
 			try {
 				if(user.roles.has(role.id)) return;
-				await message.member.addRole(role.id,"Spamming"});
+				await message.member.addRole(role.id, "Spamming");
 				if (options.muteMessage)
 					await message.channel.send(format(options.muteMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
