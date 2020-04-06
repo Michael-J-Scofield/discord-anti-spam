@@ -23,11 +23,11 @@ declare module 'discord-anti-spam' {
 		public resetData(): AntiSpamData;
 
 		public on(
-			event: 'banAdd' | 'kickAdd' | 'warnAdd',
+			event: 'banAdd' | 'kickAdd' | 'warnAdd' | 'muteAdd',
 			listener: (member: GuildMember) => any
 		): this;
 		public on(
-			event: 'spamThresholdBan' | 'spamThresholdKick' | 'spamThresholdWarn',
+			event: 'spamThresholdBan' | 'spamThresholdKick' | 'spamThresholdWarn' | 'spamThresholdMute',
 			listener: (member: GuildMember, duplicateMessages: boolean) => any
 		): this;
 		public on(
@@ -35,7 +35,7 @@ declare module 'discord-anti-spam' {
 			listener: (
 				message: Message,
 				error: DiscordAPIError,
-				type: 'ban' | 'kick'
+				type: 'ban' | 'kick' | 'mute'
 			) => any
 		): this;
 	}
@@ -49,19 +49,24 @@ declare module 'discord-anti-spam' {
 		bannedUsers: Snowflake[];
 		kickedUsers: Snowflake[];
 		warnedUsers: Snowflake[];
+		mutedUsers: Snowflake[];
 	};
 
 	type AntiSpamOptions = {
 		warnThreshold?: number;
 		banThreshold?: number;
 		kickThreshold?: number;
+		muteThreshold?: number;
 		maxInterval?: number;
+		muteRoleName?: string;
 		warnMessage?: string | RichEmbed;
 		banMessage?: string | RichEmbed;
 		kickMessage?: string | RichEmbed;
+		muteMessage?: string | RichEmbed;
 		maxDuplicatesWarning?: number;
 		maxDuplicatesBan?: number;
 		maxDuplicatesKick?: number;
+		maxDuplicatesMute?: number;
 		deleteMessagesAfterBanForPastDays?: number;
 		exemptPermissions?: PermissionResolvable[];
 		ignoreBots?: boolean;
@@ -74,5 +79,6 @@ declare module 'discord-anti-spam' {
 		warnEnabled?: boolean;
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
+		muteEnabled?: boolean;
 	};
 }
