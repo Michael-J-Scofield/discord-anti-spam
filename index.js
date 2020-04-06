@@ -490,7 +490,7 @@ class AntiSpam extends EventEmitter {
   * 
   * @param {Message} message The Discord message
   * @param {error} error The error
-  * @param {string} type The sanction type: 'kick' or 'ban'
+  * @param {string} type The sanction type: 'kick' or 'ban' or 'mute'
   * 
   * @example
   * antiSpam.on("error", (message, error, type) => {
