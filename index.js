@@ -13,21 +13,27 @@ const v11 = version.split(".")[0] === "11";
  * @property {number} [warnThreshold=3] Amount of messages sent in a row that will cause a warning.
  * @property {number} [kickThreshold=5] Amount of messages sent in a row that will cause a kick.
  * @property {number} [warnThreshold=7] Amount of messages sent in a row that will cause a ban.
+ * @property {number} [muteThreshold=7] Amount of messages sent in a row that will cause a mute.
  * 
  * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
  * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
  * 
+ * @property {string} [muteRoleName='Muted'] Role that will be added to the user if they got muted
+ *
  * @property {string|RichEmbed|MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in chat upon warning a user.
  * @property {string|RichEmbed|MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
  * @property {string|RichEmbed|MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in chat upon banning a user.
+ * @property {string|RichEmbed|MessageEmbed} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in chat upon muting a user.
  * 
  * @property {boolean} [errorMessages=true] Whether the error messages, when the bot doesn't have enough permissions, must be sent or not
  * @property {string|RichEmbed|MessageEmbed} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to kick the member.
  * @property {string|RichEmbed|MessageEmbed} [banErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to ban the member.
+ * @property {string|RichEmbed|MessageEmbed} [muteErrorMessage='Could not mute **{user_tag}** because of improper permissions or the mute role couldn't be found.'] Message that will be sent in chat when the bot doesn't have enough permissions to mute the member.
  * 
  * @property {number} [maxDuplicatesWarning=7] Amount of duplicate messages that trigger a warning.
- * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
- * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
+ * @property {number} [maxDuplicatesKick=11] Amount of duplicate messages that trigger a kick.
+ * @property {number} [maxDuplicatesMute=9] Amount of duplicate messages that trigger a kick.
+ * @property {number} [maxDuplicatesBan=12] Amount of duplicate messages that trigger a ban.
  * 
  * @property {number} [deleteMessagesAfterBanForPastDays=1] Amount of days in which old messages will be deleted. (1-7)
  *
@@ -44,23 +50,29 @@ const v11 = version.split(".")[0] === "11";
  * @property {boolean} [warnEnabled=true] If false, the bot won't warn users
  * @property {boolean} [kickEnabled=true] If false, the bot won't kick users
  * @property {boolean} [banEnabled=true] If false, the bot won't ban users
+ * @property {boolean} [muteEnabled=true] If false, the bot won't mute users
  * 
  */
 const clientOptions = {
 	warnThreshold: 3,
 	kickThreshold: 5,
 	banThreshold: 7,
+	muteThreshold: 4,
 	maxInterval: 2000,
 	maxDuplicatesInterval: 2000,
+	muteRoleName: "Muted",
 	warnMessage: '{@user}, Please stop spamming.',
+	muteMessage: '**{user_tag}** has been muted for spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
 	banMessage: '**{user_tag}** has been banned for spamming.',
 	errorMessages: true,
 	kickErrorMessage: "Could not kick **{user_tag}** because of improper permissions.",
 	banErrorMessage: "Could not ban **{user_tag}** because of improper permissions.",
+	muteErrorMessage: "Could not mute **{user_tag}** because of improper permissions or the mute role couldn't be found.",
 	maxDuplicatesWarning: 7,
 	maxDuplicatesKick: 10,
 	maxDuplicatesBan: 10,
+	maxDuplicatesMute: 9,
 	deleteMessagesAfterBanForPastDays: 1,
 	exemptPermissions: [],
 	ignoreBots: true,
@@ -72,6 +84,7 @@ const clientOptions = {
 	ignoredChannels: [],
 	warnEnabled: true,
 	kickEnabled: true,
+	muteEnabled: true,
 	banEnabled: true
 };
 
@@ -84,6 +97,7 @@ const clientOptions = {
  * @property {Array<Snowflake>} warnedUsers Array of warned users
  * @property {Array<Snowflake>} kickedUsers Array of kicked users
  * @property {Array<Snowflake>} bannedUsers Array of banned users
+ * @property {Array<Snowflake>} mutedUsers Array of muted users
  * 
  */
 
@@ -98,9 +112,12 @@ const clientOptions = {
  * const antiSpam = new AntiSpam({
  *   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
  *   banThreshold: 7, // Amount of messages sent in a row that will cause a ban.
+ *   muteThreshold: 5, // Amount of messages sent in a row that will cause a mute.
  *   maxInterval: 2000, // Amount of time (in ms) in which messages are cosidered spam.
+ *   muteRoleName: "Muted", // Name of the role that the bot gonna give to users that get muted.
  *   warnMessage: "{@user}, Please stop spamming.", // Message will be sent in chat upon warning.
  *   banMessage: "**{user_tag}** has been banned for spamming.", // Message will be sent in chat upon banning.
+ *   muteMessage: "**{user_tag}** has been muted for spamming.", // Message will be sent in chat upon banning.
  *   maxDuplicatesWarning: 7, // Amount of same messages sent that will be considered as duplicates that will cause a warning.
  *   maxDuplicatesBan: 15, // Amount of same messages sent that will be considered as duplicates that will cause a ban.
  *   deleteMessagesAfterBanForPastDays: 1, // Amount of days in which old messages will be deleted. (1-7)
@@ -130,6 +147,7 @@ class AntiSpam extends EventEmitter {
 			bannedUsers: [],
 			kickedUsers: [],
 			warnedUsers: [],
+			mutedUsers: [],
 			users: []
 		};
 	}
@@ -225,7 +243,46 @@ class AntiSpam extends EventEmitter {
 				return false;
 			}
 		};
-
+		const muteUser = async () => {
+			data.messageCache = data.messageCache.filter(m => m.author !== message.author.id);
+			const role = message.guild.roles.find(role => role.name == options.mutedRoleName)
+			if (!role) {
+				if (options.verbose)
+					console.log(
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`
+					);
+				if (options.errorMessages)
+					await message.channel
+						.send(format(options.muteErrorMessage, message))
+						.catch((e) => {
+							if (options.verbose) console.error(e);
+						});
+				return false;
+			}
+			try {
+				if(user.roles.has(role.id)) return;
+				await message.member.addRole(role.id,"Spamming"});
+				if (options.muteMessage)
+					await message.channel.send(format(options.muteMessage, message)).catch(e => {
+						if (options.verbose) console.error(e);
+					});
+				this.emit('muteAdd', message.member);
+				return true;
+			} catch (error) {
+				const emitted = this.emit('error', message, error, 'mute');
+				if (emitted) return false;
+				if (options.verbose)
+					console.log(
+						`**${message.author.tag}** (ID: ${message.author.id}) could not be muted, ${error}.`
+					);
+				await message.channel
+					.send(format(options.muteErrorMessage, message))
+					.catch(e => {
+						if (options.verbose) console.error(e);
+					});
+				return false;
+			}
+		};
 		const kickUser = async () => {
 			data.messageCache = data.messageCache.filter(m => m.author !== message.author.id);
 			data.kickedUsers.push(message.author.id);
@@ -373,6 +430,15 @@ class AntiSpam extends EventEmitter {
  * 
  * @example
  * antiSpam.on("kickAdd", (member) => console.log(`${member.user.tag} has been kicked.`));
+ */
+/**
+ * Emitted when a member is muted.
+ * @event AntiSpam#muteAdd
+ * 
+ * @param {GuildMember} member The muted member.
+ * 
+ * @example
+ * antiSpam.on("muteAdd", (member) => console.log(`${member.user.tag} has been muted.`));
  */
 
 /**
