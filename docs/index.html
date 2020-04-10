@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpam.html">AntiSpam</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#resetData">resetData</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdBan">spamThresholdBan</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdKick">spamThresholdKick</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdWarn">spamThresholdWarn</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#format">format</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpam.html">AntiSpam</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#resetData">resetData</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdBan">spamThresholdBan</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdKick">spamThresholdKick</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdWarn">spamThresholdWarn</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#format">format</a></span></li>
 </nav>
 
 <div id="main">
@@ -66,14 +66,18 @@ const antiSpam = new AntiSpam({
 	warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
 	kickThreshold: 7, // Amount of messages sent in a row that will cause a kick.
 	banThreshold: 7, // Amount of messages sent in a row that will cause a ban.
+	muteThreshold: 5, // Amount of messages sent in a row that will cause a mute.
 	maxInterval: 2000, // Amount of time (in milliseconds) in which messages are considered spam.
 	warnMessage: '{@user}, Please stop spamming.', // Message that will be sent in chat upon warning a user.
 	kickMessage: '**{user_tag}** has been kicked for spamming.', // Message that will be sent in chat upon kicking a user.
 	banMessage: '**{user_tag}** has been banned for spamming.', // Message that will be sent in chat upon banning a user.
+	muteMessage: '**{user_tag}** has been muted for spamming.', // Message that will be sent in chat upon muting a user.
 	maxDuplicatesWarning: 7, // Amount of duplicate messages that trigger a warning.
 	maxDuplicatesKick: 10, // Amount of duplicate messages that trigger a warning.
 	maxDuplicatesBan: 12, // Amount of duplicate messages that trigger a warning.
-	exemptPermissions: [ 'ADMINISTRATOR'], // Bypass users with any of these permissions.
+	maxDuplicatesMute: 9, // Amount of duplicate messages that trigger a warning.
+	// Discord permission flags: https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS
+	exemptPermissions: [ 'ADMINISTRATOR'], // Bypass users with any of these permissions(These are not roles so use the flags from link above).
 	ignoreBots: true, // Ignore bot messages.
 	verbose: true, // Extended Logs from module.
 	ignoredUsers: [], // Array of User IDs that get ignored.
@@ -82,7 +86,7 @@ const antiSpam = new AntiSpam({
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}.`));
 
-client.on('message', (message) => antiSpam.message(message)); 
+client.on('message', (message) => antiSpam.message(message));
 
 client.login('YOUR_SUPER_SECRET_TOKEN');
 </code></pre>
@@ -102,7 +106,7 @@ client.login('YOUR_SUPER_SECRET_TOKEN');
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
