@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpam.html">AntiSpam</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#resetData">resetData</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdBan">spamThresholdBan</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdKick">spamThresholdKick</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdWarn">spamThresholdWarn</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#format">format</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpam.html">AntiSpam</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#resetData">resetData</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdBan">spamThresholdBan</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdKick">spamThresholdKick</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdWarn">spamThresholdWarn</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#format">format</a></span></li>
 </nav>
 
 <div id="main">
@@ -449,6 +449,31 @@
         
 
     
+
+        <tr>
+            
+                <td class="name"><code>mutedUsers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Array.&lt;Snowflake></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of muted users</p></td>
+        </tr>
+
+        
+
+    
     </tbody>
 </table>
 
@@ -671,6 +696,45 @@
 
         <tr>
             
+                <td class="name"><code>muteThreshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    7
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of messages sent in a row that will cause a mute.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
                 <td class="name"><code>maxInterval</code></td>
             
 
@@ -741,6 +805,45 @@
             
 
             <td class="description last"><p>Amount of time (ms) in which duplicate messages are considered spam.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteRoleName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'Muted'
+                
+                </td>
+            
+
+            <td class="description last"><p>Role that will be added to the user if they got muted</p></td>
         </tr>
 
         
@@ -884,6 +987,51 @@
 
         <tr>
             
+                <td class="name"><code>muteMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>RichEmbed</code></span>
+|
+
+<span class="param-type"><code>MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '**{user_tag}** has been muted for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in chat upon muting a user.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
                 <td class="name"><code>errorMessages</code></td>
             
 
@@ -1013,6 +1161,51 @@
 
         <tr>
             
+                <td class="name"><code>muteErrorMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>RichEmbed</code></span>
+|
+
+<span class="param-type"><code>MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'Could not mute **{user_tag}** because of improper permissions or the mute role couldn't be found.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in chat when the bot doesn't have enough permissions to mute the member.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
                 <td class="name"><code>maxDuplicatesWarning</code></td>
             
 
@@ -1077,7 +1270,46 @@
             
                 <td class="default">
                 
-                    10
+                    11
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of duplicate messages that trigger a kick.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxDuplicatesMute</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    9
                 
                 </td>
             
@@ -1116,7 +1348,7 @@
             
                 <td class="default">
                 
-                    10
+                    12
                 
                 </td>
             
@@ -1607,6 +1839,45 @@
         
 
     
+
+        <tr>
+            
+                <td class="name"><code>muteEnabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>If false, the bot won't mute users</p></td>
+        </tr>
+
+        
+
+    
     </tbody>
 </table>
 
@@ -1682,7 +1953,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
