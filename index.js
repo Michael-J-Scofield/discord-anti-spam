@@ -338,6 +338,7 @@ class AntiSpam extends EventEmitter {
 		};
 
 		data.messageCache.push({
+			messageID: message.id,
 			content: message.content,
 			author: message.author.id,
 			time: Date.now()
