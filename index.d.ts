@@ -42,6 +42,7 @@ declare module 'discord-anti-spam' {
 
 	type AntiSpamData = {
 		messageCache: {
+			message_id: string;
 			content: string;
 			author: Snowflake;
 			time: number;
