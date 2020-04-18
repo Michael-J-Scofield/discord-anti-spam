@@ -218,7 +218,7 @@ class AntiSpam extends EventEmitter {
 			}
 
 			try {
-				const tempMember = message.member
+				const tempMember = message.member;
 				await message.member.ban({
 					reason: 'Spamming!',
 					days: options.deleteMessagesAfterBanForPastDays
@@ -303,7 +303,7 @@ class AntiSpam extends EventEmitter {
 			}
 
 			try {
-				const tempMember = message.member
+				const tempMember = message.member;
 				await message.member.kick('Spamming!');
 				if (options.kickMessage)
 					await message.channel.send(format(options.kickMessage, message)).catch(e => {
@@ -345,7 +345,7 @@ class AntiSpam extends EventEmitter {
 			author: message.author.id,
 			time: Date.now()
 		});
-		const tempMember = message.member
+		const tempMember = message.member;
 
 		const messageMatches = data.messageCache.filter(
 			m => 	m.time > Date.now() - options.maxDuplicatesInterval &&
