@@ -38,16 +38,18 @@ const antiSpam = new AntiSpam({
 	maxDuplicatesKick: 10, // Amount of duplicate messages that trigger a warning.
 	maxDuplicatesBan: 12, // Amount of duplicate messages that trigger a warning.
 	maxDuplicatesMute: 9, // Amount of duplicate messages that trigger a warning.
-	exemptPermissions: [ 'ADMINISTRATOR'], // Bypass users with any of these permissions.
+	// Discord permission flags: https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS
+	exemptPermissions: [ 'ADMINISTRATOR'], // Bypass users with any of these permissions(These are not roles so use the flags from link above).
 	ignoreBots: true, // Ignore bot messages.
 	verbose: true, // Extended Logs from module.
 	ignoredUsers: [], // Array of User IDs that get ignored.
+	removeMessages: true, // Array of User IDs that get ignored.
 	// And many more options... See the documentation.
 });
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}.`));
 
-client.on('message', (message) => antiSpam.message(message)); 
+client.on('message', (message) => antiSpam.message(message));
 
 client.login('YOUR_SUPER_SECRET_TOKEN');
 ```

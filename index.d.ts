@@ -42,6 +42,7 @@ declare module 'discord-anti-spam' {
 
 	type AntiSpamData = {
 		messageCache: {
+			messageID: string;
 			content: string;
 			author: Snowflake;
 			time: number;
@@ -59,6 +60,7 @@ declare module 'discord-anti-spam' {
 		muteThreshold?: number;
 		maxInterval?: number;
 		muteRoleName?: string;
+		modLogChannel?: string;
 		warnMessage?: string | RichEmbed;
 		banMessage?: string | RichEmbed;
 		kickMessage?: string | RichEmbed;
@@ -80,5 +82,7 @@ declare module 'discord-anti-spam' {
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
 		muteEnabled?: boolean;
+		modlogEnabled?: boolean;
+		removeMessages?: boolean;
 	};
 }

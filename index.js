@@ -7,51 +7,56 @@ const v11 = version.split(".")[0] === "11";
 
 /**
  * Options for AntiSpam instance
- * 
+ *
  * @typedef {Object} AntiSpamOptions
- * 
+ *
  * @property {number} [warnThreshold=3] Amount of messages sent in a row that will cause a warning.
  * @property {number} [kickThreshold=5] Amount of messages sent in a row that will cause a kick.
  * @property {number} [warnThreshold=7] Amount of messages sent in a row that will cause a ban.
  * @property {number} [muteThreshold=7] Amount of messages sent in a row that will cause a mute.
- * 
+ *
  * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
  * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
- * 
+ *
  * @property {string} [muteRoleName='Muted'] Role that will be added to the user if they got muted
+ * 
+ * @property {string} [modLogChannel='mod-logs'] Name of the channel where moderation logs will be sent.
  *
  * @property {string|RichEmbed|MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in chat upon warning a user.
  * @property {string|RichEmbed|MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
  * @property {string|RichEmbed|MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in chat upon banning a user.
  * @property {string|RichEmbed|MessageEmbed} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in chat upon muting a user.
- * 
+ *
  * @property {boolean} [errorMessages=true] Whether the error messages, when the bot doesn't have enough permissions, must be sent or not
  * @property {string|RichEmbed|MessageEmbed} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to kick the member.
  * @property {string|RichEmbed|MessageEmbed} [banErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in chat when the bot doesn't have enough permissions to ban the member.
  * @property {string|RichEmbed|MessageEmbed} [muteErrorMessage='Could not mute **{user_tag}** because of improper permissions or the mute role couldn't be found.'] Message that will be sent in chat when the bot doesn't have enough permissions to mute the member.
- * 
+ *
  * @property {number} [maxDuplicatesWarning=7] Amount of duplicate messages that trigger a warning.
  * @property {number} [maxDuplicatesKick=11] Amount of duplicate messages that trigger a kick.
  * @property {number} [maxDuplicatesMute=9] Amount of duplicate messages that trigger a kick.
  * @property {number} [maxDuplicatesBan=12] Amount of duplicate messages that trigger a ban.
- * 
+ *
  * @property {number} [deleteMessagesAfterBanForPastDays=1] Amount of days in which old messages will be deleted. (1-7)
  *
  * @property {Array<string>} [exemptPermissions=[]] Bypass users with at least one of these permissions
  * @property {boolean} [ignoreBots=true] Whether bot messages are ignored
  * @property {boolean} [verbose=false] Extended Logs from module (recommended)
  * @property {boolean} [debug=false] Whether to run the module in debug mode
- * 
+ *
  * @property {Array<string>|function} [ignoredUsers=[]] Array of string user IDs that are ignored
  * @property {Array<string>|function} [ignoredRoles=[]] Array of string role IDs or role name that are ignored
  * @property {Array<string>|function} [ignoredGuilds=[]] Array of string Guild IDs that are ignored
  * @property {Array<string>|function} [ignoredChannels=[]] Array of string channels IDs that are ignored
- * 
+ *
  * @property {boolean} [warnEnabled=true] If false, the bot won't warn users
  * @property {boolean} [kickEnabled=true] If false, the bot won't kick users
  * @property {boolean} [banEnabled=true] If false, the bot won't ban users
  * @property {boolean} [muteEnabled=true] If false, the bot won't mute users
  * 
+ * @property {boolean} [modlog=false] If false, the bot won't send moderation logs in a specefic channel.
+ * @property {boolean} [removeMessages=true] If false, the bot won't delete messages of the user when a punishment happend
+ *
  */
 const clientOptions = {
 	warnThreshold: 3,
@@ -61,6 +66,7 @@ const clientOptions = {
 	maxInterval: 2000,
 	maxDuplicatesInterval: 2000,
 	muteRoleName: "Muted",
+	modLogChannel: "mod-logs",
 	warnMessage: '{@user}, Please stop spamming.',
 	muteMessage: '**{user_tag}** has been muted for spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
@@ -85,29 +91,31 @@ const clientOptions = {
 	warnEnabled: true,
 	kickEnabled: true,
 	muteEnabled: true,
-	banEnabled: true
+	banEnabled: true,
+	modlogEnabled: false,
+	removeMessages: true
 };
 
 /**
  * Cache data for the Anti Spam instance.
  * @typedef {object} AntiSpamData
- * 
+ *
  * @property {Array<object>} messageCache Array which contains the message cache
- * 
+ *
  * @property {Array<Snowflake>} warnedUsers Array of warned users
  * @property {Array<Snowflake>} kickedUsers Array of kicked users
  * @property {Array<Snowflake>} bannedUsers Array of banned users
  * @property {Array<Snowflake>} mutedUsers Array of muted users
- * 
+ *
  */
 
 /**
  * Anti Spam instance.
- * 
+ *
  * @param {AntiSpamOptions} [options] Client options.
- * 
+ *
  * @property {AntiSpamData} data Anti Spam cache data.
- * 
+ *
  * @example
  * const antiSpam = new AntiSpam({
  *   warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
@@ -154,11 +162,11 @@ class AntiSpam extends EventEmitter {
 
 	/**
 	 * Checks a message.
-	 * 
+	 *
 	 * @param {Message} message The message to check.
-	 * 
+	 *
 	 * @returns {Promise<boolean>} Whether the message has triggered a threshold.
-	 * 
+	 *
 	 * @example
 	 * client.on('message', (msg) => {
 	 * 	antiSpam.message(msg);
@@ -218,6 +226,7 @@ class AntiSpam extends EventEmitter {
 			}
 
 			try {
+				const tempMember = message.member;
 				await message.member.ban({
 					reason: 'Spamming!',
 					days: options.deleteMessagesAfterBanForPastDays
@@ -226,7 +235,12 @@ class AntiSpam extends EventEmitter {
 					await message.channel.send(format(options.banMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
-				this.emit('banAdd', message.member);
+					if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **banned**`)
+					}
+				this.emit('banAdd', tempMember);
 				return true;
 			} catch (error) {
 				const emitted = this.emit('error', message, error, 'ban');
@@ -266,6 +280,13 @@ class AntiSpam extends EventEmitter {
 					await message.channel.send(format(options.muteMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
+				if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **muted**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.muteThreshold)
 				this.emit('muteAdd', message.member);
 				return true;
 			} catch (error) {
@@ -302,12 +323,20 @@ class AntiSpam extends EventEmitter {
 			}
 
 			try {
+				const tempMember = message.member;
 				await message.member.kick('Spamming!');
 				if (options.kickMessage)
 					await message.channel.send(format(options.kickMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
-				this.emit('kickAdd', message.member);
+					if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **kicked**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.kickThreshold)
+				this.emit('kickAdd', tempMember);
 				return true;
 			} catch (error) {
 				const emitted = this.emit('error', message, error, 'kick');
@@ -327,6 +356,13 @@ class AntiSpam extends EventEmitter {
 
 		const warnUser = async () => {
 			data.warnedUsers.push(message.author.id);
+			if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **warned**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.warnThreshold)
 			this.emit('warnAdd', message.member);
 
 			if (options.warnMessage)
@@ -338,10 +374,12 @@ class AntiSpam extends EventEmitter {
 		};
 
 		data.messageCache.push({
+			messageID: message.id,
 			content: message.content,
 			author: message.author.id,
 			time: Date.now()
 		});
+		const tempMember = message.member;
 
 		const messageMatches = data.messageCache.filter(
 			m => 	m.time > Date.now() - options.maxDuplicatesInterval &&
@@ -373,7 +411,7 @@ class AntiSpam extends EventEmitter {
 			if (options.kickEnabled) await kickUser(message);
 			this.emit(
 				'spamThresholdKick',
-				message.member,
+				tempMember,
 				messageMatches === options.maxDuplicatesKick
 			);
 			return true;
@@ -383,7 +421,7 @@ class AntiSpam extends EventEmitter {
 			if (options.banEnabled) await banUser(message);
 			this.emit(
 				'spamThresholdBan',
-				message.member,
+				tempMember,
 				messageMatches === options.maxDuplicatesBan
 			);
 			return true;
@@ -395,9 +433,9 @@ class AntiSpam extends EventEmitter {
 	/**
 	 * Resets the cache data of the Anti Spam instance.
 	 * @private
-	 * 
+	 *
 	 * @returns {AntiSpamData} The cache that was just cleared.
-	 * 
+	 *
 	 * @example
 	 * const data = antiSpam.resetData();
 	 * console.log(`Cleared a total of ${data.messageCache.length} cached messages.`);
@@ -415,9 +453,9 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member is warned.
  * @event AntiSpam#warnAdd
- * 
+ *
  * @param {GuildMember} member The warned member.
- * 
+ *
  * @example
  * antiSpam.on("warnAdd", (member) => console.log(`${member.user.tag} has been warned.`));
  */
@@ -425,18 +463,18 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member is kicked.
  * @event AntiSpam#kickAdd
- * 
+ *
  * @param {GuildMember} member The kicked member.
- * 
+ *
  * @example
  * antiSpam.on("kickAdd", (member) => console.log(`${member.user.tag} has been kicked.`));
  */
 /**
  * Emitted when a member is muted.
  * @event AntiSpam#muteAdd
- * 
+ *
  * @param {GuildMember} member The muted member.
- * 
+ *
  * @example
  * antiSpam.on("muteAdd", (member) => console.log(`${member.user.tag} has been muted.`));
  */
@@ -444,9 +482,9 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member is banned.
  * @event AntiSpam#banAdd
- * 
+ *
  * @param {GuildMember} member The banned member.
- * 
+ *
  * @example
  * antiSpam.on("banAdd", (member) => console.log(`${member.user.tag} has been banned.`));
  */
@@ -454,10 +492,10 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member reaches the warn threshold.
  * @event AntiSpam#spamThresholdWarn
- * 
+ *
  * @param {GuildMember} member The member who reached the warn threshold.
  * @param {boolean} duplicate Whether the member reached the warn threshold by spamming the same message.
- * 
+ *
  * @example
  * antiSpam.on("spamThresholdWarn", (member) => console.log(`${member.user.tag} has reached the warn threshold.`));
  */
@@ -465,10 +503,10 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member reaches the kick threshold.
  * @event AntiSpam#spamThresholdKick
- * 
+ *
  * @param {GuildMember} member The member who reached the kick threshold.
  * @param {boolean} duplicate Whether the member reached the kick threshold by spamming the same message.
- * 
+ *
  * @example
  * antiSpam.on("spamThresholdKick", (member) => console.log(`${member.user.tag} has reached the kick threshold.`));
  */
@@ -476,10 +514,10 @@ class AntiSpam extends EventEmitter {
 /**
  * Emitted when a member reaches the ban threshold.
  * @event AntiSpam#spamThresholdBan
- * 
+ *
  * @param {GuildMember} member The member who reached the ban threshold.
  * @param {boolean} duplicate Whether the member reached the ban threshold by spamming the same message.
- * 
+ *
  * @example
  * antiSpam.on("spamThresholdBan", (member) => console.log(`${member.user.tag} has reached the ban threshold.`));
  */
@@ -487,11 +525,11 @@ class AntiSpam extends EventEmitter {
  /**
   * Emitted when the bot could not kick or ban a member.
   * @event AntiSpam#error
-  * 
+  *
   * @param {Message} message The Discord message
   * @param {error} error The error
   * @param {string} type The sanction type: 'kick' or 'ban' or 'mute'
-  * 
+  *
   * @example
   * antiSpam.on("error", (message, error, type) => {
   * 	console.log(`${message.author.tag} couldn't receive the sanction '${type}', error: ${error}`);
