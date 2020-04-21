@@ -19,6 +19,8 @@ const v11 = version.split(".")[0] === "11";
  * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
  *
  * @property {string} [muteRoleName='Muted'] Role that will be added to the user if they got muted
+ * 
+ * @property {string} [modLogChannel='mod-logs'] Name of the channel where moderation logs will be sent.
  *
  * @property {string|RichEmbed|MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in chat upon warning a user.
  * @property {string|RichEmbed|MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in chat upon kicking a user.
@@ -51,6 +53,9 @@ const v11 = version.split(".")[0] === "11";
  * @property {boolean} [kickEnabled=true] If false, the bot won't kick users
  * @property {boolean} [banEnabled=true] If false, the bot won't ban users
  * @property {boolean} [muteEnabled=true] If false, the bot won't mute users
+ * 
+ * @property {boolean} [modlog=false] If false, the bot won't send moderation logs in a specefic channel.
+ * @property {boolean} [removeMessages=true] If false, the bot won't delete messages of the user when a punishment happend
  *
  */
 const clientOptions = {
@@ -61,6 +66,7 @@ const clientOptions = {
 	maxInterval: 2000,
 	maxDuplicatesInterval: 2000,
 	muteRoleName: "Muted",
+	modLogChannel: "mod-logs",
 	warnMessage: '{@user}, Please stop spamming.',
 	muteMessage: '**{user_tag}** has been muted for spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
@@ -85,7 +91,9 @@ const clientOptions = {
 	warnEnabled: true,
 	kickEnabled: true,
 	muteEnabled: true,
-	banEnabled: true
+	banEnabled: true,
+	modlogEnabled: false,
+	removeMessages: true
 };
 
 /**
@@ -227,6 +235,11 @@ class AntiSpam extends EventEmitter {
 					await message.channel.send(format(options.banMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
+					if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **banned**`)
+					}
 				this.emit('banAdd', tempMember);
 				return true;
 			} catch (error) {
@@ -267,6 +280,13 @@ class AntiSpam extends EventEmitter {
 					await message.channel.send(format(options.muteMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
+				if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **muted**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.muteThreshold)
 				this.emit('muteAdd', message.member);
 				return true;
 			} catch (error) {
@@ -309,6 +329,13 @@ class AntiSpam extends EventEmitter {
 					await message.channel.send(format(options.kickMessage, message)).catch(e => {
 						if (options.verbose) console.error(e);
 					});
+					if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **kicked**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.kickThreshold)
 				this.emit('kickAdd', tempMember);
 				return true;
 			} catch (error) {
@@ -329,6 +356,13 @@ class AntiSpam extends EventEmitter {
 
 		const warnUser = async () => {
 			data.warnedUsers.push(message.author.id);
+			if(options.modlogEnabled)
+					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					if(modlogCh){
+						modlogCh.send(`Spam detected: ${message.author} got **warned**`)
+					}
+					if(options.removeMessages)
+						message.channel.bulkDelete(options.warnThreshold)
 			this.emit('warnAdd', message.member);
 
 			if (options.warnMessage)
