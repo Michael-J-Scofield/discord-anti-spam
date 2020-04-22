@@ -82,7 +82,6 @@ declare module 'discord-anti-spam' {
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
 		muteEnabled?: boolean;
-		modlogEnabled?: boolean;
 		removeMessages?: boolean;
 	};
 }
