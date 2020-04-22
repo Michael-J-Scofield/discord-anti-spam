@@ -43,7 +43,7 @@ const antiSpam = new AntiSpam({
 	ignoreBots: true, // Ignore bot messages.
 	verbose: true, // Extended Logs from module.
 	ignoredUsers: [], // Array of User IDs that get ignored.
-	removeMessages: true, // Array of User IDs that get ignored.
+	removeMessages: true, // Delete messages when a punishment got made
 	// And many more options... See the documentation.
 });
 
