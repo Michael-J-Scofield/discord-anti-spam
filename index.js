@@ -236,7 +236,7 @@ class AntiSpam extends EventEmitter {
 						if (options.verbose) console.error(e);
 					});
 					if(options.modlogEnabled)
-					let modlogCh = message.guild.channels.cache.find(ch => ch.name == options.modLogChannel)
+					const modlogCh = (v11 ? message.guild.channels : message.guild.channels.cache).find(ch => ch.name === options.modLogChannel || ch.id === options.modLogChannel)
 					if(modlogCh){
 						modlogCh.send(`Spam detected: ${message.author} got **banned**`)
 					}
