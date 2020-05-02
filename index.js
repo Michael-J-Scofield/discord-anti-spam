@@ -412,6 +412,7 @@ class AntiSpam extends EventEmitter {
 		this.data.bannedUsers = [];
 		this.data.kickedUsers = [];
 		this.data.warnedUsers = [];
+		this.data.mutedUsers = [];
 		return data;
 	}
 }
