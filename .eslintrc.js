@@ -4,7 +4,7 @@ module.exports =  {
         "eslint-plugin-tsdoc"
     ],
     extends:  [
-      'plugin:@typescript-eslint/recommended'
+        'plugin:@typescript-eslint/recommended'
     ],
     parser:  '@typescript-eslint/parser',
     parserOptions: {
@@ -14,6 +14,6 @@ module.exports =  {
         sourceType: "module"
     },
     rules: {
-      "tsdoc/syntax": "warn"
+        "tsdoc/syntax": "warn"
     }
 };
