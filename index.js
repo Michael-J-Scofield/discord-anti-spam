@@ -537,7 +537,7 @@ class AntiSpam extends EventEmitter {
  */
 
  /**
- * Emitted when a member reaches the ban threshold.
+ * Emitted when a member reaches the mute threshold.
  * @event AntiSpam#spamThresholdMute
  *
  * @param {GuildMember} member The member who reached the mute threshold.
