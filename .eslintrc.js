@@ -1,7 +1,6 @@
 module.exports =  {
     plugins: [
-        "@typescript-eslint/eslint-plugin",
-        "eslint-plugin-tsdoc"
+        "@typescript-eslint/eslint-plugin"
     ],
     extends:  [
         'plugin:@typescript-eslint/recommended'
