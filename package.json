@@ -29,7 +29,12 @@
   "author": "Michael Scofield",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-tsdoc": "^0.2.4",
     "jsdoc": "^3.6.3",
-    "minami": "^1.2.3"
+    "minami": "^1.2.3",
+    "typescript": "^3.8.3"
   }
 }
