@@ -292,8 +292,7 @@ class AntiSpam extends EventEmitter {
 				this.emit('muteAdd', message.member);
 				return true;
 			} catch (error) {
-				console.log(error)
-				// const emitted = this.emit('error', message, error, 'mute');
+				const emitted = this.emit('error', message, error, 'mute');
 				if (emitted) return false;
 				if (options.verbose)
 					console.log(
