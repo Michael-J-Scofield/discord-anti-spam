@@ -1,18 +1,24 @@
-module.exports =  {
-    plugins: [
-        "@typescript-eslint/eslint-plugin"
-    ],
-    extends:  [
-        'plugin:@typescript-eslint/recommended'
-    ],
-    parser:  '@typescript-eslint/parser',
-    parserOptions: {
-        project: "./tsconfig.json",
-        tsconfigRootDir: __dirname,
-        ecmaVersion: 2018,
-        sourceType: "module"
+module.exports = {
+    "env": {
+        "browser": true,
+        "es6": true
     },
-    rules: {
-        "tsdoc/syntax": "warn"
+    "extends": [
+        "standard"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": [ "error", "tab" ],
+        "allowIndentationTabs": true
     }
 };
