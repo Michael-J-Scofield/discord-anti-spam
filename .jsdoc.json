@@ -4,12 +4,13 @@
         "dictionaries": ["jsdoc"]
     },
     "source": {
-        "include": ["index.js", "package.json", "README.md"],
-        "includePattern": ".js$",
+        "include": ["index.ts", "package.json", "README.md"],
+        "includePattern": "\\.(ts|tsx)$",
         "excludePattern": "(node_modules/|docs)"
     },
     "plugins": [
-        "plugins/markdown"
+        "plugins/markdown",
+        "node_modules/better-docs/typescript"
     ],
     "templates": {
         "cleverLinks": false,
@@ -26,7 +27,7 @@
         "encoding": "utf8",
         "private": true,
         "recurse": true,
-        "template": "./node_modules/minami",
+        "template": "./node_modules/better-docs",
         "sort": false
     }
 }
