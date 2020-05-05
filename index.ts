@@ -1,4 +1,5 @@
-import { Collection, Role, Snowflake, TextChannel, MessageEmbed, Message, User, GuildMember, Guild, Channel, PermissionString } from 'discord.js'
+import { Collection, Role, Snowflake, TextChannel, MessageEmbed, Message, User, GuildMember, Guild, Channel, PermissionString, Client } from 'discord.js'
+import { EventEmitter } from 'events'
 
 interface IgnoreUserFunction {
 	(user: User): boolean;
@@ -65,14 +66,14 @@ interface AntiSpamClientOptions {
 	maxDuplicatesBan: number;
 
 	/**
-	 * Role that will be added to users if they got muted.
+	 * Name or ID of the role that will be added to users if they got muted.
 	 */
-	muteRoleName: string | Role | Snowflake;
+	muteRoleName: string | Snowflake;
 
 	/**
-	 * Channel in which moderation logs will be sent.
+	 * Name or ID of the channel in which moderation logs will be sent.
 	 */
-	modLogsChannel: string | TextChannel | Snowflake;
+	modLogsChannelName: string | Snowflake;
 	/**
 	 * Whether moderation logs are enabled.
 	 */
@@ -178,21 +179,25 @@ interface CachedMessage {
 	 */
 	messageID: Snowflake;
 	/**
-	 * The content of the message.
+	 * The ID of the guild where the message was sent.
 	 */
-	content: string;
+	guildID: Snowflake;
 	/**
 	 * The ID of the author of the message.
 	 */
 	authorID: Snowflake;
 	/**
+	 * The ID of the channel of the message.
+	 */
+	channelID: Snowflake;
+	/**
+	 * The content of the message.
+	 */
+	content: string;
+	/**
 	 * The timestamp the message was sent.
 	 */
 	sendAt: number;
-	/**
-	 * The ID of the guild where the message was sent.
-	 */
-	guildID: Snowflake;
 };
 
 /**
@@ -221,14 +226,10 @@ interface AntiSpamCache {
 	messages: CachedMessage[];
 };
 
-const banUser = async (member: GuildMember): Promise<boolean> => {
-
-};
-
 /**
  * Main AntiSpam class
  */
-export = class AntiSpamClient {
+export = class AntiSpamClient extends EventEmitter {
 	/**
 	 * The options for this AntiSpam client instance
 	 */
@@ -239,6 +240,7 @@ export = class AntiSpamClient {
 	public cache: AntiSpamCache;
 
 	constructor (options: AntiSpamClientOptions) {
+		super()
 		this.options = {
 
 			warnThreshold: options.warnThreshold || 3,
@@ -256,7 +258,7 @@ export = class AntiSpamClient {
 
 			muteRoleName: options.muteRoleName || 'Muted',
 
-			modLogsChannel: options.modLogsChannel || 'mod-logs',
+			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
 
 			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
@@ -296,6 +298,66 @@ export = class AntiSpamClient {
 		}
 	}
 
+	private format (string: string, message: Message): string|MessageEmbed {
+		if (typeof string === 'string') {
+			return string
+				.replace(/{@user}/g, message.author.toString())
+				.replace(/{user_tag}/g, message.author.tag)
+				.replace(/{server_name}/g, message.guild.name)
+		} else {
+			const embed = new MessageEmbed(string)
+			if (embed.description) embed.setDescription(this.format(embed.description, message))
+			if (embed.title) embed.setTitle(this.format(embed.title, message))
+			if (embed.footer && embed.footer.text) embed.footer.text = this.format(embed.footer.text, message) as string
+			if (embed.author && embed.author.name) embed.author.name = this.format(embed.author.name, message) as string
+			return embed
+		}
+	}
+
+	private log (message: string, client: Client) {
+		if (this.options.modLogsEnabled) {
+			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
+			client.channels.cache.filter((channel) => channel.type === 'text').find((channel) => (channel as TextChannel).name === this.options.modLogsChannelName)
+			if (modLogChannel) {
+				(modLogChannel as TextChannel).send(message)
+			}
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (verbose mode): ${message}`)
+			}
+		}
+	}
+
+	private async clearSpamMessages (messages: CachedMessage[], client: Client) {
+		messages.forEach((message) => {
+			const channel = (client.channels.cache.get(message.channelID) as TextChannel)
+			if (channel) {
+				const msg = channel.messages.cache.get(message.messageID)
+				if (msg) msg.delete()
+			}
+		})
+	}
+
+	private kickUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]) {
+		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
+	}
+
+	private warnUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]) {
+		if (this.options.removeMessages) {
+			this.clearSpamMessages(spamMessages, message.client)
+		}
+		this.cache.warnedUsers.push(message.author.id)
+		this.log(`Spam detected: ${message.author.tag} got **warned**`, message.client)
+		if (this.options.warnMessage) {
+			message.channel.send(this.format(this.options.warnMessage as string, message)).catch((e) => {
+				if (this.options.verbose) {
+					console.error(`DAntiSpam (verbose mode): ${e.message}`)
+				}
+			})
+		}
+		this.emit('warnAdd', member)
+		return true
+	}
+
 	/**
 	 * Checks a message.
 	 * @param {Message} message The message to check.
@@ -305,7 +367,7 @@ export = class AntiSpamClient {
 	 * 	antiSpam.message(msg);
 	 * });
 	 */
-	async message (message: Message): Promise<boolean> {
+	public async message (message: Message): Promise<boolean> {
 		const { options } = this
 
 		if (
@@ -337,6 +399,7 @@ export = class AntiSpamClient {
 			messageID: message.id,
 			guildID: message.guild.id,
 			authorID: message.author.id,
+			channelID: message.channel.id,
 			content: message.content,
 			sendAt: message.createdTimestamp
 		}
@@ -344,13 +407,42 @@ export = class AntiSpamClient {
 
 		const cachedMessages = this.cache.messages.filter((m) => m.authorID === message.author.id && m.guildID === message.guild.id)
 
-		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sendAt > (currentMessage.sendAt - options.maxDuplicatesInterval))).length
-		const spamMatches = cachedMessages.filter((m) => m.sendAt > (Date.now() - options.maxInterval)).length
+		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sendAt > (currentMessage.sendAt - options.maxDuplicatesInterval)))
+		const spamMatches = cachedMessages.filter((m) => m.sendAt > (Date.now() - options.maxInterval))
 
-		const userNeedWarn = options.warnEnabled && (spamMatches === options.warnThreshold || duplicateMatches === options.maxDuplicatesWarn) && !this.cache.warnedUsers.includes(message.author.id)
-		if (userNeedWarn) {
+		let sanctioned = false
+
+		const userCanBeKicked = options.kickEnabled && !this.cache.kickedUsers.includes(message.author.id) && !sanctioned
+		if (userCanBeKicked && (spamMatches.length >= options.warnThreshold)) {
+			this.kickUser(message, member, spamMatches)
+			sanctioned = true
+		} else if (userCanBeKicked && (duplicateMatches.length >= options.maxDuplicatesKick)) {
+			this.kickUser(message, member, duplicateMatches)
+			sanctioned = true
+		}
+
+		const userCanBeWarned = options.warnEnabled && !this.cache.warnedUsers.includes(message.author.id) && !sanctioned
+		if (userCanBeWarned && (spamMatches.length >= options.warnThreshold)) {
+			this.warnUser(message, member, spamMatches)
+			sanctioned = true
+		} else if (userCanBeWarned && (duplicateMatches.length >= options.maxDuplicatesWarn)) {
+			this.warnUser(message, member, duplicateMatches)
+			sanctioned = true
 		}
 
 		return false
+	}
+
+	/**
+	 * Reset the cache of this AntiSpam client instance.
+	 */
+	public reset () {
+		this.cache = {
+			messages: [],
+			warnedUsers: [],
+			kickedUsers: [],
+			mutedUsers: [],
+			bannedUsers: []
+		}
 	}
 }
