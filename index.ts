@@ -172,6 +172,29 @@ interface AntiSpamClientOptions {
 	removeMessages: boolean;
 };
 
+interface CachedMessage {
+	/**
+	 * The ID of the message.
+	 */
+	messageID: Snowflake;
+	/**
+	 * The content of the message.
+	 */
+	content: string;
+	/**
+	 * The ID of the author of the message.
+	 */
+	authorID: Snowflake;
+	/**
+	 * The timestamp the message was sent.
+	 */
+	sendAt: number;
+	/**
+	 * The ID of the guild where the message was sent.
+	 */
+	guildID: Snowflake;
+};
+
 /**
  * Cache data for the AntiSpamClient
  */
@@ -192,6 +215,14 @@ interface AntiSpamCache {
 	 * Array of banned users.
 	 */
 	bannedUsers: Snowflake[];
+	/**
+	 * Cached messages, used to detect spam.
+	 */
+	messages: CachedMessage[];
+};
+
+const banUser = async (member: GuildMember): Promise<boolean> => {
+
 };
 
 /**
@@ -257,6 +288,7 @@ export = class AntiSpamClient {
 		}
 
 		this.cache = {
+			messages: [],
 			warnedUsers: [],
 			kickedUsers: [],
 			mutedUsers: [],
@@ -300,6 +332,24 @@ export = class AntiSpamClient {
 		if (memberHasIgnoredRoles) return false
 
 		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
+
+		const currentMessage: CachedMessage = {
+			messageID: message.id,
+			guildID: message.guild.id,
+			authorID: message.author.id,
+			content: message.content,
+			sendAt: message.createdTimestamp
+		}
+		this.cache.messages.push(currentMessage)
+
+		const cachedMessages = this.cache.messages.filter((m) => m.authorID === message.author.id && m.guildID === message.guild.id)
+
+		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sendAt > (currentMessage.sendAt - options.maxDuplicatesInterval))).length
+		const spamMatches = cachedMessages.filter((m) => m.sendAt > (Date.now() - options.maxInterval)).length
+
+		const userNeedWarn = options.warnEnabled && (spamMatches === options.warnThreshold || duplicateMatches === options.maxDuplicatesWarn) && !this.cache.warnedUsers.includes(message.author.id)
+		if (userNeedWarn) {
+		}
 
 		return false
 	}
