@@ -1,4 +1,20 @@
-import { Role, Snowflake, TextChannel, MessageEmbed, Permissions, Message } from 'discord.js';
+import { Collection, Role, Snowflake, TextChannel, MessageEmbed, Message, User, GuildMember, Guild, Channel, PermissionString } from 'discord.js'
+
+interface IgnoreUserFunction {
+	(user: User): boolean;
+};
+
+interface IgnoreRoleFunction {
+	(roles: Collection<Snowflake, Role>, member: GuildMember): boolean;
+}
+
+interface IgnoreGuildFunction {
+	(guild: Guild): boolean;
+}
+
+interface IgnoreChannelFunction {
+	(channel: Channel): boolean;
+}
 
 /**
  * Options for the AntiSpam client
@@ -21,7 +37,7 @@ interface AntiSpamClientOptions {
 	 * Amount of messages sent in a row that will cause a ban.
 	 */
 	banThreshold: number;
-	
+
 	/**
 	 * Amount of time (ms) in which messages are considered spam.
 	 */
@@ -99,23 +115,23 @@ interface AntiSpamClientOptions {
 	/**
 	 * Array of user IDs that are ignored.
 	 */
-	ignoredUsers: Array<Snowflake|string>;
+	ignoredUsers: (Snowflake|string)[]|IgnoreUserFunction;
 	/**
 	 * Array of role IDs or role names that are ignored. Members with one of these roles will be ignored.
 	 */
-	ignoredRoles: Array<Snowflake|string>;
+	ignoredRoles: (Snowflake|string)[]|IgnoreRoleFunction;
 	/**
 	 * Array of guild IDs or guild names that are ignored.
 	 */
-	ignoredGuilds: Array<Snowflake|string>;
+	ignoredGuilds: (Snowflake|string)[]|IgnoreGuildFunction;
 	/**
 	 * Array of channel IDs or channel names that are ignored.
 	 */
-	ignoredChannels: Array<Snowflake|string>;
+	ignoredChannels: (Snowflake|string)[]|IgnoreChannelFunction;
 	/**
 	 * Users with at least one of these permissions will be ignored.
 	 */
-	exemptPermissions: string[];
+	ignoredPermissions: PermissionString[];
 	/**
 	 * Whether bots are ignored.
 	 */
@@ -181,8 +197,7 @@ interface AntiSpamCache {
 /**
  * Main AntiSpam class
  */
-class AntiSpamClient {
-
+export = class AntiSpamClient {
 	/**
 	 * The options for this AntiSpam client instance
 	 */
@@ -192,7 +207,7 @@ class AntiSpamClient {
 	 */
 	public cache: AntiSpamCache;
 
-	constructor(options: AntiSpamClientOptions){
+	constructor (options: AntiSpamClientOptions) {
 		this.options = {
 
 			warnThreshold: options.warnThreshold || 3,
@@ -208,9 +223,9 @@ class AntiSpamClient {
 			maxDuplicatesBan: options.maxDuplicatesBan || 10,
 			maxDuplicatesMute: options.maxDuplicatesMute || 9,
 
-			muteRoleName: options.muteRoleName || "Muted",
+			muteRoleName: options.muteRoleName || 'Muted',
 
-			modLogsChannel: options.modLogsChannel || "mod-logs",
+			modLogsChannel: options.modLogsChannel || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
 
 			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
@@ -219,15 +234,15 @@ class AntiSpamClient {
 			banMessage: options.banMessage || '**{user_tag}** has been banned for spamming.',
 
 			errorMessages: options.errorMessages || true,
-			kickErrorMessage: options.kickErrorMessage || "Could not kick **{user_tag}** because of improper permissions.",
-			banErrorMessage: options.banErrorMessage || "Could not ban **{user_tag}** because of improper permissions.",
-			muteErrorMessage: options.muteErrorMessage || "Could not mute **{user_tag}** because of improper permissions or the mute role couldn't be found.",
-			
+			kickErrorMessage: options.kickErrorMessage || 'Could not kick **{user_tag}** because of improper permissions.',
+			banErrorMessage: options.banErrorMessage || 'Could not ban **{user_tag}** because of improper permissions.',
+			muteErrorMessage: options.muteErrorMessage || 'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.',
+
 			ignoredUsers: options.ignoredUsers || [],
 			ignoredRoles: options.ignoredRoles || [],
 			ignoredGuilds: options.ignoredGuilds || [],
 			ignoredChannels: options.ignoredChannels || [],
-			exemptPermissions: options.exemptPermissions || [],
+			ignoredPermissions: options.ignoredPermissions || [],
 			ignoreBots: options.ignoreBots || true,
 
 			warnEnabled: options.warnEnabled || true,
@@ -239,27 +254,53 @@ class AntiSpamClient {
 			verbose: options.verbose || false,
 			debug: options.debug || false,
 			removeMessages: options.removeMessages || true
-		};
+		}
 
 		this.cache = {
 			warnedUsers: [],
 			kickedUsers: [],
 			mutedUsers: [],
 			bannedUsers: []
-		};
+		}
 	}
 
 	/**
 	 * Checks a message.
 	 * @param {Message} message The message to check.
-	 * @returns {boolean} Whether the message has triggered a threshold.
+	 * @returns {boolean} Whether the message has triggered a threshold.
 	 * @example
 	 * client.on('message', (msg) => {
 	 * 	antiSpam.message(msg);
 	 * });
 	 */
-	async message(message: Message): Promise<boolean>{
-		return true;
-	}
+	async message (message: Message): Promise<boolean> {
+		const { options } = this
 
-};
+		if (
+			!message.guild ||
+			message.author.id === message.client.user.id ||
+			(message.guild.ownerID === message.author.id && !options.debug) ||
+			(options.ignoreBots && message.author.bot)
+		) {
+			return false
+		}
+
+		const isUserIgnored = typeof options.ignoredUsers === 'function' ? options.ignoredUsers(message.author) : options.ignoredUsers.includes(message.author.id)
+		if (isUserIgnored) return false
+
+		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(message.guild) : options.ignoredGuilds.includes(message.guild.id)
+		if (isGuildIgnored) return false
+
+		const isChannelIgnored = typeof options.ignoredChannels === 'function' ? options.ignoredChannels(message.channel) : options.ignoredChannels.includes(message.channel.id)
+		if (isChannelIgnored) return false
+
+		const member = message.member || await message.guild.members.fetch(message.author)
+
+		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function' ? options.ignoredRoles(member.roles.cache, member) : options.ignoredRoles
+		if (memberHasIgnoredRoles) return false
+
+		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
+
+		return false
+	}
+}
