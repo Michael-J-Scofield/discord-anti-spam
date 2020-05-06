@@ -298,7 +298,7 @@ export = class AntiSpamClient extends EventEmitter {
 		}
 	}
 
-	private format (string: string, message: Message): string|MessageEmbed {
+	private format (string: string|MessageEmbed, message: Message): string|MessageEmbed {
 		if (typeof string === 'string') {
 			return string
 				.replace(/{@user}/g, message.author.toString())
@@ -321,9 +321,6 @@ export = class AntiSpamClient extends EventEmitter {
 			if (modLogChannel) {
 				(modLogChannel as TextChannel).send(message)
 			}
-			if (this.options.verbose) {
-				console.log(`DAntiSpam (verbose mode): ${message}`)
-			}
 		}
 	}
 
@@ -337,20 +334,51 @@ export = class AntiSpamClient extends EventEmitter {
 		})
 	}
 
-	private kickUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]) {
+	private async kickUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
+		if (this.options.removeMessages) {
+			this.clearSpamMessages(spamMessages, message.client)
+		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
+		this.cache.kickedUsers.push(message.author.id)
+		if (!member.kickable) {
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (kickUser#userNotKickable): ${message.author.tag} (ID: ${message.author.id}) could not be kicked, insufficient permissions`)
+			}
+			if (this.options.errorMessages) {
+				message.channel.send(this.format(this.options.kickMessage, message)).catch((e) => {
+					if (this.options.verbose) {
+						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
+					}
+				})
+			}
+			return false
+		} else {
+			await message.member.kick('Spamming!')
+			if (this.options.kickMessage) {
+				message.channel.send(this.format(this.options.kickMessage, message)).catch((e) => {
+					if (this.options.verbose) {
+						console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
+					}
+				})
+			}
+			if (this.options.modLogsEnabled) {
+				this.log(`Spam detected: ${message.author} got **kicked**`, message.client)
+			}
+			this.emit('kickAdd', member)
+			return true
+		}
 	}
 
-	private warnUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]) {
+	private async warnUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
 		if (this.options.removeMessages) {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.warnedUsers.push(message.author.id)
 		this.log(`Spam detected: ${message.author.tag} got **warned**`, message.client)
 		if (this.options.warnMessage) {
-			message.channel.send(this.format(this.options.warnMessage as string, message)).catch((e) => {
+			message.channel.send(this.format(this.options.warnMessage, message)).catch((e) => {
 				if (this.options.verbose) {
-					console.error(`DAntiSpam (verbose mode): ${e.message}`)
+					console.error(`DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`)
 				}
 			})
 		}
@@ -412,8 +440,17 @@ export = class AntiSpamClient extends EventEmitter {
 
 		let sanctioned = false
 
+		/* const userCanBeBanned = options.banEnabled && !this.cache.bannedUsers.includes(message.author.id) && !sanctioned
+		if (userCanBeBanned && (spamMatches.length >= options.banThreshold)) {
+			this.banUser(message, member, spamMatches)
+			sanctioned = true
+		} else if (userCanBeBanned && (duplicateMatches.length >= options.maxDuplicatesBan)) {
+			this.banUser(message, member, duplicateMatches)
+			sanctioned = true
+		} */
+
 		const userCanBeKicked = options.kickEnabled && !this.cache.kickedUsers.includes(message.author.id) && !sanctioned
-		if (userCanBeKicked && (spamMatches.length >= options.warnThreshold)) {
+		if (userCanBeKicked && (spamMatches.length >= options.kickThreshold)) {
 			this.kickUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeKicked && (duplicateMatches.length >= options.maxDuplicatesKick)) {
