@@ -334,6 +334,44 @@ export = class AntiSpamClient extends EventEmitter {
 		})
 	}
 
+	private async banUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
+		if (this.options.removeMessages) {
+			this.clearSpamMessages(spamMessages, message.client)
+		}
+		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
+		this.cache.bannedUsers.push(message.author.id)
+		if (!member.bannable) {
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (banUser#userNotBannable): ${message.author.tag} (ID: ${message.author.id}) could not be banned, insufficient permissions`)
+			}
+			if (this.options.errorMessages) {
+				message.channel.send(this.format(this.options.banMessage, message)).catch((e) => {
+					if (this.options.verbose) {
+						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
+					}
+				})
+			}
+			return false
+		} else {
+			await message.member.ban({
+				reason: 'Spamming!',
+				days: this.options.deleteMessagesAfterBanForPastDays
+			})
+			if (this.options.banMessage) {
+				message.channel.send(this.format(this.options.banMessage, message)).catch((e) => {
+					if (this.options.verbose) {
+						console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
+					}
+				})
+			}
+			if (this.options.modLogsEnabled) {
+				this.log(`Spam detected: ${message.author} got **banned**`, message.client)
+			}
+			this.emit('banAdd', member)
+			return true
+		}
+	}
+
 	private async kickUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
 		if (this.options.removeMessages) {
 			this.clearSpamMessages(spamMessages, message.client)
@@ -440,14 +478,14 @@ export = class AntiSpamClient extends EventEmitter {
 
 		let sanctioned = false
 
-		/* const userCanBeBanned = options.banEnabled && !this.cache.bannedUsers.includes(message.author.id) && !sanctioned
+		const userCanBeBanned = options.banEnabled && !this.cache.bannedUsers.includes(message.author.id) && !sanctioned
 		if (userCanBeBanned && (spamMatches.length >= options.banThreshold)) {
 			this.banUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeBanned && (duplicateMatches.length >= options.maxDuplicatesBan)) {
 			this.banUser(message, member, duplicateMatches)
 			sanctioned = true
-		} */
+		}
 
 		const userCanBeKicked = options.kickEnabled && !this.cache.kickedUsers.includes(message.author.id) && !sanctioned
 		if (userCanBeKicked && (spamMatches.length >= options.kickThreshold)) {
