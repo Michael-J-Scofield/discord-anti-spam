@@ -229,7 +229,7 @@ interface AntiSpamCache {
 /**
  * Main AntiSpam class
  */
-export = class AntiSpamClient extends EventEmitter {
+class AntiSpamClient extends EventEmitter {
 	/**
 	 * The options for this AntiSpam client instance
 	 */
@@ -569,3 +569,5 @@ export = class AntiSpamClient extends EventEmitter {
 		}
 	}
 }
+
+export = AntiSpamClient;
