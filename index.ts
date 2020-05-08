@@ -372,6 +372,45 @@ export = class AntiSpamClient extends EventEmitter {
 		}
 	}
 
+	private async muteUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
+		if (this.options.removeMessages) {
+			this.clearSpamMessages(spamMessages, message.client)
+		}
+		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
+		this.cache.mutedUsers.push(message.author.id)
+		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
+		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		if (!userCanBeMuted) {
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
+			}
+			if (this.options.errorMessages) {
+				await message.channel
+					.send(this.format(this.options.muteErrorMessage, message))
+					.catch((e) => {
+						if (this.options.verbose) {
+							console.log(`DAntiSpam (muteUser#sendMissingPermMessage): ${e.message}`)
+						}
+					})
+			}
+			return false
+		}
+		if (message.member.roles.cache.has(role.id)) return
+		await message.member.roles.add(role, 'Spamming')
+		if (this.options.muteMessage) {
+			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
+				if (this.options.verbose) {
+					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
+				}
+			})
+		}
+		if (this.options.modLogsEnabled) {
+			this.log(`Spam detected: ${message.author} got **muted**`, message.client)
+		}
+		this.emit('muteAdd', member)
+		return true
+	}
+
 	private async kickUser (message: Message, member: GuildMember, spamMessages?: CachedMessage[]): Promise<boolean> {
 		if (this.options.removeMessages) {
 			this.clearSpamMessages(spamMessages, message.client)
@@ -484,6 +523,15 @@ export = class AntiSpamClient extends EventEmitter {
 			sanctioned = true
 		} else if (userCanBeBanned && (duplicateMatches.length >= options.maxDuplicatesBan)) {
 			this.banUser(message, member, duplicateMatches)
+			sanctioned = true
+		}
+
+		const userCanBeMuted = options.muteEnabled && !this.cache.mutedUsers.includes(message.author.id) && !sanctioned
+		if (userCanBeMuted && (spamMatches.length >= options.muteThreshold)) {
+			this.banUser(message, member, spamMatches)
+			sanctioned = true
+		} else if (userCanBeMuted && (duplicateMatches.length >= options.maxDuplicatesMute)) {
+			this.muteUser(message, member, duplicateMatches)
 			sanctioned = true
 		}
 
