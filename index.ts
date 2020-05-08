@@ -515,6 +515,16 @@ class AntiSpamClient extends EventEmitter {
 		const cachedMessages = this.cache.messages.filter((m) => m.authorID === message.author.id && m.guildID === message.guild.id)
 
 		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sendAt > (currentMessage.sendAt - options.maxDuplicatesInterval)))
+		const spamOtherDuplicates: CachedMessage[] = []
+		if (duplicateMatches.length > 0) {
+			let rowBroken = false
+			cachedMessages.sort((a, b) => b.sendAt - a.sendAt).forEach(element => {
+				if (rowBroken) return
+				if (element.content !== duplicateMatches[0].content) rowBroken = true
+				else spamOtherDuplicates.push(element)
+			})
+		}
+
 		const spamMatches = cachedMessages.filter((m) => m.sendAt > (Date.now() - options.maxInterval))
 
 		let sanctioned = false
@@ -524,7 +534,7 @@ class AntiSpamClient extends EventEmitter {
 			this.banUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeBanned && (duplicateMatches.length >= options.maxDuplicatesBan)) {
-			this.banUser(message, member, duplicateMatches)
+			this.banUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
 			sanctioned = true
 		}
 
@@ -533,7 +543,7 @@ class AntiSpamClient extends EventEmitter {
 			this.banUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeMuted && (duplicateMatches.length >= options.maxDuplicatesMute)) {
-			this.muteUser(message, member, duplicateMatches)
+			this.muteUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
 			sanctioned = true
 		}
 
@@ -542,7 +552,7 @@ class AntiSpamClient extends EventEmitter {
 			this.kickUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeKicked && (duplicateMatches.length >= options.maxDuplicatesKick)) {
-			this.kickUser(message, member, duplicateMatches)
+			this.kickUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
 			sanctioned = true
 		}
 
@@ -551,7 +561,7 @@ class AntiSpamClient extends EventEmitter {
 			this.warnUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeWarned && (duplicateMatches.length >= options.maxDuplicatesWarn)) {
-			this.warnUser(message, member, duplicateMatches)
+			this.warnUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
 			sanctioned = true
 		}
 
