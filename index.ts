@@ -495,7 +495,9 @@ class AntiSpamClient extends EventEmitter {
 
 		const member = message.member || await message.guild.members.fetch(message.author)
 
-		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function' ? options.ignoredRoles(member.roles.cache, member) : options.ignoredRoles
+		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function'
+			? options.ignoredRoles(member.roles.cache, member)
+			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
 		if (memberHasIgnoredRoles) return false
 
 		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
@@ -553,7 +555,7 @@ class AntiSpamClient extends EventEmitter {
 			sanctioned = true
 		}
 
-		return false
+		return sanctioned
 	}
 
 	/**
