@@ -17,6 +17,13 @@ interface IgnoreChannelFunction {
 	(channel: Channel): boolean;
 }
 
+declare interface AntiSpamClient {
+	on(event: 'warnAdd', listener: (member: GuildMember) => void): this;
+	on(event: 'kickAdd', listener: (member: GuildMember) => void): this;
+	on(event: 'muteAdd', listener: (member: GuildMember) => void): this;
+	on(event: 'banAdd', listener: (member: GuildMember) => void): this;
+}
+
 /**
  * Options for the AntiSpam client
  */
