@@ -329,7 +329,7 @@ class AntiSpamClient extends EventEmitter {
 			const channel = (client.channels.cache.get(message.channelID) as TextChannel)
 			if (channel) {
 				const msg = channel.messages.cache.get(message.messageID)
-				if (msg) msg.delete()
+				if (msg && msg.deletable) msg.delete()
 			}
 		})
 	}
