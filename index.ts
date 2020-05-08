@@ -357,8 +357,8 @@ class AntiSpamClient extends EventEmitter {
 				reason: 'Spamming!',
 				days: this.options.deleteMessagesAfterBanForPastDays
 			})
-			if (this.options.banMessage) {
-				message.channel.send(this.format(this.options.banMessage, message)).catch((e) => {
+			if (this.options.errorMessages) {
+				message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
 					}
@@ -422,7 +422,7 @@ class AntiSpamClient extends EventEmitter {
 				console.log(`DAntiSpam (kickUser#userNotKickable): ${message.author.tag} (ID: ${message.author.id}) could not be kicked, insufficient permissions`)
 			}
 			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.kickMessage, message)).catch((e) => {
+				message.channel.send(this.format(this.options.kickErrorMessage, message)).catch((e) => {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
 					}
