@@ -345,7 +345,7 @@ class AntiSpamClient extends EventEmitter {
 				console.log(`DAntiSpam (banUser#userNotBannable): ${message.author.tag} (ID: ${message.author.id}) could not be banned, insufficient permissions`)
 			}
 			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.banMessage, message)).catch((e) => {
+				message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
 					}
