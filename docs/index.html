@@ -135,9 +135,9 @@ const antiSpam = new AntiSpam({
 	banMessage: '**{user_tag}** has been banned for spamming.', // Message that will be sent in chat upon banning a user.
 	muteMessage: '**{user_tag}** has been muted for spamming.', // Message that will be sent in chat upon muting a user.
 	maxDuplicatesWarning: 7, // Amount of duplicate messages that trigger a warning.
-	maxDuplicatesKick: 10, // Amount of duplicate messages that trigger a warning.
-	maxDuplicatesBan: 12, // Amount of duplicate messages that trigger a warning.
-	maxDuplicatesMute: 9, // Amount of duplicate messages that trigger a warning.
+	maxDuplicatesKick: 10, // Amount of duplicate messages that trigger a kick.
+	maxDuplicatesBan: 12, // Amount of duplicate messages that trigger a ban.
+	maxDuplicatesMute: 9, // Amount of duplicate messages that trigger a mute.
 	// Discord permission flags: https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS
 	exemptPermissions: [ 'ADMINISTRATOR'], // Bypass users with any of these permissions(These are not roles so use the flags from link above).
 	ignoreBots: true, // Ignore bot messages.
