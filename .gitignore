@@ -8,3 +8,7 @@ node_modules
 
 # Macos
 .DS_Store
+
+# Compiled files
+index.d.ts
+index.js
