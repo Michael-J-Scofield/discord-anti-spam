@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": true,
+        "strict": true,
+        "strictNullChecks": false
+    },
+    "include": [
+        "index.ts"
+    ]
+}

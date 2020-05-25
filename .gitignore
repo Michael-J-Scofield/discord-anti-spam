@@ -1,4 +1,14 @@
-node_modules
+# Tests
 bot.js
+
+# Node
 package-lock.json
+yarn.lock
+node_modules
+
+# Macos
 .DS_Store
+
+# Compiled files
+index.d.ts
+index.js
