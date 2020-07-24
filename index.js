@@ -494,7 +494,7 @@ class AntiSpamClient extends EventEmitter {
 
 		const userCanBeMuted = options.muteEnabled && !this.cache.mutedUsers.includes(message.author.id) && !sanctioned
 		if (userCanBeMuted && (spamMatches.length >= options.muteThreshold)) {
-			this.banUser(message, member, spamMatches)
+			this.muteUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeMuted && (duplicateMatches.length >= options.maxDuplicatesMute)) {
 			this.muteUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
