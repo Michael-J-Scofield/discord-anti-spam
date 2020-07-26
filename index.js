@@ -227,7 +227,7 @@ class AntiSpamClient extends EventEmitter {
 	log (message, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
-			message.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName)
+			message.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'text')
 			if (modLogChannel) {
 				modLogChannel.send(message)
 			}
