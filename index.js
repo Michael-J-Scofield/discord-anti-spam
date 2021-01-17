@@ -424,8 +424,32 @@ class AntiSpamClient extends EventEmitter {
 	 */
 	async message (message) {
 		const { options } = this
+		if (
+			!message.guild ||
+			message.author.id === message.client.user.id ||
+			(message.guild.ownerID === message.author.id && !options.debug) ||
+			(options.ignoreBots && message.author.bot)
+		) {
+			return false
+		}
+
+		const isMemberIgnored = typeof options.ignoredMembers === 'function' ? options.ignoredMembers(message.member) : options.ignoredMembers.includes(message.author.id)
+		if (isMemberIgnored) return false
+
+		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(message.guild) : options.ignoredGuilds.includes(message.guild.id)
+		if (isGuildIgnored) return false
+
+		const isChannelIgnored = typeof options.ignoredChannels === 'function' ? options.ignoredChannels(message.channel) : options.ignoredChannels.includes(message.channel.id)
+		if (isChannelIgnored) return false
 
 		const member = message.member || await message.guild.members.fetch(message.author)
+
+		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function'
+			? options.ignoredRoles(member.roles.cache)
+			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
+		if (memberHasIgnoredRoles) return false
+
+		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
 
 		const currentMessage = {
 			messageID: message.id,
