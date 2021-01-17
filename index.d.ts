@@ -81,5 +81,8 @@ declare module 'discord-anti-spam' {
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
 		muteEnabled?: boolean;
+		muteRoleName?: String;
+		modLogsChannelName?: String;
+		modLogsEnabled?: boolean;
 	};
 }
