@@ -221,13 +221,14 @@ class AntiSpamClient extends EventEmitter {
 	/**
 	 * Send a message to the logs channel
 	 * @ignore
+	 * @param {Discord.Message} msg The message to check the channel with
 	 * @param {string} message The message to log
 	 * @param {Discord.Client} client The Discord client that will send the message
 	 */
-	log (message, client) {
+	log (msg, message, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
-			message.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'text')
+			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'text')
 			if (modLogChannel) {
 				modLogChannel.send(message)
 			}
@@ -290,7 +291,7 @@ class AntiSpamClient extends EventEmitter {
 				})
 			}
 			if (this.options.modLogsEnabled) {
-				this.log(`Spam detected: ${message.author} got **banned**`, message.client)
+				this.log(message, `Spam detected: ${message.author} got **banned**`, message.client)
 			}
 			this.emit('banAdd', member)
 			return true
@@ -311,7 +312,7 @@ class AntiSpamClient extends EventEmitter {
 		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
-		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
+		const role = message.guild.roles.cache.find(role => role.name === "Muted")
 		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
@@ -338,7 +339,7 @@ class AntiSpamClient extends EventEmitter {
 			})
 		}
 		if (this.options.modLogsEnabled) {
-			this.log(`Spam detected: ${message.author} got **muted**`, message.client)
+			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
 		}
 		this.emit('muteAdd', member)
 		return true
@@ -380,7 +381,7 @@ class AntiSpamClient extends EventEmitter {
 				})
 			}
 			if (this.options.modLogsEnabled) {
-				this.log(`Spam detected: ${message.author} got **kicked**`, message.client)
+				this.log(message, `Spam detected: ${message.author} got **kicked**`, message.client)
 			}
 			this.emit('kickAdd', member)
 			return true
@@ -400,7 +401,7 @@ class AntiSpamClient extends EventEmitter {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.warnedUsers.push(message.author.id)
-		this.log(`Spam detected: ${message.author.tag} got **warned**`, message.client)
+		this.log(message, `Spam detected: ${message.author.tag} got **warned**`, message.client)
 		if (this.options.warnMessage) {
 			message.channel.send(this.format(this.options.warnMessage, message)).catch((e) => {
 				if (this.options.verbose) {
@@ -424,32 +425,7 @@ class AntiSpamClient extends EventEmitter {
 	async message (message) {
 		const { options } = this
 
-		if (
-			!message.guild ||
-			message.author.id === message.client.user.id ||
-			(message.guild.ownerID === message.author.id && !options.debug) ||
-			(options.ignoreBots && message.author.bot)
-		) {
-			return false
-		}
-
-		const isMemberIgnored = typeof options.ignoredMembers === 'function' ? options.ignoredMembers(message.member) : options.ignoredMembers.includes(message.author.id)
-		if (isMemberIgnored) return false
-
-		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(message.guild) : options.ignoredGuilds.includes(message.guild.id)
-		if (isGuildIgnored) return false
-
-		const isChannelIgnored = typeof options.ignoredChannels === 'function' ? options.ignoredChannels(message.channel) : options.ignoredChannels.includes(message.channel.id)
-		if (isChannelIgnored) return false
-
 		const member = message.member || await message.guild.members.fetch(message.author)
-
-		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function'
-			? options.ignoredRoles(member.roles.cache)
-			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
-		if (memberHasIgnoredRoles) return false
-
-		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
 
 		const currentMessage = {
 			messageID: message.id,
@@ -464,6 +440,7 @@ class AntiSpamClient extends EventEmitter {
 		const cachedMessages = this.cache.messages.filter((m) => m.authorID === message.author.id && m.guildID === message.guild.id)
 
 		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sentTimestamp > (currentMessage.sentTimestamp - options.maxDuplicatesInterval)))
+
 
 		/**
 		 * Duplicate messages sent before the threshold is triggered
@@ -492,9 +469,10 @@ class AntiSpamClient extends EventEmitter {
 			sanctioned = true
 		}
 
+
 		const userCanBeMuted = options.muteEnabled && !this.cache.mutedUsers.includes(message.author.id) && !sanctioned
 		if (userCanBeMuted && (spamMatches.length >= options.muteThreshold)) {
-			this.banUser(message, member, spamMatches)
+			this.muteUser(message, member, spamMatches)
 			sanctioned = true
 		} else if (userCanBeMuted && (duplicateMatches.length >= options.maxDuplicatesMute)) {
 			this.muteUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
