@@ -1,4 +1,4 @@
-# THIS IS THE DEV BRANCH! It's been used for development, DO NOT USE THIS OPTIONS FOR MAIN USE!!!!!!!
+<p align="center"><a href="https://nodei.co/npm/discord-anti-spam/"><img src="https://nodei.co/npm/discord-anti-spam.png"></a></p>
 
 # discord-anti-spam.js
 
