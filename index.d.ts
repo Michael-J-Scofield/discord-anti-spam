@@ -59,7 +59,6 @@ declare module 'discord-anti-spam' {
 		kickThreshold?: number;
 		muteThreshold?: number;
 		maxInterval?: number;
-		muteRoleName?: string;
 		warnMessage?: string | RichEmbed;
 		banMessage?: string | RichEmbed;
 		kickMessage?: string | RichEmbed;
