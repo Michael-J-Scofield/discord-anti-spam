@@ -72,7 +72,7 @@ declare module 'discord-anti-spam' {
 		ignoreBots?: boolean;
 		verbose?: boolean;
 		debug?: boolean;
-		ignoredUsers?: Snowflake[] | ((user: User) => boolean);
+		ignoredMembers?: Snowflake[] | ((user: User) => boolean);
 		ignoredRoles?: (Snowflake | string)[] | ((role: Role) => boolean);
 		ignoredGuilds?: Snowflake[] | ((guild: Guild) => boolean);
 		ignoredChannels?: Snowflake[] | ((channel: TextChannel) => boolean);
