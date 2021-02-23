@@ -261,9 +261,6 @@ class AntiSpamClient extends EventEmitter {
 	 * @returns {Promise<boolean>} Whether the member could be banned.
 	 */
 	async banUser (message, member, spamMessages) {
-		if (this.options.removeMessages && spamMessages) {
-			this.clearSpamMessages(spamMessages, message.client)
-		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.bannedUsers.push(message.author.id)
 		if (!member.bannable) {
