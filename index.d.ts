@@ -9,6 +9,7 @@ import {
 	Message,
 	DiscordAPIError,
 	RichEmbed,
+	MessageEmbed,
 	Role
 } from 'discord.js';
 declare module 'discord-anti-spam' {
@@ -59,10 +60,10 @@ declare module 'discord-anti-spam' {
 		kickThreshold?: number;
 		muteThreshold?: number;
 		maxInterval?: number;
-		warnMessage?: string | RichEmbed;
-		banMessage?: string | RichEmbed;
-		kickMessage?: string | RichEmbed;
-		muteMessage?: string | RichEmbed;
+		warnMessage?: string | RichEmbed | MessageEmbed;
+		banMessage?: string | RichEmbed | MessageEmbed;
+		kickMessage?: string | RichEmbed | MessageEmbed;
+		muteMessage?: string | RichEmbed | MessageEmbed;
 		maxDuplicatesWarning?: number;
 		maxDuplicatesBan?: number;
 		maxDuplicatesKick?: number;
