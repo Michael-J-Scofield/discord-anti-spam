@@ -290,14 +290,15 @@ class AntiSpamClient extends EventEmitter {
 			await message.member.ban({
 				reason: 'Spamming!',
 				days: this.options.deleteMessagesAfterBanForPastDays
-			})
-			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
-					}
-				})
-			}
+			}).catch(e => {
+        if (this.options.errorMessages) {
+          message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
+            if (this.options.verbose) {
+              console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
+            }
+          })
+        }
+      })
 			if (this.options.modLogsEnabled) {
 				this.log(message, `Spam detected: ${message.author} got **banned**`, message.client)
 			}
