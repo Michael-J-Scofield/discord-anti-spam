@@ -243,13 +243,21 @@ class AntiSpamClient extends EventEmitter {
 	 * @returns {Promise<void>}
 	 */
 	async clearSpamMessages (messages, client) {
-		messages.forEach((message) => {
-			const channel = client.channels.cache.get(message.channelID)
-			if (channel) {
-				const msg = channel.messages.cache.get(message.messageID)
-				if (msg && msg.deletable) msg.delete()
+		try {
+			messages.forEach((message) => {
+				const channel = client.channels.cache.get(message.channelID)
+				if (channel) {
+					const msg = channel.messages.cache.get(message.messageID)
+					if (msg && msg.deletable) msg.delete()
+				}
+			})
+		} catch (e) {
+			if(e){
+				if (this.options.verbose) {
+					console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`);
+				}
 			}
-		})
+		}
 	}
 
 	/**
