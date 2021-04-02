@@ -84,5 +84,8 @@ declare module 'discord-anti-spam' {
 		muteRoleName?: String;
 		modLogsChannelName?: string;
 		modLogsEnabled?: boolean;
+		removeMessages?: boolean;
+		removeBotMessages?: boolean;
+		removeBotMessagesAfter?: number;
 	};
 }
