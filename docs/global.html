@@ -27,7 +27,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpam.html">AntiSpam</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpam.html#resetData">resetData</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdBan">spamThresholdBan</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdKick">spamThresholdKick</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:spamThresholdWarn">spamThresholdWarn</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpam.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#format">format</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -112,203 +112,6 @@
     
 
     
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="format"><span class="type-signature"></span>format<span class="signature">(string, message)</span><span class="type-signature"> &rarr; {string|RichEmbed|MessageEmbed}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>This function formats a string by replacing some keywords with variables</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>string</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <p>The non-formatted string or RichEmbed</p>
-                
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>message</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>object</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <p>The Discord Message object</p>
-                
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-    </dd>
-</dl>
-
-
-<div class="param-desc">
-    <p>The formatted string</p>
-</div>
-
-    
-</div>
-
-
-
-</div>
-        
-    
 
     
         <h3 class="subsection-title">Type Definitions</h3>
@@ -316,13 +119,13 @@
         
                 
 <div class="section-members">
-<h4 class="name" id="AntiSpamData">AntiSpamData</h4>
+<h4 class="name" id="AntiSpamCache">AntiSpamCache</h4>
 
 
 
 
 <div class="description">
-    <p>Cache data for the Anti Spam instance.</p>
+    <p>Cache data for the AntiSpamClient</p>
 </div>
 
 
@@ -355,38 +158,13 @@
 
         <tr>
             
-                <td class="name"><code>messageCache</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array.&lt;object></code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Array which contains the message cache</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
                 <td class="name"><code>warnedUsers</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><code>Array.&lt;Snowflake></code></span>
+<span class="param-type"><code>Array.&lt;Discord.Snowflake></code></span>
 
 
             
@@ -396,29 +174,10 @@
 
             
 
-            <td class="description last"><p>Array of warned users</p></td>
+            <td class="description last"><p>Array of warned users.</p></td>
         </tr>
 
-        <tr>
-            
-            <td class="name"><code>mutedUsers</code></td>
         
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>Array.&lt;Snowflake></code></span>
-
-
-        
-        </td>
-
-        
-
-        
-
-        <td class="description last"><p>Array of muted users</p></td>
-    </tr>
 
     
 
@@ -430,7 +189,7 @@
             <td class="type">
             
                 
-<span class="param-type"><code>Array.&lt;Snowflake></code></span>
+<span class="param-type"><code>Array.&lt;Discord.Snowflake></code></span>
 
 
             
@@ -440,7 +199,32 @@
 
             
 
-            <td class="description last"><p>Array of kicked users</p></td>
+            <td class="description last"><p>Array of kicked users.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mutedUsers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Array.&lt;Discord.Snowflake></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of muted users.</p></td>
         </tr>
 
         
@@ -455,7 +239,7 @@
             <td class="type">
             
                 
-<span class="param-type"><code>Array.&lt;Snowflake></code></span>
+<span class="param-type"><code>Array.&lt;Discord.Snowflake></code></span>
 
 
             
@@ -465,7 +249,32 @@
 
             
 
-            <td class="description last"><p>Array of banned users</p></td>
+            <td class="description last"><p>Array of banned users.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Array.&lt;<a href="global.html#CachedMessage">CachedMessage</a>></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of cached messages, used to detect spam.</p></td>
         </tr>
 
         
@@ -514,16 +323,6 @@
 
 
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type"><code>object</code></span>
-
-
-        </li>
-    </ul>
-
 
 
 
@@ -533,13 +332,13 @@
             
                 
 <div class="section-members">
-<h4 class="name" id="AntiSpamOptions">AntiSpamOptions</h4>
+<h4 class="name" id="AntiSpamClientOptions">AntiSpamClientOptions</h4>
 
 
 
 
 <div class="description">
-    <p>Options for AntiSpam instance</p>
+    <p>Options for the AntiSpam client</p>
 </div>
 
 
@@ -609,41 +408,6 @@
             <td class="description last"><p>Amount of messages sent in a row that will cause a warning.</p></td>
         </tr>
 
-        <tr>
-            
-            <td class="name"><code>muteThreshold</code></td>
-        
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>number</code></span>
-
-
-        
-        </td>
-
-        
-            <td class="attributes">
-            
-                &lt;optional><br>
-            
-
-            
-            </td>
-        
-
-        
-            <td class="default">
-            
-                3
-            
-            </td>
-        
-
-        <td class="description last"><p>Amount of messages sent in a row that will cause a mute.</p></td>
-    </tr>
-
         
 
     
@@ -689,7 +453,7 @@
 
         <tr>
             
-                <td class="name"><code>banThreshold</code></td>
+                <td class="name"><code>muteThreshold</code></td>
             
 
             <td class="type">
@@ -715,6 +479,45 @@
                 <td class="default">
                 
                     7
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of messages sent in a row that will cause a mute.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banThreshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    4
                 
                 </td>
             
@@ -806,351 +609,6 @@
 
         <tr>
             
-                <td class="name"><code>warnMessage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    '{@user}, Please stop spamming.'
-                
-                </td>
-            
-
-            <td class="description last"><p>Message that will be sent in chat upon warning a user.</p></td>
-        </tr>
-
-        <tr>
-            
-            <td class="name"><code>muteMessage</code></td>
-        
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-        
-        </td>
-
-        
-            <td class="attributes">
-            
-                &lt;optional><br>
-            
-
-            
-            </td>
-        
-
-        
-            <td class="default">
-            
-                '**{user_tag}** has been muted for spamming.'
-            
-            </td>
-        
-
-        <td class="description last"><p>Message that will be sent in chat upon muting a user.</p></td>
-    </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>kickMessage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    '**{user_tag}** has been kicked for spamming.'
-                
-                </td>
-            
-
-            <td class="description last"><p>Message that will be sent in chat upon kicking a user.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>banMessage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    '**{user_tag}** has been banned for spamming.'
-                
-                </td>
-            
-
-            <td class="description last"><p>Message that will be sent in chat upon banning a user.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>errorMessages</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>boolean</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last"><p>Whether the error messages, when the bot doesn't have enough permissions, must be sent or not</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>kickErrorMessage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'Could not kick **{user_tag}** because of improper permissions.'
-                
-                </td>
-            
-
-            <td class="description last"><p>Message that will be sent in chat when the bot doesn't have enough permissions to kick the member.</p></td>
-        </tr>
-        <tr>
-            
-            <td class="name"><code>muteErrorMessage</code></td>
-        
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-        
-        </td>
-
-        
-            <td class="attributes">
-            
-                &lt;optional><br>
-            
-
-            
-            </td>
-        
-
-        
-            <td class="default">
-            
-                'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'
-            
-            </td>
-        
-
-        <td class="description last"><p>Message that will be sent in chat when the bot doesn't have enough permissions to mute the member or if the mute role couldn' t be found!.</p></td>
-    </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>banErrorMessage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>RichEmbed</code></span>
-|
-
-<span class="param-type"><code>MessageEmbed</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'Could not ban **{user_tag}** because of improper permissions.'
-                
-                </td>
-            
-
-            <td class="description last"><p>Message that will be sent in chat when the bot doesn't have enough permissions to ban the member.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
                 <td class="name"><code>maxDuplicatesWarn</code></td>
             
 
@@ -1181,42 +639,8 @@
                 </td>
             
 
-            <td class="description last"><p>Amount of duplicate messages that trigger a warn.</p></td>
+            <td class="description last"><p>Amount of duplicate messages that trigger a warning.</p></td>
         </tr>
-        <tr>
-            
-            <td class="name"><code>maxDuplicatesMute</code></td>
-        
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>number</code></span>
-
-
-        
-        </td>
-
-        
-            <td class="attributes">
-            
-                &lt;optional><br>
-            
-
-            
-            </td>
-        
-
-        
-            <td class="default">
-            
-                7
-            
-            </td>
-        
-
-        <td class="description last"><p>Amount of duplicate messages that trigger a mute.</p></td>
-    </tr>
 
         
 
@@ -1249,12 +673,51 @@
             
                 <td class="default">
                 
-                    10
+                    5
                 
                 </td>
             
 
             <td class="description last"><p>Amount of duplicate messages that trigger a kick.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxDuplicatesMute</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    7
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of duplicate messages that trigger a mute.</p></td>
         </tr>
 
         
@@ -1302,13 +765,16 @@
 
         <tr>
             
-                <td class="name"><code>deleteMessagesAfterBanForPastDays</code></td>
+                <td class="name"><code>muteRoleName</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><code>number</code></span>
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.Snowflake</code></span>
 
 
             
@@ -1327,12 +793,12 @@
             
                 <td class="default">
                 
-                    1
+                    'Muted'
                 
                 </td>
             
 
-            <td class="description last"><p>Amount of days in which old messages will be deleted. (1-7)</p></td>
+            <td class="description last"><p>Name or ID of the role that will be added to users if they got muted.</p></td>
         </tr>
 
         
@@ -1341,13 +807,424 @@
 
         <tr>
             
-                <td class="name"><code>exemptPermissions</code></td>
+                <td class="name"><code>modLogsChannelName</code></td>
             
 
             <td class="type">
             
                 
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.Snowflake</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'mod-logs'
+                
+                </td>
+            
+
+            <td class="description last"><p>Name or ID of the channel in which moderation logs will be sent.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>modLogsEnabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether moderation logs are enabled.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>warnMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '{@user}, Please stop spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when someone is warned.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>kickMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '**{user_tag}** has been muted for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when someone is kicked.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '**{user_tag}** has been kicked for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when someone is muted.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+|
+
+<span class="param-type"><code>Discord.MessageEmbed</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '**{user_tag}** has been banned for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when someone is banned.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>errorMessages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>kickErrorMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'Could not kick **{user_tag}** because of improper permissions.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when the bot doesn't have enough permissions to kick the member.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteErrorMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'Could not ban **{user_tag}** because of improper permissions.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when the bot doesn't have enough permissions to mute the member (to add the mute role).</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banErrorMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Message that will be sent in the channel when the bot doesn't have enough permissions to ban the member.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoredMembers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+|
+
 <span class="param-type"><code>Array.&lt;string></code></span>
+|
+
+<span class="param-type"><code><a href="global.html#IgnoreMemberFunction">IgnoreMemberFunction</a></code></span>
 
 
             
@@ -1371,7 +1248,181 @@
                 </td>
             
 
-            <td class="description last"><p>Bypass users with at least one of these permissions</p></td>
+            <td class="description last"><p>Array of member IDs that are ignored.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoredRoles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+|
+
+<span class="param-type"><code>Array.&lt;string></code></span>
+|
+
+<span class="param-type"><code><a href="global.html#IgnoreRoleFunction">IgnoreRoleFunction</a></code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last"><p>Array of role IDs or role names that are ignored. Members with one of these roles will be ignored.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoredGuilds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+|
+
+<span class="param-type"><code>Array.&lt;string></code></span>
+|
+
+<span class="param-type"><code><a href="global.html#IgnoreGuildFunction">IgnoreGuildFunction</a></code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last"><p>Array of guild IDs or guild names that are ignored.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoredChannels</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+|
+
+<span class="param-type"><code>Array.&lt;string></code></span>
+|
+
+<span class="param-type"><code><a href="global.html#IgnoreChannelFunction">IgnoreChannelFunction</a></code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last"><p>Array of channel IDs or channel names that are ignored.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoredPermissions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Array.&lt;Discord.PermissionString></code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last"><p>Users with at least one of these permissions will be ignored.</p></td>
         </tr>
 
         
@@ -1410,253 +1461,7 @@
                 </td>
             
 
-            <td class="description last"><p>Whether bot messages are ignored</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>verbose</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>boolean</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>Extended Logs from module (recommended)</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>debug</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>boolean</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>Whether to run the module in debug mode</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ignoredUsers</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array.&lt;string></code></span>
-|
-
-<span class="param-type"><code>function</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    []
-                
-                </td>
-            
-
-            <td class="description last"><p>Array of string user IDs that are ignored</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ignoredRoles</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array.&lt;string></code></span>
-|
-
-<span class="param-type"><code>function</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    []
-                
-                </td>
-            
-
-            <td class="description last"><p>Array of string role IDs or role name that are ignored</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ignoredGuilds</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array.&lt;string></code></span>
-|
-
-<span class="param-type"><code>function</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    []
-                
-                </td>
-            
-
-            <td class="description last"><p>Array of string Guild IDs that are ignored</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ignoredChannels</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array.&lt;string></code></span>
-|
-
-<span class="param-type"><code>function</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    []
-                
-                </td>
-            
-
-            <td class="description last"><p>Array of string channels IDs that are ignored</p></td>
+            <td class="description last"><p>Whether bots should be ignored.</p></td>
         </tr>
 
         
@@ -1695,42 +1500,8 @@
                 </td>
             
 
-            <td class="description last"><p>If false, the bot won't mute users</p></td>
-        </tr>\
-        <tr>
-            
-            <td class="name"><code>muteEnabled</code></td>
-        
-
-        <td class="type">
-        
-            
-<span class="param-type"><code>boolean</code></span>
-
-
-        
-        </td>
-
-        
-            <td class="attributes">
-            
-                &lt;optional><br>
-            
-
-            
-            </td>
-        
-
-        
-            <td class="default">
-            
-                true
-            
-            </td>
-        
-
-        <td class="description last"><p>If false, the bot won't mute users</p></td>
-    </tr>
+            <td class="description last"><p>Whether warn sanction is enabled.</p></td>
+        </tr>
 
         
 
@@ -1768,7 +1539,46 @@
                 </td>
             
 
-            <td class="description last"><p>If false, the bot won't kick users</p></td>
+            <td class="description last"><p>Whether kick sanction is enabled.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteEnabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether mute sanction is enabled.</p></td>
         </tr>
 
         
@@ -1807,145 +1617,242 @@
                 </td>
             
 
-            <td class="description last"><p>If false, the bot won't ban users</p></td>
+            <td class="description last"><p>Whether ban sanction is enabled.</p></td>
         </tr>
+
+        
+
+    
 
         <tr>
             
-            <td class="name"><code>muteRoleName</code></td>
-        
-
-        <td class="type">
-        
+                <td class="name"><code>deleteMessagesAfterBanForPastDays</code></td>
             
-<span class="param-type"><code>String</code></span>
 
-
-        
-        </td>
-
-        
-            <td class="attributes">
+            <td class="type">
             
-                &lt;optional><br>
-            
+                
+<span class="param-type"><code>number</code></span>
+
 
             
             </td>
-        
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>When a user is banned, their messages sent in the last x days will be deleted.</p></td>
+        </tr>
 
         
-            <td class="default">
+
+    
+
+        <tr>
             
-                'Muted'
+                <td class="name"><code>verbose</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
             
             </td>
-        
 
-        <td class="description last"><p>Name of the role given to the users on mute</td>
-    </tr>
-    <tr>
             
-        <td class="name"><code>modLogsChannelName</code></td>
-    
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-    <td class="type">
-    
-        
-<span class="param-type"><code>String</code></span>
-
-
-    
-    </td>
-
-    
-        <td class="attributes">
-        
-            &lt;optional><br>
-        
-
-        
-        </td>
-    
-
-    
-        <td class="default">
-        
-            'mod-logs'
-        
-        </td>
-    
-
-    <td class="description last"><p>Name of the modlogs channel</td>
-</tr>
-<tr>
+                
+                </td>
             
-    <td class="name"><code>modLogsEnabled</code></td>
 
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-<td class="type">
+            <td class="description last"><p>Extended logs from module (recommended).</p></td>
+        </tr>
+
+        
 
     
+
+        <tr>
+            
+                <td class="name"><code>debug</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><code>boolean</code></span>
 
 
-
-</td>
-
-
-    <td class="attributes">
-    
-        &lt;optional><br>
-    
-
-    
-    </td>
-
-
-
-    <td class="default">
-    
-        false
-    
-    </td>
-
-
-<td class="description last"><p>If should be turned on!</td>
-</tr>
-<tr>
             
-    <td class="name"><code>removeMessages</code></td>
+            </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-<td class="type">
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to run the module in debug mode.</p></td>
+        </tr>
+
+        
 
     
+
+        <tr>
+            
+                <td class="name"><code>removeMessages</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><code>boolean</code></span>
 
 
+            
+            </td>
 
-</td>
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
+            
 
-    <td class="attributes">
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to delete user messages after a sanction.</p></td>
+        </tr>
+
+        
+
     
-        &lt;optional><br>
-    
+
+        <tr>
+            
+                <td class="name"><code>removeBotMessages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to delete bot messages after an time.</p></td>
+        </tr>
+
+        
 
     
-    </td>
+
+        <tr>
+            
+                <td class="name"><code>removeBotMessagesAfter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
 
 
+            
+            </td>
 
-    <td class="default">
-    
-        true
-    
-    </td>
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
+            
 
-<td class="description last"><p>If the bot should remove the messages on action!</td>
-</tr>
+            
+                <td class="default">
+                
+                    10000
+                
+                </td>
+            
+
+            <td class="description last"><p>Whenever to delete bot messages. IN MILLISECONDS</p></td>
+        </tr>
 
         
 
@@ -1993,15 +1900,243 @@
 
 
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
+
+
+
+
+</div>
+
             
-<span class="param-type"><code>Object</code></span>
+                
+<div class="section-members">
+<h4 class="name" id="CachedMessage">CachedMessage</h4>
 
 
-        </li>
-    </ul>
+
+
+<div class="description">
+    <p>Cached message.</p>
+</div>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>messageID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guildID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the guild where the message was sent.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>authorID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the author of the message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>channelID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Snowflake</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the channel of the message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The content of the message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sentTimestamp</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The timestamp the message was sent.</p></td>
+        </tr>
+
+        
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
 
 
 
@@ -2009,6 +2144,634 @@
 
 </div>
 
+            
+                
+<div class="section-method">
+
+    
+
+    
+    <h4 class="name" id="IgnoreChannelFunction"><span class="type-signature"></span>IgnoreChannelFunction<span class="signature">(channel)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>channel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Channel</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The channel to check</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    <p>Whether the channel should be ignored</p>
+</div>
+
+    
+</div>
+
+
+
+
+
+</div>
+            
+                
+<div class="section-method">
+
+    
+
+    
+    <h4 class="name" id="IgnoreGuildFunction"><span class="type-signature"></span>IgnoreGuildFunction<span class="signature">(guild)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guild</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Guild</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The guild to check</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    <p>Whether the guild should be ignored</p>
+</div>
+
+    
+</div>
+
+
+
+
+
+</div>
+            
+                
+<div class="section-method">
+
+    
+
+    
+    <h4 class="name" id="IgnoreMemberFunction"><span class="type-signature"></span>IgnoreMemberFunction<span class="signature">(member)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>member</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.GuildMember</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The member to check</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    <p>Whether the member should be ignored</p>
+</div>
+
+    
+</div>
+
+
+
+
+
+</div>
+            
+                
+<div class="section-method">
+
+    
+
+    
+    <h4 class="name" id="IgnoreRoleFunction"><span class="type-signature"></span>IgnoreRoleFunction<span class="signature">(role)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>role</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Discord.Collection.&lt;Discord.Snowflake, Discord.Role></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The role to check</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    <p>Whether the user should be ignored</p>
+</div>
+
+    
+</div>
+
+
+
+
+
+</div>
             
     
 
@@ -2025,7 +2788,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

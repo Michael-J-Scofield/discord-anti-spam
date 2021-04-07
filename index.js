@@ -96,6 +96,9 @@ const { EventEmitter } = require('events')
  * @property {boolean} [verbose=false] Extended logs from module (recommended).
  * @property {boolean} [debug=false] Whether to run the module in debug mode.
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
+ * 
+ * @property {boolean} [removeBotMessages=false] Whether to delete bot messages after an time.
+ * @property {number} [removeBotMessagesAfter=10000] Whenever to delete bot messages. IN MILLISECONDS
  */
 
 /**
@@ -179,7 +182,10 @@ class AntiSpamClient extends EventEmitter {
 			deleteMessagesAfterBanForPastDays: options.deleteMessagesAfterBanForPastDays || 1,
 			verbose: options.verbose || false,
 			debug: options.debug || false,
-			removeMessages: options.removeMessages || true
+			removeMessages: options.removeMessages || true,
+
+			removeBotMessages: options.removeBotMessages || false,
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
 		}
 
 		/**
@@ -243,13 +249,39 @@ class AntiSpamClient extends EventEmitter {
 	 * @returns {Promise<void>}
 	 */
 	async clearSpamMessages (messages, client) {
-		messages.forEach((message) => {
-			const channel = client.channels.cache.get(message.channelID)
-			if (channel) {
-				const msg = channel.messages.cache.get(message.messageID)
-				if (msg && msg.deletable) msg.delete()
+		try {
+			messages.forEach((message) => {
+				const channel = client.channels.cache.get(message.channelID)
+				if (channel) {
+					const msg = channel.messages.cache.get(message.messageID)
+					if (msg && msg.deletable) msg.delete()
+				}
+			})
+		} catch (e) {
+			if(e){
+				if (this.options.verbose) {
+					console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`);
+				}
 			}
-		})
+		}
+	}
+	/**
+	 * Delete bot messages
+	 * @ignore
+	 * @param {Discord.Message} message Bot message object to delete
+	 * @returns {Promise<void>}
+	 */
+	async clearBotMessages(message){
+		if(this.options.removeBotMessages == false) return;
+		try {
+			setTimeout(function(){message.delete() }, this.options.removeBotMessagesAfter);
+		} catch(e){
+			if(this.options.verbose){
+				if (this.options.verbose) {
+					console.log(`DAntiSpam (clearBotmMessages#failed): The message(s) couldn't be deleted!`);
+				}
+			}
+		}
 	}
 
 	/**
@@ -271,10 +303,12 @@ class AntiSpamClient extends EventEmitter {
 				console.log(`DAntiSpam (banUser#userNotBannable): ${message.author.tag} (ID: ${message.author.id}) could not be banned, insufficient permissions`)
 			}
 			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
+				let send = message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
 					}
+				}).then(msg => {
+					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -282,14 +316,17 @@ class AntiSpamClient extends EventEmitter {
 			await message.member.ban({
 				reason: 'Spamming!',
 				days: this.options.deleteMessagesAfterBanForPastDays
-			})
-			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
-					}
-				})
-			}
+			}).catch(e => {
+        if (this.options.errorMessages) {
+          message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
+            if (this.options.verbose) {
+              console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
+            }
+          }).then(msg => {
+			return this.clearBotMessages(msg)
+		})
+        }
+      })
 			if (this.options.modLogsEnabled) {
 				this.log(message, `Spam detected: ${message.author} got **banned**`, message.client)
 			}
@@ -336,6 +373,8 @@ class AntiSpamClient extends EventEmitter {
 				if (this.options.verbose) {
 					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
 				}
+			}).then(msg => {
+				return this.clearBotMessages(msg)
 			})
 		}
 		if (this.options.modLogsEnabled) {
@@ -368,6 +407,8 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
 					}
+				}).then(msg => {
+					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -378,6 +419,8 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
 					}
+				}).then(msg => {
+					return this.clearBotMessages(msg)
 				})
 			}
 			if (this.options.modLogsEnabled) {
@@ -407,6 +450,8 @@ class AntiSpamClient extends EventEmitter {
 				if (this.options.verbose) {
 					console.error(`DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`)
 				}
+			}).then(msg => {
+				return this.clearBotMessages(msg)
 			})
 		}
 		this.emit('warnAdd', member)
