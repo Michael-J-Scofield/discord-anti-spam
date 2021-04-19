@@ -162,7 +162,7 @@ class AntiSpamClient extends EventEmitter {
 			kickMessage: options.kickMessage || '**{user_tag}** has been kicked for spamming.',
 			banMessage: options.banMessage || '**{user_tag}** has been banned for spamming.',
 
-			errorMessages: options.errorMessages || true,
+			errorMessages: options.errorMessages != undefined ? options.errorMessages : true,
 			kickErrorMessage: options.kickErrorMessage || 'Could not kick **{user_tag}** because of improper permissions.',
 			banErrorMessage: options.banErrorMessage || 'Could not ban **{user_tag}** because of improper permissions.',
 			muteErrorMessage: options.muteErrorMessage || 'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.',
@@ -172,17 +172,17 @@ class AntiSpamClient extends EventEmitter {
 			ignoredGuilds: options.ignoredGuilds || [],
 			ignoredChannels: options.ignoredChannels || [],
 			ignoredPermissions: options.ignoredPermissions || [],
-			ignoreBots: options.ignoreBots || true,
+			ignoreBots: options.ignoreBots != undefined ? options.ignoreBots : true,
 
-			warnEnabled: options.warnEnabled || true,
-			kickEnabled: options.kickEnabled || true,
-			muteEnabled: options.muteEnabled || true,
-			banEnabled: options.banEnabled || true,
+			warnEnabled: options.warnEnabled != undefined ? options.warnEnabled : true,
+			kickEnabled: options.kickEnabled != undefined ? options.kickEnabled : true,
+			muteEnabled: options.muteEnabled != undefined ? options.muteEnabled : true,
+			banEnabled: options.banEnabled != undefined ? options.banEnabled : true,
 
 			deleteMessagesAfterBanForPastDays: options.deleteMessagesAfterBanForPastDays || 1,
 			verbose: options.verbose || false,
 			debug: options.debug || false,
-			removeMessages: options.removeMessages || true,
+			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
 
 			removeBotMessages: options.removeBotMessages || false,
 			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
