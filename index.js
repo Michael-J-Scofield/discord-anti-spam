@@ -363,7 +363,7 @@ class AntiSpamClient extends EventEmitter {
 						}
 					})
 			}
-		}
+		} return false;
 		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
