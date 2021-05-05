@@ -66,7 +66,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesMute=7] Amount of duplicate messages that trigger a mute.
  * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
  *
- * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
+ * @property {string|Discord.Snowflake} [muteRole='Muted'] Name or ID of the role that will be added to users if they got muted.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
@@ -152,7 +152,7 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesBan: options.maxDuplicatesBan || 10,
 			maxDuplicatesMute: options.maxDuplicatesMute || 9,
 
-			muteRoleName: options.muteRoleName || 'Muted',
+			muteRole: options.muteRole || 'Muted',
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
@@ -349,7 +349,21 @@ class AntiSpamClient extends EventEmitter {
 		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
-		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
+		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRole) || message.guild.roles.cache.get(this.options.muteRole)
+		if(!role){
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
+			}
+			if (this.options.errorMessages) {
+				await message.channel
+					.send(this.format(this.options.muteErrorMessage, message))
+					.catch((e) => {
+						if (this.options.verbose) {
+							console.log(`DAntiSpam (muteUser#muteRoleNotFound): ${e.message}`)
+						}
+					})
+			}
+		}
 		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {

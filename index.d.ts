@@ -81,7 +81,7 @@ declare module 'discord-anti-spam' {
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
 		muteEnabled?: boolean;
-		muteRoleName?: String;
+		muteRole?: String;
 		modLogsChannelName?: string;
 		modLogsEnabled?: boolean;
 		removeMessages?: boolean;
