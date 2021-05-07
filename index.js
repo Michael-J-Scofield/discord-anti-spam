@@ -42,6 +42,11 @@ const { EventEmitter } = require('events')
  * @event AntiSpamClient#muteAdd
  * @property {Discord.GuildMember} member The member that was muted.
  */
+/**
+ * Emitted when a member gets unmutted
+ * @event AntiSpamClient#muteRemove
+ * @property {Discord.GuildMember} member The member that was unmuted
+ */
 
 /**
  * Emitted when a member gets banned.
@@ -67,6 +72,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRole='Muted'] Name or ID of the role that will be added to users if they got muted.
+ * @property {number} [unmuteAfter=10800] After how long the user should be unmuted. (IN SECONDS)
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
@@ -77,8 +83,8 @@ const { EventEmitter } = require('events')
  *
  * @property {boolean} [errorMessages=true] Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.
  * @property {string} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to kick the member.
- * @property {string} [muteErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to mute the member (to add the mute role).
- * @property {string} [banErrorMessage='Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'] Message that will be sent in the channel when the bot doesn't have enough permissions to ban the member.
+ * @property {string} [muteErrorMessage='Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'] Message that will be sent in the channel when the bot doesn't have enough permissions to mute the member (to add the mute role).
+ * @property {string} [banErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to ban the member.
  *
  * @property {Discord.Snowflake|string[]|IgnoreMemberFunction} [ignoredMembers=[]] Array of member IDs that are ignored.
  * @property {Discord.Snowflake|string[]|IgnoreRoleFunction} [ignoredRoles=[]] Array of role IDs or role names that are ignored. Members with one of these roles will be ignored.
@@ -352,7 +358,7 @@ class AntiSpamClient extends EventEmitter {
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRole) || message.guild.roles.cache.get(this.options.muteRole)
 		if(!role){
 			if (this.options.verbose) {
-				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
+				console.log(`DAntiSpam (muteUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
 			}
 			if (this.options.errorMessages) {
 				await message.channel
@@ -368,7 +374,7 @@ class AntiSpamClient extends EventEmitter {
 		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
-				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
+				console.log(`DAntiSpam (muteUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
 			}
 			if (this.options.errorMessages) {
 				await message.channel
@@ -386,7 +392,7 @@ class AntiSpamClient extends EventEmitter {
 		if (this.options.muteMessage) {
 			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
 				if (this.options.verbose) {
-					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
+					console.error(`DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`)
 				}
 			}).then(msg => {
 				return this.clearBotMessages(msg)
@@ -398,6 +404,38 @@ class AntiSpamClient extends EventEmitter {
 		this.emit('muteAdd', member)
 		return true
 	}
+	/**
+	 * unmute a user.
+	 * @ignore
+	 * @param {Discord.Message} message Context message.
+	 * @param {Discord.GuildMember} member The member to unmute.
+	 * @returns {Promise<boolean>} Whether the member could be unmuted.
+	 */
+	 async unmuteUser (message, member) {
+		let userIndex = this.cache.mutedUsers.indexOf(member.user.id)
+		this.cache.mutedUsers.splice(userIndex, 1);
+		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRole) || message.guild.roles.cache.get(this.options.muteRole)
+		if(!role){
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (unmuteUser#userNotunMutable): ${message.author.tag} (ID: ${message.author.id}) could not be unmuted, improper permissions or the mute role couldn't be found.`)
+			}
+			return false;
+		}
+		const userCanBeUnMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		if (!userCanBeUnMuted) {
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (muteUser#userNotUnMutable): ${message.author.tag} (ID: ${message.author.id}) could not be unmuted, improper permissions or the mute role couldn't be found.`)
+			}
+			return false
+		}
+		if (!message.member.roles.cache.has(role.id)) return false
+		await message.member.roles.remove(role,"Auto spam unmute")
+		if (this.options.modLogsEnabled) {
+			this.log(message, `**${message.author}** was automaticly unmuted!`, message.client)
+		}
+		this.emit('muteRemove', member)
+		return true
+	 }
 
 	/**
 	 * Kick a user.
