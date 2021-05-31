@@ -405,7 +405,7 @@ class AntiSpamClient extends EventEmitter {
 		return true
 	}
 	/**
-	 * unmute a user.
+	 * Unmute a user.
 	 * @ignore
 	 * @param {Discord.Message} message Context message.
 	 * @param {Discord.GuildMember} member The member to unmute.
@@ -431,10 +431,44 @@ class AntiSpamClient extends EventEmitter {
 		if (!message.member.roles.cache.has(role.id)) return false
 		await message.member.roles.remove(role,"Auto spam unmute")
 		if (this.options.modLogsEnabled) {
-			this.log(message, `**${message.author}** was automaticly unmuted!`, message.client)
+			this.log(message, `**${message.author}** was unmuted!`, message.client)
 		}
 		this.emit('muteRemove', member)
 		return true
+	 }
+	 /**
+	  * Unmute after a time period
+	  * @ignore
+	  * @param {Discord.Message} message 
+	  * @param {Discord.GuildMember} member 
+	  * @param {number} minutes
+	  */
+	 async muteUserForTime(message,member,minutes){
+		let userIndex = this.cache.mutedUsers.indexOf(member.user.id)
+		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRole) || message.guild.roles.cache.get(this.options.muteRole)
+		if(!role){
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (unmuteUser#userNotunMutable): ${message.author.tag} (ID: ${message.author.id}) could not be unmuted, improper permissions or the mute role couldn't be found.`)
+			}
+			return false;
+		}
+		const userCanBeUnMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		if (!userCanBeUnMuted) {
+			if (this.options.verbose) {
+				console.log(`DAntiSpam (muteUser#userNotUnMutable): ${message.author.tag} (ID: ${message.author.id}) could not be unmuted, improper permissions or the mute role couldn't be found.`)
+			}
+			return false
+		}
+		setTimeout(() => {
+			this.cache.mutedUsers.splice(userIndex,1);
+			if (!message.member.roles.cache.has(role.id)) return false
+			await message.member.roles.remove(role,"Auto spam unmute")
+			if (this.options.modLogsEnabled) {
+				this.log(message, `**${message.author}** was automaticly unmuted! (Length: ${minutes} minutes)`, message.client)
+			}
+			this.emit('muteRemove', member)
+			return true
+		}, minutes * 60000)
 	 }
 
 	/**
