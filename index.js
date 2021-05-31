@@ -189,6 +189,7 @@ class AntiSpamClient extends EventEmitter {
 			verbose: options.verbose || false,
 			debug: options.debug || false,
 			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
+			unmuteAfter: options.unmuteAfter != undefined ? options.unmuteAfter : 0,
 
 			removeBotMessages: options.removeBotMessages || false,
 			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
@@ -401,6 +402,9 @@ class AntiSpamClient extends EventEmitter {
 		if (this.options.modLogsEnabled) {
 			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
 		}
+		if(this.options.unmuteAfter !=0){
+			this.unmuteAfter(message,message.member,this.options.unmuteAfter)
+		}
 		this.emit('muteAdd', member)
 		return true
 	}
@@ -443,7 +447,7 @@ class AntiSpamClient extends EventEmitter {
 	  * @param {Discord.GuildMember} member 
 	  * @param {number} minutes
 	  */
-	 async muteUserForTime(message,member,minutes){
+	 async unmuteAfter(message,member,minutes){
 		let userIndex = this.cache.mutedUsers.indexOf(member.user.id)
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRole) || message.guild.roles.cache.get(this.options.muteRole)
 		if(!role){
