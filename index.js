@@ -272,14 +272,12 @@ class AntiSpamClient extends EventEmitter {
 	 * @returns {Promise<void>}
 	 */
 	async clearBotMessages(message){
-		if(this.options.removeBotMessages == false) return;
+		if(!this.options.removeBotMessages) return;
 		try {
 			setTimeout(function(){message.delete() }, this.options.removeBotMessagesAfter);
 		} catch(e){
 			if(this.options.verbose){
-				if (this.options.verbose) {
-					console.log(`DAntiSpam (clearBotmMessages#failed): The message(s) couldn't be deleted!`);
-				}
+				console.log(`DAntiSpam (clearBotmMessages#failed): The message(s) couldn't be deleted!`);
 			}
 		}
 	}
