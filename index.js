@@ -71,9 +71,9 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesMute=7] Amount of duplicate messages that trigger a mute.
  * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
  *
- * @property {string|Discord.Snowflake} [muteRole='Muted'] Name or ID of the role that will be added to users if they got muted.
+ * @property {string|number|Discord.Snowflake} [muteRole='Muted'] Name or ID of the role that will be added to users if they got muted.
  * @property {number} [unmuteAfter=60] After how long the user should be unmuted. (IN MINUTES), 0 is premament
- * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
+ * @property {string|number|Discord.Snowflake} [modLogsChannel='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
  * @property {string|Discord.MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
