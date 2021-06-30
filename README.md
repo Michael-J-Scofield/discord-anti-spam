@@ -42,8 +42,9 @@ const antiSpam = new AntiSpam({
   ignoreBots: true, // Ignore bot messages.
   verbose: true, // Extended Logs from module.
   ignoredMembers: [], // Array of User IDs that get ignored.
-  muteRoleName: "Muted", // Name of the role that will be given to muted users!
+  muteRole: "Muted", // Name or id of the role that will be given to muted users!
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
+  unmuteAfter: 60, // When the bot should unmute someone! (IN MINUTES)
   // And many more options... See the documentation.
 });
 

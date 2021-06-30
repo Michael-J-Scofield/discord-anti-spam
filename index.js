@@ -160,7 +160,7 @@ class AntiSpamClient extends EventEmitter {
 
 			muteRole: options.muteRole || 'Muted',
 
-			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
+			modLogsChannel: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
 
 			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
@@ -192,7 +192,9 @@ class AntiSpamClient extends EventEmitter {
 			unmuteAfter: options.unmuteAfter != undefined ? options.unmuteAfter : 0,
 
 			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000,
+
+			unmuteAfter: options.unmuteAfter || 60,
 		}
 
 		/**
