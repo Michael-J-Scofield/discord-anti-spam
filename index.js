@@ -435,7 +435,7 @@ class AntiSpamClient extends EventEmitter {
 			return false
 		}
 		if (!message.member.roles.cache.has(role.id)) return false
-		await message.member.roles.remove(role,"Auto spam unmute")
+		message.member.roles.remove(role,"Auto spam unmute")
 		if (this.options.modLogsEnabled) {
 			this.log(message, `**${message.author}** was unmuted!`, message.client)
 		}
@@ -468,7 +468,7 @@ class AntiSpamClient extends EventEmitter {
 		setTimeout(() => {
 			this.cache.mutedUsers.splice(userIndex,1);
 			if (!message.member.roles.cache.has(role.id)) return false
-			await message.member.roles.remove(role,"Auto spam unmute")
+			message.member.roles.remove(role,"Auto spam unmute")
 			if (this.options.modLogsEnabled) {
 				this.log(message, `**${message.author}** was automaticly unmuted! (Length: ${minutes} minutes)`, message.client)
 			}
