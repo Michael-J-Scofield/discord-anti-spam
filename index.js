@@ -234,7 +234,7 @@ class AntiSpamClient extends EventEmitter {
 	log (msg, message, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
-			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'text')
+			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
 			if (modLogChannel) {
 				modLogChannel.send(message)
 			}
@@ -350,7 +350,7 @@ class AntiSpamClient extends EventEmitter {
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
-		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		const userCanBeMuted = role && message.guild.me.permissions.has('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
 				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
@@ -494,7 +494,7 @@ class AntiSpamClient extends EventEmitter {
 			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
 		if (memberHasIgnoredRoles) return false
 
-		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
+		if (options.ignoredPermissions.some((permission) => member.permissions.has(permission))) return false
 
 		const currentMessage = {
 			messageID: message.id,
