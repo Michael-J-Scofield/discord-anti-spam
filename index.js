@@ -210,17 +210,17 @@ class AntiSpamClient extends EventEmitter {
 	 */
 	format (string, message) {
 		if (typeof string === 'string') {
-			return string
-				.replace(/{@user}/g, message.author.toString())
+			const content = string.replace(/{@user}/g, message.author.toString())
 				.replace(/{user_tag}/g, message.author.tag)
 				.replace(/{server_name}/g, message.guild.name)
+			return { content };
 		} else {
 			const embed = new Discord.MessageEmbed(string)
 			if (embed.description) embed.setDescription(this.format(embed.description, message))
 			if (embed.title) embed.setTitle(this.format(embed.title, message))
 			if (embed.footer && embed.footer.text) embed.footer.text = this.format(embed.footer.text, message)
 			if (embed.author && embed.author.name) embed.author.name = this.format(embed.author.name, message)
-			return embed
+			return { embeds: [embed] }
 		}
 	}
 
@@ -236,7 +236,7 @@ class AntiSpamClient extends EventEmitter {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
 			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
 			if (modLogChannel) {
-				modLogChannel.send(message)
+				modLogChannel.send({ content: message})
 			}
 		}
 	}
