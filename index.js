@@ -494,7 +494,7 @@ class AntiSpamClient extends EventEmitter {
 			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
 		if (memberHasIgnoredRoles) return false
 
-		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
+		if (options.ignoredPermissions.some((permission) => member.permissons.has(permission))) return false
 
 		const currentMessage = {
 			messageID: message.id,
