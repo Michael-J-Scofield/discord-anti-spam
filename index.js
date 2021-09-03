@@ -54,17 +54,17 @@ const { EventEmitter } = require('events')
  * @typedef AntiSpamClientOptions
  *
  * @property {number} [warnThreshold=3] Amount of messages sent in a row that will cause a warning.
+ * @property {number} [muteThreshold=4] Amount of messages sent in a row that will cause a mute.
  * @property {number} [kickThreshold=5] Amount of messages sent in a row that will cause a kick.
- * @property {number} [muteThreshold=7] Amount of messages sent in a row that will cause a mute.
- * @property {number} [banThreshold=4] Amount of messages sent in a row that will cause a ban.
+ * @property {number} [banThreshold=7] Amount of messages sent in a row that will cause a ban.
  *
  * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
  * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
  *
- * @property {number} [maxDuplicatesWarn=3] Amount of duplicate messages that trigger a warning.
- * @property {number} [maxDuplicatesKick=5] Amount of duplicate messages that trigger a kick.
- * @property {number} [maxDuplicatesMute=7] Amount of duplicate messages that trigger a mute.
- * @property {number} [maxDuplicatesBan=10] Amount of duplicate messages that trigger a ban.
+ * @property {number} [maxDuplicatesWarn=7] Amount of duplicate messages that trigger a warning.
+ * @property {number} [maxDuplicatesMute=9] Amount of duplicate messages that trigger a mute.
+ * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
+ * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
@@ -98,7 +98,7 @@ const { EventEmitter } = require('events')
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
  * 
  * @property {boolean} [removeBotMessages=false] Whether to delete bot messages after an time.
- * @property {number} [removeBotMessagesAfter=10000] Whenever to delete bot messages. IN MILLISECONDS
+ * @property {number} [removeBotMessagesAfter=2000] Whenever to delete bot messages. IN MILLISECONDS
  */
 
 /**
@@ -140,17 +140,17 @@ class AntiSpamClient extends EventEmitter {
 		this.options = {
 
 			warnThreshold: options.warnThreshold || 3,
+			muteThreshold: options.muteThreshold || 4,
 			kickThreshold: options.kickThreshold || 5,
 			banThreshold: options.banThreshold || 7,
-			muteThreshold: options.muteThreshold || 4,
 
 			maxInterval: options.maxInterval || 2000,
 			maxDuplicatesInterval: options.maxDuplicatesInterval || 2000,
 
 			maxDuplicatesWarn: options.maxDuplicatesWarn || 7,
-			maxDuplicatesKick: options.maxDuplicatesKick || 10,
-			maxDuplicatesBan: options.maxDuplicatesBan || 10,
 			maxDuplicatesMute: options.maxDuplicatesMute || 9,
+			maxDuplicatesKick: options.maxDuplicatesKick || 10,
+			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
 			muteRoleName: options.muteRoleName || 'Muted',
 
@@ -185,7 +185,7 @@ class AntiSpamClient extends EventEmitter {
 			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
 
 			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000
 		}
 
 		/**
@@ -210,17 +210,17 @@ class AntiSpamClient extends EventEmitter {
 	 */
 	format (string, message) {
 		if (typeof string === 'string') {
-			return string
-				.replace(/{@user}/g, message.author.toString())
+			const content = string.replace(/{@user}/g, message.author.toString())
 				.replace(/{user_tag}/g, message.author.tag)
 				.replace(/{server_name}/g, message.guild.name)
+			return { content };
 		} else {
 			const embed = new Discord.MessageEmbed(string)
 			if (embed.description) embed.setDescription(this.format(embed.description, message))
 			if (embed.title) embed.setTitle(this.format(embed.title, message))
 			if (embed.footer && embed.footer.text) embed.footer.text = this.format(embed.footer.text, message)
 			if (embed.author && embed.author.name) embed.author.name = this.format(embed.author.name, message)
-			return embed
+			return { embeds: [embed] }
 		}
 	}
 
@@ -234,9 +234,9 @@ class AntiSpamClient extends EventEmitter {
 	log (msg, message, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
-			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'text')
+			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
 			if (modLogChannel) {
-				modLogChannel.send(message)
+				modLogChannel.send({ content: message})
 			}
 		}
 	}
@@ -350,7 +350,7 @@ class AntiSpamClient extends EventEmitter {
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
-		const userCanBeMuted = role && message.guild.me.hasPermission('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		const userCanBeMuted = role && message.guild.me.permissions.has('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
 				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
@@ -494,7 +494,7 @@ class AntiSpamClient extends EventEmitter {
 			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
 		if (memberHasIgnoredRoles) return false
 
-		if (options.ignoredPermissions.some((permission) => member.hasPermission(permission))) return false
+		if (options.ignoredPermissions.some((permission) => member.permissions.has(permission))) return false
 
 		const currentMessage = {
 			messageID: message.id,
