@@ -59,7 +59,7 @@ const { EventEmitter } = require('events')
  * @property {number} [banThreshold=7] Amount of messages sent in a row that will cause a ban.
  *
  * @property {number} [maxInterval=2000] Amount of time (ms) in which messages are considered spam.
- * @property {number} [maxDuplicatesInterval=10000] Amount of time (ms) in which duplicate messages are considered spam.
+ * @property {number} [maxDuplicatesInterval=2000] Amount of time (ms) in which duplicate messages are considered spam.
  *
  * @property {number} [maxDuplicatesWarn=7] Amount of duplicate messages that trigger a warning.
  * @property {number} [maxDuplicatesMute=9] Amount of duplicate messages that trigger a mute.
@@ -98,7 +98,7 @@ const { EventEmitter } = require('events')
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
  * 
  * @property {boolean} [removeBotMessages=false] Whether to delete bot messages after an time.
- * @property {number} [removeBotMessagesAfter=10000] Whenever to delete bot messages. IN MILLISECONDS
+ * @property {number} [removeBotMessagesAfter=2000] Whenever to delete bot messages. IN MILLISECONDS
  */
 
 /**
@@ -145,7 +145,7 @@ class AntiSpamClient extends EventEmitter {
 			banThreshold: options.banThreshold || 7,
 
 			maxInterval: options.maxInterval || 2000,
-			maxDuplicatesInterval: options.maxDuplicatesInterval || 10000,
+			maxDuplicatesInterval: options.maxDuplicatesInterval || 2000,
 
 			maxDuplicatesWarn: options.maxDuplicatesWarn || 7,
 			maxDuplicatesMute: options.maxDuplicatesMute || 9,
@@ -185,7 +185,7 @@ class AntiSpamClient extends EventEmitter {
 			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
 
 			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 10000
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000
 		}
 
 		/**
