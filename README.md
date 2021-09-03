@@ -61,3 +61,10 @@ Join our [Support Server](https://discord.gg/KQgDfGr) where we help you with iss
 ## Bug Reports
 
 If you have any bugs or trouble setting the module up, feel free to open an issue on [Github](https://github.com/Michael-J-Scofield/discord-anti-spam)
+
+
+## 📝 License
+Copyright © 2019 [Michael-J-Scofield](https://github.com/Michael-J-Scofield)<br />
+This project is MIT licensed.
+
+---
