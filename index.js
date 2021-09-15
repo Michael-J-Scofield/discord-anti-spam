@@ -254,7 +254,9 @@ class AntiSpamClient extends EventEmitter {
 				const channel = client.channels.cache.get(message.channelID)
 				if (channel) {
 					const msg = channel.messages.cache.get(message.messageID)
-					if (msg && msg.deletable) msg.delete()
+					if (msg && msg.deletable) msg.delete().catch(err => {
+						if(err && this.options.verbose == true) console.log(`[Discord-Anti-Spam] Couldn't delete a message!`) 
+					})
 				}
 			})
 		} catch (e) {
