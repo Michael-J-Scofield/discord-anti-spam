@@ -3,6 +3,7 @@
 # discord-anti-spam.js
 
 A simple module with quick setup and different options to implement anti-spam features in your bot.
+**This version of the package will only support discord.js v13**
 
 ## Installation
 
@@ -22,7 +23,7 @@ Example of a basic bot handling spam messages using this module.
 
 ```js
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({{ intents: [Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES] });
 const AntiSpam = require('discord-anti-spam');
 const antiSpam = new AntiSpam({
 	warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
@@ -49,7 +50,7 @@ const antiSpam = new AntiSpam({
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}.`));
 
-client.on('message', (message) => antiSpam.message(message)); 
+client.on('messageCreate', (message) => antiSpam.message(message)); 
 
 client.login('YOUR_SUPER_SECRET_TOKEN');
 ```
