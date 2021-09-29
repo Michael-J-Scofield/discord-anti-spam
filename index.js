@@ -96,6 +96,8 @@ const { EventEmitter } = require('events')
  * @property {boolean} [verbose=false] Extended logs from module (recommended).
  * @property {boolean} [debug=false] Whether to run the module in debug mode.
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
+ * 
+ * @property {boolean} [MultipleSanctions=false] Whether to run sanctions multiple times
  */
 
 /**
@@ -182,7 +184,9 @@ class AntiSpamClient extends EventEmitter {
 			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
 
 			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000,
+
+			MultipleSanctions: options.MultipleSanctions || false,
 		}
 
 		/**
@@ -536,6 +540,27 @@ class AntiSpamClient extends EventEmitter {
 		}
 
 		return sanctioned
+	}
+	/**
+	 * Checks a message.
+	 * @param {Discord.GuildMember} member The member to remove from the cache.
+	 * @returns {Promise<boolean>} Whether the member has been removed
+	 * @example
+	 * client.on('guildMemberRemove', (member) => {
+	 * 	antiSpam.userleave(member);
+	 * });
+	 */
+	async userleave (member){
+		const options = this.options
+		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(member.guild) : options.ignoredGuilds.includes(member.guild.id)
+		if (isGuildIgnored) return false
+
+		this.cache.bannedUsers = this.cache.bannedUsers.filter((u) => u !== member.user.id)
+		this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
+		this.cache.kickedUsers = this.cache.kickedUsers.filter((u) => u !== member.user.id)
+		this.cache.warnedUsers = this.cache.warnedUsers.filter((u) => u !== member.user.id)
+
+		return true
 	}
 
 	/**
