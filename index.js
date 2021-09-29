@@ -252,13 +252,13 @@ class AntiSpamClient extends EventEmitter {
 				if (channel) {
 					const msg = channel.messages.cache.get(message.messageID)
 					if (msg && msg.deletable) msg.delete().catch(err => {
-						if(err && this.options.verbose == true) console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`) 
+						if(err && this.options.debug == true) console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`) 
 					})
 				}
 			})
 		} catch (e) {
 			if(e){
-				if (this.options.verbose) {
+				if (this.options.debug) {
 					console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`);
 				}
 			}
