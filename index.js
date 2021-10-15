@@ -252,9 +252,9 @@ class AntiSpamClient extends EventEmitter {
 	async clearSpamMessages (messages, client) {
 		try {
 			messages.forEach((message) => {
-				const channel = client.channels.cache.get(message.channelID)
+				const channel = client.channels.cache.get(message.channelId)
 				if (channel) {
-					const msg = channel.messages.cache.get(message.messageID)
+					const msg = channel.messages.cache.get(message.messageId)
 					if (msg && msg.deletable) msg.delete().catch(err => {
 						if(err && this.options.debug == true) console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`) 
 					})
@@ -445,7 +445,7 @@ class AntiSpamClient extends EventEmitter {
 		if (
 			!message.guild ||
 			message.author.id === message.client.user.id ||
-			(message.guild.ownerID === message.author.id && !options.debug) ||
+			(message.guild.ownerId === message.author.id && !options.debug) ||
 			(options.ignoreBots && message.author.bot)
 		) {
 			return false
