@@ -30,7 +30,7 @@ const antiSpam = new AntiSpam({
 	kickThreshold: 7, // Amount of messages sent in a row that will cause a kick.
 	banThreshold: 7, // Amount of messages sent in a row that will cause a ban.
 	maxInterval: 2000, // Amount of time (in milliseconds) in which messages are considered spam.
-	warnMessage: `<@` + user.id + `>` + ' ' + ', Please stop spamming.', // Message that will be sent in chat upon warning a user.
+	warnMessage: '{@user}, Please stop spamming.', // Message that will be sent in chat upon warning a user.
 	kickMessage: '**{user_tag}** has been kicked for spamming.', // Message that will be sent in chat upon kicking a user.
 	muteMessage: '**{user_tag}** has been muted for spamming.',// Message that will be sent in chat upon muting a user.
 	banMessage: '**{user_tag}** has been banned for spamming.', // Message that will be sent in chat upon banning a user.
@@ -63,7 +63,7 @@ const antiSpam = new AntiSpam({
 	kickThreshold: 7,
 	banThreshold: 7,
 	maxInterval: 2000,
-	warnMessage: `<@` + user.id + `>` + ' ' + ', Please stop spamming.',
+	warnMessage: '{@user}, Please stop spamming.',
 	kickMessage: '**{user_tag}** has been kicked for spamming.',
 	muteMessage: '**{user_tag}** has been muted for spamming.',
 	banMessage: '**{user_tag}** has been banned for spamming.',
