@@ -61,25 +61,25 @@ client.login("YOUR_SUPER_SECRET_TOKEN");
 
 ```js
 const antiSpam = new AntiSpam({
-	warnThreshold: 3,
-	muteThreshold: 4,
-	kickThreshold: 7,
-	banThreshold: 7,
-	maxInterval: 2000,
-	warnMessage: '{@user}, Please stop spamming.',
-	kickMessage: '**{user_tag}** has been kicked for spamming.',
-	muteMessage: '**{user_tag}** has been muted for spamming.',
-	banMessage: '**{user_tag}** has been banned for spamming.',
-	maxDuplicatesWarning: 6,
-	maxDuplicatesKick: 10,
-	maxDuplicatesBan: 12,
-	maxDuplicatesMute: 8,
-	ignoredPermissions: ['ADMINISTRATOR'],
-	ignoreBots: true,
-	verbose: true,
-	ignoredMembers: [],
-	muteRoleName: "Muted",
-	removeMessages: true
+  warnThreshold: 3,
+  muteThreshold: 4,
+  kickThreshold: 7,
+  banThreshold: 7,
+  maxInterval: 2000,
+  warnMessage: '{@user}, Please stop spamming.',
+  kickMessage: '**{user_tag}** has been kicked for spamming.',
+  muteMessage: '**{user_tag}** has been muted for spamming.',
+  banMessage: '**{user_tag}** has been banned for spamming.',
+  maxDuplicatesWarning: 6,
+  maxDuplicatesKick: 10,
+  maxDuplicatesBan: 12,
+  maxDuplicatesMute: 8,
+  ignoredPermissions: ['ADMINISTRATOR'],
+  ignoreBots: true,
+  verbose: true,
+  ignoredMembers: [],
+  muteRoleName: "Muted",
+  removeMessages: true
 });
 ```
 
