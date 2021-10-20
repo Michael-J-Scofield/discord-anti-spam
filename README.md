@@ -57,6 +57,32 @@ client.on("messageCreate", (message) => antiSpam.message(message));
 client.login("YOUR_SUPER_SECRET_TOKEN");
 ```
 
+## Example (As a direct copy template without explanations)
+
+```js
+const antiSpam = new AntiSpam({
+	warnThreshold: 3,
+	muteThreshold: 4,
+	kickThreshold: 7,
+	banThreshold: 7,
+	maxInterval: 2000,
+	warnMessage: '{@user}, Please stop spamming.',
+	kickMessage: '**{user_tag}** has been kicked for spamming.',
+	muteMessage: '**{user_tag}** has been muted for spamming.',
+	banMessage: '**{user_tag}** has been banned for spamming.',
+	maxDuplicatesWarning: 6,
+	maxDuplicatesKick: 10,
+	maxDuplicatesBan: 12,
+	maxDuplicatesMute: 8,
+	ignoredPermissions: ['ADMINISTRATOR'],
+	ignoreBots: true,
+	verbose: true,
+	ignoredMembers: [],
+	muteRoleName: "Muted",
+	removeMessages: true
+});
+```
+
 ## Support Server
 
 Join our [Support Server](https://discord.gg/KQgDfGr) where we help you with issues regarding the module.
