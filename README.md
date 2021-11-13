@@ -48,6 +48,8 @@ const antiSpam = new AntiSpam({
   muteRoleName: "Muted", // Name of the role that will be given to muted users!
   timeMute: 0, // Amount of time (in minutes) a user will be muted for.
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
+  modLogsEnabled: false, // If to enable modlogs
+  modLogsChannelName: "mod-logs", // channel to send the modlogs too!
   // And many more options... See the documentation.
 });
 
@@ -82,6 +84,8 @@ const antiSpam = new AntiSpam({
   muteRoleName: "Muted",
   muteTime: 0,
   removeMessages: true,
+  modLogsEnabled: false,
+  modLogsChannelName: "mod-logs",
 });
 ```
 
