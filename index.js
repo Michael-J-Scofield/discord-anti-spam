@@ -77,8 +77,8 @@ const { EventEmitter } = require('events')
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
  * @property {string|Discord.MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
- * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is kicked.
- * @property {string|Discord.MessageEmbed} [muteMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is muted.
+ * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is kicked.
+ * @property {string|Discord.MessageEmbed} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is muted.
  * @property {string|Discord.MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in the channel when someone is banned.
  *
  * @property {boolean} [errorMessages=true] Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.
