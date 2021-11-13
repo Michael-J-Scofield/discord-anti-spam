@@ -46,7 +46,7 @@ const antiSpam = new AntiSpam({
   verbose: true, // Extended Logs from module.
   ignoredMembers: [], // Array of User IDs that get ignored.
   muteRoleName: "Muted", // Name of the role that will be given to muted users!
-  timeMute: "0", // Amount of time (in minutes) a user will be muted for.
+  timeMute: 0, // Amount of time (in minutes) a user will be muted for.
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
   // And many more options... See the documentation.
 });
@@ -80,7 +80,7 @@ const antiSpam = new AntiSpam({
   verbose: true,
   ignoredMembers: [],
   muteRoleName: "Muted",
-  muteTime: "0",
+  muteTime: 0,
   removeMessages: true,
 });
 ```
