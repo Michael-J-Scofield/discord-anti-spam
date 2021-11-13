@@ -42,6 +42,11 @@ const { EventEmitter } = require('events')
  * @event AntiSpamClient#muteAdd
  * @property {Discord.GuildMember} member The member that was muted.
  */
+/**
+ * Emitted when a member gets unmuted.
+ * @event AntiSpamClient#muteRemove
+ * @property {Discord.GuildMember} member The member that was unmuted.
+ */
 
 /**
  * Emitted when a member gets banned.
@@ -67,6 +72,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
+ * @property {string|Discord.Snowflake} [unmuteTime='0'] Time in ms to wait until unmuting a user. 0=never.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
@@ -352,7 +358,7 @@ class AntiSpamClient extends EventEmitter {
 		if (this.options.muteMessage) {
 			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
 				if (this.options.verbose) {
-					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
+					console.error(`DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`)
 				}
 			})
 		}
@@ -560,6 +566,29 @@ class AntiSpamClient extends EventEmitter {
 		this.cache.kickedUsers = this.cache.kickedUsers.filter((u) => u !== member.user.id)
 		this.cache.warnedUsers = this.cache.warnedUsers.filter((u) => u !== member.user.id)
 
+		return true
+	}
+
+	async timeMute(member, time) {
+		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
+		if(time != 0) {
+			setTimeout(() => {
+				member.roles.remove(role)
+				}, time)
+			this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
+			if (this.options.muteMessage) {
+				await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
+					if (this.options.verbose) {
+						console.error(`DAntiSpam (unmuteUser#sendSuccessMessage): ${e.message}`)
+					}
+				})
+			}
+			if (this.options.modLogsEnabled) {
+				this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
+			}
+			this.emit('muteRemove', member)
+			return true
+		}
 		return true
 	}
 
