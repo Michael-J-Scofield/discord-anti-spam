@@ -338,7 +338,7 @@ class AntiSpamClient extends EventEmitter {
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
-		this.timeMute(member, this.options.unmuteTime)
+		this.timeMute(member, this.options.unmuteTime, message)
 		const userCanBeMuted = role && message.guild.me.permissions.has('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
@@ -571,7 +571,7 @@ class AntiSpamClient extends EventEmitter {
 		return true
 	}
 
-	async timeMute(member, time) {
+	async timeMute(member, time, message) {
 		const minutestime = time * 60 * 1000
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
 		if(time != 0) {
