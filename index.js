@@ -158,6 +158,7 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
 			muteRoleName: options.muteRoleName || 'Muted',
+			muteTime: options.muteTime || '0',
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
@@ -337,6 +338,7 @@ class AntiSpamClient extends EventEmitter {
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
+		this.timeMute(member, this.options.unmuteTime)
 		const userCanBeMuted = role && message.guild.me.permissions.has('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
