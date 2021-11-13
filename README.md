@@ -46,6 +46,7 @@ const antiSpam = new AntiSpam({
   verbose: true, // Extended Logs from module.
   ignoredMembers: [], // Array of User IDs that get ignored.
   muteRoleName: "Muted", // Name of the role that will be given to muted users!
+  timeMute: "0", // Amount of time (in minutes) a user will be muted for.
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
   // And many more options... See the documentation.
 });
@@ -66,20 +67,21 @@ const antiSpam = new AntiSpam({
   kickThreshold: 7,
   banThreshold: 7,
   maxInterval: 2000,
-  warnMessage: '{@user}, Please stop spamming.',
-  kickMessage: '**{user_tag}** has been kicked for spamming.',
-  muteMessage: '**{user_tag}** has been muted for spamming.',
-  banMessage: '**{user_tag}** has been banned for spamming.',
+  warnMessage: "{@user}, Please stop spamming.",
+  kickMessage: "**{user_tag}** has been kicked for spamming.",
+  muteMessage: "**{user_tag}** has been muted for spamming.",
+  banMessage: "**{user_tag}** has been banned for spamming.",
   maxDuplicatesWarning: 6,
   maxDuplicatesKick: 10,
   maxDuplicatesBan: 12,
   maxDuplicatesMute: 8,
-  ignoredPermissions: ['ADMINISTRATOR'],
+  ignoredPermissions: ["ADMINISTRATOR"],
   ignoreBots: true,
   verbose: true,
   ignoredMembers: [],
   muteRoleName: "Muted",
-  removeMessages: true
+  muteTime: "0",
+  removeMessages: true,
 });
 ```
 

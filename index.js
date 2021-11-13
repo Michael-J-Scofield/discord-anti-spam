@@ -72,7 +72,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
- * @property {string|Discord.Snowflake} [unmuteTime='0'] Time in ms to wait until unmuting a user. 0=never.
+ * @property {string|Discord.Snowflake} [unmuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
@@ -572,11 +572,12 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	async timeMute(member, time) {
+		const minutestime = time * 60 * 1000
 		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
 		if(time != 0) {
 			setTimeout(() => {
 				member.roles.remove(role)
-				}, time)
+				}, minutestime)
 			this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
 			if (this.options.muteMessage) {
 				await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
