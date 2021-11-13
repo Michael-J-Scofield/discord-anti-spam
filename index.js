@@ -72,7 +72,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
- * @property {number} [unmuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
+ * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  *
@@ -158,7 +158,7 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
 			muteRoleName: options.muteRoleName || 'Muted',
-			muteTime: options.muteTime || 0,
+			unMuteTime: options.muteTime || 0,
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
@@ -367,7 +367,7 @@ class AntiSpamClient extends EventEmitter {
 			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
 		}
 		this.emit('muteAdd', member)
-		this.timeMute(member, this.options.unmuteTime, message, role)
+		this.timeMute(member, message, role)
 		return true
 	}
 
@@ -571,9 +571,8 @@ class AntiSpamClient extends EventEmitter {
 		return true
 	}
 
-	async timeMute(member, time, message, role) {
-		const minutestime = time * 60 * 1000
-		console.log(minutestime)
+	async timeMute(member, message, role) {
+		const minutestime = this.options.unMuteTime * 60 * 1000
 		if(time != 0) {
 			setTimeout(() => {
 				member.roles.remove(role)
