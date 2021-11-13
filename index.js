@@ -573,6 +573,7 @@ class AntiSpamClient extends EventEmitter {
 
 	async timeMute(member, time, message, role) {
 		const minutestime = time * 60 * 1000
+		console.log(minutestime)
 		if(time != 0) {
 			setTimeout(() => {
 				member.roles.remove(role)
