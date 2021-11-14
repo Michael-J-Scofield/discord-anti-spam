@@ -550,7 +550,7 @@ class AntiSpamClient extends EventEmitter {
 		return sanctioned
 	}
 	/**
-	 * Checks a message.
+	 * Checks if the user left the server to remove him from the cache!
 	 * @param {Discord.GuildMember} member The member to remove from the cache.
 	 * @returns {Promise<boolean>} Whether the member has been removed
 	 * @example
@@ -571,6 +571,11 @@ class AntiSpamClient extends EventEmitter {
 		return true
 	}
 
+	/**
+	 * Removes the muted role from member after specefic time
+	 * @param {Discord.GuildMember} member The member to the role from
+	 * @returns {Promise<boolean>} Whether the role has been removed
+	 */
 	async timeMute(member, message, role) {
 		const minutestime = this.options.unMuteTime * 60 * 1000
 		if(minutestime != 0) {
