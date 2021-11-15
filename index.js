@@ -265,24 +265,6 @@ class AntiSpamClient extends EventEmitter {
 			}
 		}
 	}
-	/**
-	 * Delete bot messages
-	 * @ignore
-	 * @param {Discord.Message} message Bot message object to delete
-	 * @returns {Promise<void>}
-	 */
-	async clearBotMessages(message){
-		if(this.options.removeBotMessages == false) return;
-		try {
-			setTimeout(function(){message.delete() }, this.options.removeBotMessagesAfter);
-		} catch(e){
-			if(this.options.verbose){
-				if (this.options.verbose) {
-					console.log(`DAntiSpam (clearBotmMessages#failed): The message(s) couldn't be deleted!`);
-				}
-			}
-		}
-	}
 
 	/**
 	 * Ban a user.
@@ -307,8 +289,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -322,9 +302,7 @@ class AntiSpamClient extends EventEmitter {
             if (this.options.verbose) {
               console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
             }
-          }).then(msg => {
-			return this.clearBotMessages(msg)
-		})
+          })
         }
       })
 			if (this.options.modLogsEnabled) {
@@ -373,8 +351,6 @@ class AntiSpamClient extends EventEmitter {
 				if (this.options.verbose) {
 					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
 				}
-			}).then(msg => {
-				return this.clearBotMessages(msg)
 			})
 		}
 		if (this.options.modLogsEnabled) {
@@ -407,8 +383,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -419,8 +393,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			if (this.options.modLogsEnabled) {
@@ -450,8 +422,6 @@ class AntiSpamClient extends EventEmitter {
 				if (this.options.verbose) {
 					console.error(`DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`)
 				}
-			}).then(msg => {
-				return this.clearBotMessages(msg)
 			})
 		}
 		this.emit('warnAdd', member)
