@@ -50,6 +50,7 @@ const antiSpam = new AntiSpam({
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
   modLogsEnabled: false, // If to enable modlogs
   modLogsChannelName: "mod-logs", // channel to send the modlogs too!
+  modLogsMode: "embed",
   // And many more options... See the documentation.
 });
 
@@ -86,6 +87,7 @@ const antiSpam = new AntiSpam({
   removeMessages: true,
   modLogsEnabled: false,
   modLogsChannelName: "mod-logs",
+  modLogsMode: "embed",
 });
 ```
 
