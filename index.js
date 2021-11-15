@@ -75,6 +75,7 @@ const { EventEmitter } = require('events')
  * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
+ * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
  *
  * @property {string|Discord.MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
  * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is kicked.
@@ -162,6 +163,7 @@ class AntiSpamClient extends EventEmitter {
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
+			modLogsMode: options.modLogsMode || 'embed',
 
 			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
 			muteMessage: options.muteMessage || '**{user_tag}** has been muted for spamming.',
@@ -233,19 +235,30 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
-	 * Send a message to the logs channel
+	 * Logs the actions
 	 * @ignore
 	 * @param {Discord.Message} msg The message to check the channel with
-	 * @param {string} message The message to log
+	 * @param {string} action The action to log
 	 * @param {Discord.Client} client The Discord client that will send the message
 	 */
-	log (msg, message, client) {
+	log (msg, action, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
 			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
-			if (modLogChannel) {
-				modLogChannel.send({ content: message})
+			if(modLogChannel) {
+				if(this.options.modLogsMode == "embed"){
+					const embed = new Discord.MessageEmbed()
+					.setAuthor(`DAS Spam detection`,'https://discord-anti-spam.js.org/img/antispam.png')
+					.setDescription(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**!`)
+					.setFooter(`DAS Anti spam`,'https://discord-anti-spam.js.org/img/antispam.png')
+					.setTimestamp()
+					.setColor('RED')
+					modLogChannel.send({embeds:[embed]})
+				}else{
+					modLogChannel.send(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**.`)
+				}
 			}
+			
 		}
 	}
 
