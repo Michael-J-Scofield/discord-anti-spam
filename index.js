@@ -158,7 +158,7 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
 			muteRoleName: options.muteRoleName || 'Muted',
-			unMuteTime: options.muteTime || 0,
+			unMuteTime: options.unMuteTime || 0,
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
