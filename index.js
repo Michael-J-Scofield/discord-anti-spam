@@ -578,25 +578,21 @@ class AntiSpamClient extends EventEmitter {
 	 */
 	async timeMute(member, message, role) {
 		const minutestime = this.options.unMuteTime * 60 * 1000
+        console.log(minutestime)
 		if(minutestime != 0) {
 			setTimeout(() => {
 				member.roles.remove(role)
+				this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
+				if (this.options.modLogsEnabled) {
+					this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
+				}
+				this.emit('muteRemove', member)
+				return true
 				}, minutestime)
-			this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
-			if (this.options.muteMessage) {
-				await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (unmuteUser#sendSuccessMessage): ${e.message}`)
-					}
-				})
-			}
-			if (this.options.modLogsEnabled) {
-				this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
-			}
-			this.emit('muteRemove', member)
-			return true
+			
+		}else {
+			return null;
 		}
-		return true
 	}
 
 	/**
