@@ -85,7 +85,5 @@ declare module 'discord-anti-spam' {
 		modLogsChannelName?: string;
 		modLogsEnabled?: boolean;
 		removeMessages?: boolean;
-		removeBotMessages?: boolean;
-		removeBotMessagesAfter?: number;
 	};
 }
