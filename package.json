@@ -1,6 +1,6 @@
 {
   "name": "discord-anti-spam",
-  "version": "2.5.8",
+  "version": "2.5.1",
   "description": "An easy to setup package that help you integration of anti-spam feature in your discord bot.",
   "main": "index.js",
   "scripts": {
@@ -31,5 +31,9 @@
   "devDependencies": {
     "jsdoc": "^3.6.3",
     "minami": "Androz2091/minami"
+  },
+  "dependencies": {
+    "discord-anti-spam": "github:Michael-J-Scofield/discord-anti-spam#2.6.0",
+    "discord.js": "^13.3.1"
   }
 }

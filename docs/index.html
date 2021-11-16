@@ -61,9 +61,9 @@
 <h2>Documentation</h2>
 <p>You can see the package documentation <a href="https://discord-anti-spam.js.org"><strong>here</strong></a>.</p>
 <h2>Example</h2>
-<p>Example of a basic bot handling spam messages using this module.</p>
+<p>Example of a basic bot handling spam messages using this module.\n<br>The module only supports discord.js v13 and the required intents are: "GUILD_MESSAGES"</p>
 <pre class="prettyprint source lang-js"><code>const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES] });
 const AntiSpam = require('discord-anti-spam');
 const antiSpam = new AntiSpam({
 	warnThreshold: 3, // Amount of messages sent in a row that will cause a warning.
@@ -90,7 +90,7 @@ const antiSpam = new AntiSpam({
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}.`));
 
-client.on('message', (message) => antiSpam.message(message)); 
+client.on('messageCreate', (message) => antiSpam.message(message)); 
 
 client.login('YOUR_SUPER_SECRET_TOKEN');
 </code></pre>

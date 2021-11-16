@@ -42,6 +42,11 @@ const { EventEmitter } = require('events')
  * @event AntiSpamClient#muteAdd
  * @property {Discord.GuildMember} member The member that was muted.
  */
+/**
+ * Emitted when a member gets unmuted.
+ * @event AntiSpamClient#muteRemove
+ * @property {Discord.GuildMember} member The member that was unmuted.
+ */
 
 /**
  * Emitted when a member gets banned.
@@ -67,12 +72,14 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
+ * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
+ * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
  *
  * @property {string|Discord.MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
- * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is kicked.
- * @property {string|Discord.MessageEmbed} [muteMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is muted.
+ * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is kicked.
+ * @property {string|Discord.MessageEmbed} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is muted.
  * @property {string|Discord.MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in the channel when someone is banned.
  *
  * @property {boolean} [errorMessages=true] Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.
@@ -97,8 +104,7 @@ const { EventEmitter } = require('events')
  * @property {boolean} [debug=false] Whether to run the module in debug mode.
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
  * 
- * @property {boolean} [removeBotMessages=false] Whether to delete bot messages after an time.
- * @property {number} [removeBotMessagesAfter=2000] Whenever to delete bot messages. IN MILLISECONDS
+ * @property {boolean} [MultipleSanctions=false] Whether to run sanctions multiple times
  */
 
 /**
@@ -153,9 +159,11 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
 			muteRoleName: options.muteRoleName || 'Muted',
+			unMuteTime: options.unMuteTime || 0,
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
+			modLogsMode: options.modLogsMode || 'embed',
 
 			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
 			muteMessage: options.muteMessage || '**{user_tag}** has been muted for spamming.',
@@ -185,7 +193,9 @@ class AntiSpamClient extends EventEmitter {
 			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
 
 			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000
+			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000,
+
+			MultipleSanctions: options.MultipleSanctions || false,
 		}
 
 		/**
@@ -225,19 +235,30 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
-	 * Send a message to the logs channel
+	 * Logs the actions
 	 * @ignore
 	 * @param {Discord.Message} msg The message to check the channel with
-	 * @param {string} message The message to log
+	 * @param {string} action The action to log
 	 * @param {Discord.Client} client The Discord client that will send the message
 	 */
-	log (msg, message, client) {
+	log (msg, action, client) {
 		if (this.options.modLogsEnabled) {
 			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
 			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
-			if (modLogChannel) {
-				modLogChannel.send({ content: message})
+			if(modLogChannel) {
+				if(this.options.modLogsMode == "embed"){
+					const embed = new Discord.MessageEmbed()
+					.setAuthor(`DAS Spam detection`,'https://discord-anti-spam.js.org/img/antispam.png')
+					.setDescription(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**!`)
+					.setFooter(`DAS Anti spam`,'https://discord-anti-spam.js.org/img/antispam.png')
+					.setTimestamp()
+					.setColor('RED')
+					modLogChannel.send({embeds:[embed]})
+				}else{
+					modLogChannel.send(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**.`)
+				}
 			}
+			
 		}
 	}
 
@@ -251,34 +272,18 @@ class AntiSpamClient extends EventEmitter {
 	async clearSpamMessages (messages, client) {
 		try {
 			messages.forEach((message) => {
-				const channel = client.channels.cache.get(message.channelID)
+				const channel = client.channels.cache.get(message.channelId)
 				if (channel) {
-					const msg = channel.messages.cache.get(message.messageID)
-					if (msg && msg.deletable) msg.delete()
+					const msg = channel.messages.cache.get(message.messageId)
+					if (msg && msg.deletable) msg.delete().catch(err => {
+						if(err && this.options.debug == true) console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`) 
+					})
 				}
 			})
 		} catch (e) {
 			if(e){
-				if (this.options.verbose) {
+				if (this.options.debug) {
 					console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`);
-				}
-			}
-		}
-	}
-	/**
-	 * Delete bot messages
-	 * @ignore
-	 * @param {Discord.Message} message Bot message object to delete
-	 * @returns {Promise<void>}
-	 */
-	async clearBotMessages(message){
-		if(this.options.removeBotMessages == false) return;
-		try {
-			setTimeout(function(){message.delete() }, this.options.removeBotMessagesAfter);
-		} catch(e){
-			if(this.options.verbose){
-				if (this.options.verbose) {
-					console.log(`DAntiSpam (clearBotmMessages#failed): The message(s) couldn't be deleted!`);
 				}
 			}
 		}
@@ -307,8 +312,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -322,9 +325,7 @@ class AntiSpamClient extends EventEmitter {
             if (this.options.verbose) {
               console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
             }
-          }).then(msg => {
-			return this.clearBotMessages(msg)
-		})
+          })
         }
       })
 			if (this.options.modLogsEnabled) {
@@ -371,16 +372,15 @@ class AntiSpamClient extends EventEmitter {
 		if (this.options.muteMessage) {
 			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
 				if (this.options.verbose) {
-					console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
+					console.error(`DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`)
 				}
-			}).then(msg => {
-				return this.clearBotMessages(msg)
 			})
 		}
 		if (this.options.modLogsEnabled) {
 			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
 		}
 		this.emit('muteAdd', member)
+		this.timeMute(member, message, role)
 		return true
 	}
 
@@ -407,8 +407,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			return false
@@ -419,8 +417,6 @@ class AntiSpamClient extends EventEmitter {
 					if (this.options.verbose) {
 						console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
 					}
-				}).then(msg => {
-					return this.clearBotMessages(msg)
 				})
 			}
 			if (this.options.modLogsEnabled) {
@@ -450,8 +446,6 @@ class AntiSpamClient extends EventEmitter {
 				if (this.options.verbose) {
 					console.error(`DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`)
 				}
-			}).then(msg => {
-				return this.clearBotMessages(msg)
 			})
 		}
 		this.emit('warnAdd', member)
@@ -472,7 +466,7 @@ class AntiSpamClient extends EventEmitter {
 		if (
 			!message.guild ||
 			message.author.id === message.client.user.id ||
-			(message.guild.ownerID === message.author.id && !options.debug) ||
+			(message.guild.ownerId === message.author.id && !options.debug) ||
 			(options.ignoreBots && message.author.bot)
 		) {
 			return false
@@ -567,6 +561,50 @@ class AntiSpamClient extends EventEmitter {
 		}
 
 		return sanctioned
+	}
+	/**
+	 * Checks if the user left the server to remove him from the cache!
+	 * @param {Discord.GuildMember} member The member to remove from the cache.
+	 * @returns {Promise<boolean>} Whether the member has been removed
+	 * @example
+	 * client.on('guildMemberRemove', (member) => {
+	 * 	antiSpam.userleave(member);
+	 * });
+	 */
+	async userleave (member){
+		const options = this.options
+		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(member.guild) : options.ignoredGuilds.includes(member.guild.id)
+		if (isGuildIgnored) return false
+
+		this.cache.bannedUsers = this.cache.bannedUsers.filter((u) => u !== member.user.id)
+		this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
+		this.cache.kickedUsers = this.cache.kickedUsers.filter((u) => u !== member.user.id)
+		this.cache.warnedUsers = this.cache.warnedUsers.filter((u) => u !== member.user.id)
+
+		return true
+	}
+
+	/**
+	 * Removes the muted role from member after specefic time
+	 * @param {Discord.GuildMember} member The member to the role from
+	 * @returns {Promise<boolean>} Whether the role has been removed
+	 */
+	async timeMute(member, message, role) {
+		const minutestime = this.options.unMuteTime * 60 * 1000
+		if(minutestime != 0) {
+			setTimeout(() => {
+				member.roles.remove(role)
+				this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
+				if (this.options.modLogsEnabled) {
+					this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
+				}
+				this.emit('muteRemove', member)
+				return true
+				}, minutestime)
+			
+		}else {
+			return null;
+		}
 	}
 
 	/**
