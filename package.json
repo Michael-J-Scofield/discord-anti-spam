@@ -32,8 +32,4 @@
     "jsdoc": "^3.6.3",
     "minami": "Androz2091/minami"
   },
-  "dependencies": {
-    "discord-anti-spam": "github:Michael-J-Scofield/discord-anti-spam#2.6.0",
-    "discord.js": "^13.3.1"
-  }
 }
