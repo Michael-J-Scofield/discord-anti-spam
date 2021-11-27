@@ -249,13 +249,13 @@ class AntiSpamClient extends EventEmitter {
 				if(this.options.modLogsMode == "embed"){
 					const embed = new Discord.MessageEmbed()
 					.setAuthor(`DAS Spam detection`,'https://discord-anti-spam.js.org/img/antispam.png')
-					.setDescription(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**!`)
+					.setDescription(`${msg.author} *(${msg.author.id})* has been **${action}** for **spam**!`)
 					.setFooter(`DAS Anti spam`,'https://discord-anti-spam.js.org/img/antispam.png')
 					.setTimestamp()
 					.setColor('RED')
 					modLogChannel.send({embeds:[embed]})
 				}else{
-					modLogChannel.send(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**.`)
+					modLogChannel.send(`${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`)
 				}
 			}
 			
@@ -329,7 +329,7 @@ class AntiSpamClient extends EventEmitter {
         }
       })
 			if (this.options.modLogsEnabled) {
-				this.log(message, `Spam detected: ${message.author} got **banned**`, message.client)
+				this.log(message, `banned`, message.client)
 			}
 			this.emit('banAdd', member)
 			return true
@@ -377,7 +377,7 @@ class AntiSpamClient extends EventEmitter {
 			})
 		}
 		if (this.options.modLogsEnabled) {
-			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
+			this.log(message, `muted`, message.client)
 		}
 		this.emit('muteAdd', member)
 		this.timeMute(member, message, role)
@@ -420,7 +420,7 @@ class AntiSpamClient extends EventEmitter {
 				})
 			}
 			if (this.options.modLogsEnabled) {
-				this.log(message, `Spam detected: ${message.author} got **kicked**`, message.client)
+				this.log(message, `kicked`, message.client)
 			}
 			this.emit('kickAdd', member)
 			return true
@@ -440,7 +440,7 @@ class AntiSpamClient extends EventEmitter {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.warnedUsers.push(message.author.id)
-		this.log(message, `Spam detected: ${message.author.tag} got **warned**`, message.client)
+		this.log(message, `warned`, message.client)
 		if (this.options.warnMessage) {
 			message.channel.send(this.format(this.options.warnMessage, message)).catch((e) => {
 				if (this.options.verbose) {
@@ -596,7 +596,7 @@ class AntiSpamClient extends EventEmitter {
 				member.roles.remove(role)
 				this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
 				if (this.options.modLogsEnabled) {
-					this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
+					this.log(message, `unmutted`, message.client)
 				}
 				this.emit('muteRemove', member)
 				return true
