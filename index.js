@@ -50,7 +50,7 @@ const { EventEmitter } = require('events')
 
 /**
  * Emitted when a member gets banned.
- * @event AntiSpamClient#warnAdd
+ * @event AntiSpamClient#banAdd
  * @property {Discord.GuildMember} member The member that was banned.
  */
 
