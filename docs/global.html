@@ -13,9 +13,6 @@
     <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-    <link rel="icon" 
-      type="image/png" 
-      href="img/antispam.png">
 </head>
 <body>
 
@@ -27,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#timeMute">timeMute</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteRemove">muteRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -414,6 +411,45 @@
 
         <tr>
             
+                <td class="name"><code>muteThreshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    4
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of messages sent in a row that will cause a mute.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
                 <td class="name"><code>kickThreshold</code></td>
             
 
@@ -453,45 +489,6 @@
 
         <tr>
             
-                <td class="name"><code>muteThreshold</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>number</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    7
-                
-                </td>
-            
-
-            <td class="description last"><p>Amount of messages sent in a row that will cause a mute.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
                 <td class="name"><code>banThreshold</code></td>
             
 
@@ -517,7 +514,7 @@
             
                 <td class="default">
                 
-                    4
+                    7
                 
                 </td>
             
@@ -634,51 +631,12 @@
             
                 <td class="default">
                 
-                    3
+                    7
                 
                 </td>
             
 
             <td class="description last"><p>Amount of duplicate messages that trigger a warning.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxDuplicatesKick</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>number</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    5
-                
-                </td>
-            
-
-            <td class="description last"><p>Amount of duplicate messages that trigger a kick.</p></td>
         </tr>
 
         
@@ -712,12 +670,51 @@
             
                 <td class="default">
                 
-                    7
+                    9
                 
                 </td>
             
 
             <td class="description last"><p>Amount of duplicate messages that trigger a mute.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxDuplicatesKick</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
+
+            <td class="description last"><p>Amount of duplicate messages that trigger a kick.</p></td>
         </tr>
 
         
@@ -751,7 +748,7 @@
             
                 <td class="default">
                 
-                    10
+                    11
                 
                 </td>
             
@@ -799,6 +796,45 @@
             
 
             <td class="description last"><p>Name or ID of the role that will be added to users if they got muted.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>unMuteTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>number</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '0'
+                
+                </td>
+            
+
+            <td class="description last"><p>Time in minutes to wait until unmuting a user. 0=never.</p></td>
         </tr>
 
         
@@ -888,6 +924,45 @@
 
         <tr>
             
+                <td class="name"><code>modLogsMode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'embed'
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message&quot;.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
                 <td class="name"><code>warnMessage</code></td>
             
 
@@ -958,7 +1033,7 @@
             
                 <td class="default">
                 
-                    '**{user_tag}** has been muted for spamming.'
+                    '**{user_tag}** has been kicked for spamming.'
                 
                 </td>
             
@@ -1000,7 +1075,7 @@
             
                 <td class="default">
                 
-                    '**{user_tag}** has been kicked for spamming.'
+                    '**{user_tag}** has been muted for spamming.'
                 
                 </td>
             
@@ -1782,7 +1857,7 @@
 
         <tr>
             
-                <td class="name"><code>removeBotMessages</code></td>
+                <td class="name"><code>MultipleSanctions</code></td>
             
 
             <td class="type">
@@ -1812,46 +1887,7 @@
                 </td>
             
 
-            <td class="description last"><p>Whether to delete bot messages after an time.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
-                <td class="name"><code>removeBotMessagesAfter</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>number</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    10000
-                
-                </td>
-            
-
-            <td class="description last"><p>Whenever to delete bot messages. IN MILLISECONDS</p></td>
+            <td class="description last"><p>Whether to run sanctions multiple times</p></td>
         </tr>
 
         
@@ -2788,7 +2824,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
