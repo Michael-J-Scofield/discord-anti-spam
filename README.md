@@ -83,7 +83,7 @@ const antiSpam = new AntiSpam({
   verbose: true,
   ignoredMembers: [],
   muteRoleName: "Muted",
-  muteTime: 0,
+  unMuteTime: 0,
   removeMessages: true,
   modLogsEnabled: false,
   modLogsChannelName: "mod-logs",
