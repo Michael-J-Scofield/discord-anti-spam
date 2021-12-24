@@ -65,7 +65,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
- * @property {number} [unMuteTime='0'] Time in ms to wait until unmuting a user.
+ * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
