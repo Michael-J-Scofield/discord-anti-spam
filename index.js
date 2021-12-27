@@ -200,6 +200,8 @@ class AntiSpamClient extends EventEmitter {
 			kickedUsers: [],
 			bannedUsers: []
 		}
+
+		this.guildOptions = {}
 	}
 
 	/**
@@ -440,6 +442,17 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
+	 * Returns the options for a Guild
+	 * @ignore
+	 * @param {Discord.Guild} guild The guild to get the options for.
+	 * @returns {Object} The options for the guild.
+	 */
+
+	getOptions (guild) {
+		return this.guildOptions[guild.id] || this.options
+	}
+
+	/**
 	 * Checks a message.
 	 * @param {Discord.Message} message The message to check.
 	 * @returns {Promise<boolean>} Whether the message has triggered a threshold.
@@ -449,7 +462,8 @@ class AntiSpamClient extends EventEmitter {
 	 * });
 	 */
 	async message (message) {
-		const { options } = this
+		const options = this.getOptions()
+
 		if (
 			!message.guild ||
 			message.author.id === message.client.user.id ||
@@ -571,10 +585,30 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
-	 * Removes the muted role from member after specefic time
-	 * @param {Discord.GuildMember} member The member to the role from
-	 * @returns {Promise<boolean>} Whether the role has been removed
+	 * Add GuildOptions for a guild to use instead of the default options.
+	 * @param {Discord.Guild} guild The guild to add the options for.
+	 * @param {AntiSpamClientOptions} options The options to use for the guild.
+	 * @returns {boolean} Whether the options have been added.
 	 */
+	addGuildOptions (guild, options) {
+		const guildId = guild.id
+
+		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
+
+			for (setting, value of options.entries()) { // If they do iterate over the settings and their values
+				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
+
+			}
+
+			return true
+
+		} else {
+
+			this.guildOptions.set(guildId, options)
+			return true
+
+		}
+	}
 
 	/**
 	 * Reset the cache of this AntiSpam client instance.
