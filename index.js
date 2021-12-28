@@ -595,7 +595,7 @@ class AntiSpamClient extends EventEmitter {
 
 		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
 
-			for (setting, value of options.entries()) { // If they do iterate over the settings and their values
+			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
 				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
 
 			}
