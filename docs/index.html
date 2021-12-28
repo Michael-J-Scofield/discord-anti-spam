@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#timeMute">timeMute</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteRemove">muteRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#addGuildOptions">addGuildOptions</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -83,8 +83,7 @@ const antiSpam = new AntiSpam({
   ignoreBots: true, // Ignore bot messages.
   verbose: true, // Extended Logs from module.
   ignoredMembers: [], // Array of User IDs that get ignored.
-  muteRoleName: &quot;Muted&quot;, // Name of the role that will be given to muted users!
-  unMuteTime: 0, // Amount of time (in minutes) a user will be muted for.
+  unMuteTime:  10, // Amount of time (in minutes) a user will be muted for.
   removeMessages: true, // If the bot should remove all the spam messages when taking action on a user!
   modLogsEnabled: false, // If to enable modlogs
   modLogsChannelName: &quot;mod-logs&quot;, // channel to send the modlogs too!
@@ -117,13 +116,49 @@ client.login(&quot;YOUR_SUPER_SECRET_TOKEN&quot;);
   ignoreBots: true,
   verbose: true,
   ignoredMembers: [],
-  muteRoleName: &quot;Muted&quot;,
-  muteTime: 0,
+  unMuteTime: 10,
   removeMessages: true,
   modLogsEnabled: false,
   modLogsChannelName: &quot;mod-logs&quot;,
   modLogsMode: &quot;embed&quot;,
 });
+</code></pre>
+<h2>Multiple Guild Example</h2>
+<p>Because of a new update, you may now have multiple guilds having their own options. You will need to store their options in a database or something similar to avoid loss of settings.</p>
+<pre class="prettyprint source lang-js"><code>const Discord = require(&quot;discord.js&quot;);
+const client = new Discord.Client({
+  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+});
+const AntiSpam = require(&quot;discord-anti-spam&quot;);
+
+const antiSpam = new AntiSpam({
+  warnThreshold: 3,
+  muteThreshold: 4,
+  kickThreshold: 7,
+  banThreshold: 7,
+  maxInterval: 2000,
+  warnMessage: &quot;{@user}, Please stop spamming.&quot;,
+  kickMessage: &quot;**{user_tag}** has been kicked for spamming.&quot;,
+  muteMessage: &quot;**{user_tag}** has been muted for spamming.&quot;,
+  banMessage: &quot;**{user_tag}** has been banned for spamming.&quot;,
+  maxDuplicatesWarning: 6,
+  maxDuplicatesKick: 10,
+  maxDuplicatesBan: 12,
+  maxDuplicatesMute: 8,
+  ignoredPermissions: [&quot;ADMINISTRATOR&quot;],
+  ignoreBots: true,
+  verbose: true,
+  ignoredMembers: [],
+  unMuteTime: 10,
+  removeMessages: true,
+  modLogsEnabled: false,
+  modLogsChannelName: &quot;mod-logs&quot;,
+  modLogsMode: &quot;embed&quot;,
+}); // If a guild does not have any separate options, these are the settings they will be using.
+
+client.on(&quot;ready&quot;, () => antiSpam.addGuildOptions(client.guilds.fetch(&quot;583920432168828938&quot;), {modLogsChannelName: &quot;special-logs&quot;}))
+client.on(&quot;messageCreate&quot;, (message) => antiSpam.message(messageCreate));
+client.login(&quot;YOUR_SUPER_SECRET_TOKEN&quot;);
 </code></pre>
 <h2>Support Server</h2>
 <p>Join our <a href="https://discord.gg/KQgDfGr">Support Server</a> where we help you with issues regarding the module.</p>

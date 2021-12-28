@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#timeMute">timeMute</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteRemove">muteRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#addGuildOptions">addGuildOptions</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -762,48 +762,6 @@
 
         <tr>
             
-                <td class="name"><code>muteRoleName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>Discord.Snowflake</code></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'Muted'
-                
-                </td>
-            
-
-            <td class="description last"><p>Name or ID of the role that will be added to users if they got muted.</p></td>
-        </tr>
-
-        
-
-    
-
-        <tr>
-            
                 <td class="name"><code>unMuteTime</code></td>
             
 
@@ -834,7 +792,7 @@
                 </td>
             
 
-            <td class="description last"><p>Time in minutes to wait until unmuting a user. 0=never.</p></td>
+            <td class="description last"><p>Time in minutes to wait until unmuting a user.</p></td>
         </tr>
 
         
@@ -1209,7 +1167,7 @@
 
         <tr>
             
-                <td class="name"><code>muteErrorMessage</code></td>
+                <td class="name"><code>banErrorMessage</code></td>
             
 
             <td class="type">
@@ -1248,7 +1206,7 @@
 
         <tr>
             
-                <td class="name"><code>banErrorMessage</code></td>
+                <td class="name"><code>muteErrorMessage</code></td>
             
 
             <td class="type">
@@ -1273,7 +1231,7 @@
             
                 <td class="default">
                 
-                    'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'
+                    'Could not mute **{user_tag}** because of improper permissions.'
                 
                 </td>
             

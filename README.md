@@ -89,6 +89,46 @@ const antiSpam = new AntiSpam({
 });
 ```
 
+## Multiple Guild Example
+Because of a new update, you may now have multiple guilds having their own options. You will need to store their options in a database or something similar to avoid loss of settings.
+```js
+const Discord = require("discord.js");
+const client = new Discord.Client({
+  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+});
+const AntiSpam = require("discord-anti-spam");
+
+const antiSpam = new AntiSpam({
+  warnThreshold: 3,
+  muteThreshold: 4,
+  kickThreshold: 7,
+  banThreshold: 7,
+  maxInterval: 2000,
+  warnMessage: "{@user}, Please stop spamming.",
+  kickMessage: "**{user_tag}** has been kicked for spamming.",
+  muteMessage: "**{user_tag}** has been muted for spamming.",
+  banMessage: "**{user_tag}** has been banned for spamming.",
+  maxDuplicatesWarning: 6,
+  maxDuplicatesKick: 10,
+  maxDuplicatesBan: 12,
+  maxDuplicatesMute: 8,
+  ignoredPermissions: ["ADMINISTRATOR"],
+  ignoreBots: true,
+  verbose: true,
+  ignoredMembers: [],
+  unMuteTime: 10,
+  removeMessages: true,
+  modLogsEnabled: false,
+  modLogsChannelName: "mod-logs",
+  modLogsMode: "embed",
+}); // If a guild does not have any separate options, these are the settings they will be using.
+
+client.on("ready", () => antiSpam.addGuildOptions(client.guilds.fetch("583920432168828938"), {modLogsChannelName: "special-logs"}))
+client.on("messageCreate", (message) => antiSpam.message(messageCreate));
+client.login("YOUR_SUPER_SECRET_TOKEN");
+```
+
+
 ## Support Server
 
 Join our [Support Server](https://discord.gg/KQgDfGr) where we help you with issues regarding the module.
