@@ -43,14 +43,8 @@ const { EventEmitter } = require('events')
  * @property {Discord.GuildMember} member The member that was muted.
  */
 /**
- * Emitted when a member gets unmuted.
- * @event AntiSpamClient#muteRemove
- * @property {Discord.GuildMember} member The member that was unmuted.
- */
-
-/**
  * Emitted when a member gets banned.
- * @event AntiSpamClient#warnAdd
+ * @event AntiSpamClient#banAdd
  * @property {Discord.GuildMember} member The member that was banned.
  */
 
@@ -71,8 +65,7 @@ const { EventEmitter } = require('events')
  * @property {number} [maxDuplicatesKick=10] Amount of duplicate messages that trigger a kick.
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
- * @property {string|Discord.Snowflake} [muteRoleName='Muted'] Name or ID of the role that will be added to users if they got muted.
- * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user. 0=never.
+ * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user.
  * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
@@ -84,8 +77,8 @@ const { EventEmitter } = require('events')
  *
  * @property {boolean} [errorMessages=true] Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.
  * @property {string} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to kick the member.
- * @property {string} [muteErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to mute the member (to add the mute role).
- * @property {string} [banErrorMessage='Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.'] Message that will be sent in the channel when the bot doesn't have enough permissions to ban the member.
+ * @property {string} [banErrorMessage='Could not ban **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to mute the member (to add the mute role).
+ * @property {string} [muteErrorMessage='Could not mute **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to ban the member.
  *
  * @property {Discord.Snowflake|string[]|IgnoreMemberFunction} [ignoredMembers=[]] Array of member IDs that are ignored.
  * @property {Discord.Snowflake|string[]|IgnoreRoleFunction} [ignoredRoles=[]] Array of role IDs or role names that are ignored. Members with one of these roles will be ignored.
@@ -158,8 +151,7 @@ class AntiSpamClient extends EventEmitter {
 			maxDuplicatesKick: options.maxDuplicatesKick || 10,
 			maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
-			muteRoleName: options.muteRoleName || 'Muted',
-			unMuteTime: options.unMuteTime || 0,
+			unMuteTime: options.unMuteTime * 60_000 || 300000,
 
 			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
 			modLogsEnabled: options.modLogsEnabled || false,
@@ -173,7 +165,7 @@ class AntiSpamClient extends EventEmitter {
 			errorMessages: options.errorMessages != undefined ? options.errorMessages : true,
 			kickErrorMessage: options.kickErrorMessage || 'Could not kick **{user_tag}** because of improper permissions.',
 			banErrorMessage: options.banErrorMessage || 'Could not ban **{user_tag}** because of improper permissions.',
-			muteErrorMessage: options.muteErrorMessage || 'Could not mute **{user_tag}** because of improper permissions or the mute role couldn\'t be found.',
+			muteErrorMessage: options.muteErrorMessage || 'Could not mute **{user_tag}** because of improper permissions.',
 
 			ignoredMembers: options.ignoredMembers || [],
 			ignoredRoles: options.ignoredRoles || [],
@@ -206,9 +198,10 @@ class AntiSpamClient extends EventEmitter {
 			messages: [],
 			warnedUsers: [],
 			kickedUsers: [],
-			mutedUsers: [],
 			bannedUsers: []
 		}
+
+		this.guildOptions = {}
 	}
 
 	/**
@@ -249,13 +242,13 @@ class AntiSpamClient extends EventEmitter {
 				if(this.options.modLogsMode == "embed"){
 					const embed = new Discord.MessageEmbed()
 					.setAuthor(`DAS Spam detection`,'https://discord-anti-spam.js.org/img/antispam.png')
-					.setDescription(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**!`)
+					.setDescription(`${msg.author} *(${msg.author.id})* has been **${action}** for **spam**!`)
 					.setFooter(`DAS Anti spam`,'https://discord-anti-spam.js.org/img/antispam.png')
 					.setTimestamp()
 					.setColor('RED')
 					modLogChannel.send({embeds:[embed]})
 				}else{
-					modLogChannel.send(`${msg.author}(${msg.author.id}) has been **${action}** for **spam**.`)
+					modLogChannel.send(`${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`)
 				}
 			}
 			
@@ -329,7 +322,7 @@ class AntiSpamClient extends EventEmitter {
         }
       })
 			if (this.options.modLogsEnabled) {
-				this.log(message, `Spam detected: ${message.author} got **banned**`, message.client)
+				this.log(message, `banned`, message.client)
 			}
 			this.emit('banAdd', member)
 			return true
@@ -349,12 +342,10 @@ class AntiSpamClient extends EventEmitter {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
-		this.cache.mutedUsers.push(message.author.id)
-		const role = message.guild.roles.cache.find(role => role.name === this.options.muteRoleName)
-		const userCanBeMuted = role && message.guild.me.permissions.has('MANAGE_ROLES') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		const userCanBeMuted = message.guild.me.permissions.has('MODERATE_MEMBERS') && (message.guild.me.roles.highest.position > message.member.roles.highest.position && message.member.id !== message.guild.ownerId)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
-				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
+				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions.`)
 			}
 			if (this.options.errorMessages) {
 				await message.channel
@@ -367,8 +358,7 @@ class AntiSpamClient extends EventEmitter {
 			}
 			return false
 		}
-		if (message.member.roles.cache.has(role.id)) return true
-		await message.member.roles.add(role, 'Spamming')
+		await message.member.timeout(this.options.unMuteTime, 'Spamming')
 		if (this.options.muteMessage) {
 			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
 				if (this.options.verbose) {
@@ -377,10 +367,9 @@ class AntiSpamClient extends EventEmitter {
 			})
 		}
 		if (this.options.modLogsEnabled) {
-			this.log(message, `Spam detected: ${message.author} got **muted**`, message.client)
+			this.log(message, `muted`, message.client)
 		}
 		this.emit('muteAdd', member)
-		this.timeMute(member, message, role)
 		return true
 	}
 
@@ -420,7 +409,7 @@ class AntiSpamClient extends EventEmitter {
 				})
 			}
 			if (this.options.modLogsEnabled) {
-				this.log(message, `Spam detected: ${message.author} got **kicked**`, message.client)
+				this.log(message, `kicked`, message.client)
 			}
 			this.emit('kickAdd', member)
 			return true
@@ -440,7 +429,7 @@ class AntiSpamClient extends EventEmitter {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.warnedUsers.push(message.author.id)
-		this.log(message, `Spam detected: ${message.author.tag} got **warned**`, message.client)
+		this.log(message, `warned`, message.client)
 		if (this.options.warnMessage) {
 			message.channel.send(this.format(this.options.warnMessage, message)).catch((e) => {
 				if (this.options.verbose) {
@@ -453,6 +442,17 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
+	 * Returns the options for a Guild
+	 * @ignore
+	 * @param {Discord.Guild} guild The guild to get the options for.
+	 * @returns {Object} The options for the guild.
+	 */
+
+	getOptions (guild) {
+		return this.guildOptions[guild.id] || this.options
+	}
+
+	/**
 	 * Checks a message.
 	 * @param {Discord.Message} message The message to check.
 	 * @returns {Promise<boolean>} Whether the message has triggered a threshold.
@@ -462,7 +462,8 @@ class AntiSpamClient extends EventEmitter {
 	 * });
 	 */
 	async message (message) {
-		const { options } = this
+		const options = this.getOptions()
+
 		if (
 			!message.guild ||
 			message.author.id === message.client.user.id ||
@@ -533,7 +534,7 @@ class AntiSpamClient extends EventEmitter {
 		}
 
 
-		const userCanBeMuted = options.muteEnabled && !this.cache.mutedUsers.includes(message.author.id) && !sanctioned
+		const userCanBeMuted = options.muteEnabled && !sanctioned
 		if (userCanBeMuted && (spamMatches.length >= options.muteThreshold)) {
 			this.muteUser(message, member, spamMatches)
 			sanctioned = true
@@ -577,7 +578,6 @@ class AntiSpamClient extends EventEmitter {
 		if (isGuildIgnored) return false
 
 		this.cache.bannedUsers = this.cache.bannedUsers.filter((u) => u !== member.user.id)
-		this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
 		this.cache.kickedUsers = this.cache.kickedUsers.filter((u) => u !== member.user.id)
 		this.cache.warnedUsers = this.cache.warnedUsers.filter((u) => u !== member.user.id)
 
@@ -585,25 +585,28 @@ class AntiSpamClient extends EventEmitter {
 	}
 
 	/**
-	 * Removes the muted role from member after specefic time
-	 * @param {Discord.GuildMember} member The member to the role from
-	 * @returns {Promise<boolean>} Whether the role has been removed
+	 * Add GuildOptions for a guild to use instead of the default options.
+	 * @param {Discord.Guild} guild The guild to add the options for.
+	 * @param {AntiSpamClientOptions} options The options to use for the guild.
+	 * @returns {boolean} Whether the options have been added.
 	 */
-	async timeMute(member, message, role) {
-		const minutestime = this.options.unMuteTime * 60 * 1000
-		if(minutestime != 0) {
-			setTimeout(() => {
-				member.roles.remove(role)
-				this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
-				if (this.options.modLogsEnabled) {
-					this.log(message, `Temp mute: ${message.author} got **unmuted**.`, message.client)
-				}
-				this.emit('muteRemove', member)
-				return true
-				}, minutestime)
-			
-		}else {
-			return null;
+	addGuildOptions (guild, options) {
+		const guildId = guild.id
+
+		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
+
+			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
+				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
+
+			}
+
+			return true
+
+		} else {
+
+			this.guildOptions.set(guildId, options)
+			return true
+
 		}
 	}
 
@@ -615,7 +618,6 @@ class AntiSpamClient extends EventEmitter {
 			messages: [],
 			warnedUsers: [],
 			kickedUsers: [],
-			mutedUsers: [],
 			bannedUsers: []
 		}
 	}

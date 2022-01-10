@@ -51,7 +51,6 @@ declare module 'discord-anti-spam' {
 		bannedUsers: Snowflake[];
 		kickedUsers: Snowflake[];
 		warnedUsers: Snowflake[];
-		mutedUsers: Snowflake[];
 	};
 
 	type AntiSpamOptions = {
@@ -81,7 +80,6 @@ declare module 'discord-anti-spam' {
 		kickEnabled?: boolean;
 		banEnabled?: boolean;
 		muteEnabled?: boolean;
-		muteRoleName?: String;
 		modLogsChannelName?: string;
 		modLogsEnabled?: boolean;
 		removeMessages?: boolean;
