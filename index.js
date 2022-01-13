@@ -462,7 +462,7 @@ class AntiSpamClient extends EventEmitter {
 	 * });
 	 */
 	async message (message) {
-		const options = this.getOptions()
+		const options = this.getOptions(message.guild)
 
 		if (
 			!message.guild ||
