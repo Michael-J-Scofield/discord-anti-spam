@@ -448,9 +448,9 @@ class AntiSpamClient extends EventEmitter {
 	 * @returns {Object} The options for the guild.
 	 */
 
-	getOptions (guild) {
-		return this.guildOptions[guild.id] || this.options
-	}
+// 	getOptions (guild) {
+// 		return this.guildOptions[guild.id] || this.options
+// 	}
 
 	/**
 	 * Checks a message.
@@ -462,7 +462,7 @@ class AntiSpamClient extends EventEmitter {
 	 * });
 	 */
 	async message (message) {
-		const options = this.getOptions(message.guild)
+		const { options } = this
 
 		if (
 			!message.guild ||
@@ -590,25 +590,25 @@ class AntiSpamClient extends EventEmitter {
 	 * @param {AntiSpamClientOptions} options The options to use for the guild.
 	 * @returns {boolean} Whether the options have been added.
 	 */
-	addGuildOptions (guild, options) {
-		const guildId = guild.id
+// 	addGuildOptions (guild, options) {
+// 		const guildId = guild.id
 
-		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
+// 		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
 
-			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
-				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
+// 			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
+// 				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
 
-			}
+// 			}
 
-			return true
+// 			return true
 
-		} else {
+// 		} else {
 
-			this.guildOptions.set(guildId, options)
-			return true
+// 			this.guildOptions.set(guildId, options)
+// 			return true
 
-		}
-	}
+// 		}
+// 	}
 
 	/**
 	 * Reset the cache of this AntiSpam client instance.
