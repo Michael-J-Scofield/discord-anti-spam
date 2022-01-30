@@ -201,7 +201,7 @@ class AntiSpamClient extends EventEmitter {
 			bannedUsers: []
 		}
 
-		this.guildOptions = {}
+		// this.guildOptions = {}
 	}
 
 	/**
@@ -584,12 +584,12 @@ class AntiSpamClient extends EventEmitter {
 		return true
 	}
 
-	/**
-	 * Add GuildOptions for a guild to use instead of the default options.
-	 * @param {Discord.Guild} guild The guild to add the options for.
-	 * @param {AntiSpamClientOptions} options The options to use for the guild.
-	 * @returns {boolean} Whether the options have been added.
-	 */
+	// /**
+	//  * Add GuildOptions for a guild to use instead of the default options.
+	//  * @param {Discord.Guild} guild The guild to add the options for.
+	//  * @param {AntiSpamClientOptions} options The options to use for the guild.
+	//  * @returns {boolean} Whether the options have been added.
+	//  */
 // 	addGuildOptions (guild, options) {
 // 		const guildId = guild.id
 
