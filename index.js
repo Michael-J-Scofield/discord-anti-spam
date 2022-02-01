@@ -254,6 +254,12 @@ class AntiSpamClient extends EventEmitter {
 			
 		}
 	}
+	/**
+	 * Updates options to new value.
+	 * @param {object} options The new options to consider
+	 */
+	async updateOptions (options) {
+	}
 
 	/**
 	 * Delete spam messages
