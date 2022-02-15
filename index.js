@@ -259,6 +259,7 @@ class AntiSpamClient extends EventEmitter {
 	 * @param {object} options The new options to consider
 	 */
 	async updateOptions (options) {
+		if(!options) return console.error('DAntiSpam (updateOptions#invalidOptions): You need to specify new options in the updateOptions function!')
 	}
 
 	/**
