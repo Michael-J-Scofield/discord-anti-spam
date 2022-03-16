@@ -124,7 +124,7 @@ const antiSpam = new AntiSpam({
 }); // If a guild does not have any separate options, these are the settings they will be using.
 
 client.on("ready", () => antiSpam.addGuildOptions(client.guilds.fetch("583920432168828938"), {modLogsChannelName: "special-logs"}))
-client.on("messageCreate", (message) => antiSpam.message(messageCreate));
+client.on("messageCreate", (message) => antiSpam.message(message));
 client.login("YOUR_SUPER_SECRET_TOKEN");
 ```
 
