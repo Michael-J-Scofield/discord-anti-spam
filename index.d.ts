@@ -13,8 +13,6 @@ import {
 	Role
 } from 'discord.js';
 declare module 'discord-anti-spam' {
-	const _default: AntiSpam;
-	export default _default;
 	class AntiSpam extends EventEmitter {
 		constructor(options?: AntiSpamOptions);
 		public options: AntiSpamOptions;
@@ -84,4 +82,6 @@ declare module 'discord-anti-spam' {
 		modLogsEnabled?: boolean;
 		removeMessages?: boolean;
 	};
+	
+	export default AntiSpam;
 }
