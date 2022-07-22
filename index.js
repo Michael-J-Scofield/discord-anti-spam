@@ -1,5 +1,5 @@
-const Discord = require('discord.js')
-const { EventEmitter } = require('events')
+const Discord = require("discord.js");
+const { EventEmitter } = require("events");
 
 /**
  * @callback IgnoreMemberFunction
@@ -70,10 +70,29 @@ const { EventEmitter } = require('events')
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
  *
- * @property {string|Discord.MessageEmbed} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
- * @property {string|Discord.MessageEmbed} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is kicked.
- * @property {string|Discord.MessageEmbed} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is muted.
- * @property {string|Discord.MessageEmbed} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in the channel when someone is banned.
+ * @property {string} [warnMessage='{@user}, Please stop spamming.'] Message that will be sent in the channel when someone is warned.
+ * @property {string} [kickMessage='**{user_tag}** has been kicked for spamming.'] Message that will be sent in the channel when someone is kicked.
+ * @property {string} [muteMessage='**{user_tag}** has been muted for spamming.'] Message that will be sent in the channel when someone is muted.
+ * @property {string} [banMessage='**{user_tag}** has been banned for spamming.'] Message that will be sent in the channel when someone is banned.
+ *
+ * @property {boolean} [actionInEmbed=false] Whether the action message will be sent in an embed or not.
+ * @property {string} [actionEmbedIn="channel"] Whether the action message will be sent in the channel or dm. Options: 'channel' or 'dm'.
+ * @property {string} [actionEmbedColor='#ff0000'] Color of the embeds of the action message.
+ *
+ * @property {string} [warnEmbedTitle='User has been warned'] Title of the embeds of the action message.
+ * @property {string} [kickEmbedTitle='User has been kicked'] Title of the embed of the warn message.
+ * @property {string} [muteEmbedTitle='User has been muted'] Title of the embed of the mute message.
+ * @property {string} [banEmbedTitle='User has been banned'] Title of the embed of the ban message.
+ *
+ * @property {string} [warnEmbedDescription='You have been warned for spamming.'] Description of the embed of the warn message.
+ * @property {string} [kickEmbedDescription='You have been kicked for spamming.'] Description of the embed of the kick message.
+ * @property {string} [muteEmbedDescription='You have been muted for spamming.'] Description of the embed of the mute message.
+ * @property {string} [banEmbedDescription='You have been banned for spamming.'] Description of the embed of the ban message.
+ *
+ * @property {string} [warnEmbedFooter='You have been warned.'] Footer of the embed of the warn message.
+ * @property {string} [kickEmbedFooter='You have been kicked.'] Footer of the embed of the kick message.
+ * @property {string} [muteEmbedFooter='You have been muted.'] Footer of the embed of the mute message.
+ * @property {string} [banEmbedFooter='You have been banned.'] Footer of the embed of the ban message.
  *
  * @property {boolean} [errorMessages=true] Whether the bot should send a message in the channel when it doesn't have some required permissions, like it can't kick members.
  * @property {string} [kickErrorMessage='Could not kick **{user_tag}** because of improper permissions.'] Message that will be sent in the channel when the bot doesn't have enough permissions to kick the member.
@@ -96,7 +115,7 @@ const { EventEmitter } = require('events')
  * @property {boolean} [verbose=false] Extended logs from module (recommended).
  * @property {boolean} [debug=false] Whether to run the module in debug mode.
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
- * 
+ *
  * @property {boolean} [MultipleSanctions=false] Whether to run sanctions multiple times
  */
 
@@ -127,500 +146,672 @@ const { EventEmitter } = require('events')
  * Main AntiSpam class
  */
 class AntiSpamClient extends EventEmitter {
-	/**
-     * @param {AntiSpamClientOptions} options The options for this AntiSpam client instance
+  /**
+   * @param {AntiSpamClientOptions} options The options for this AntiSpam client instance
+   */
+  constructor(options) {
+    super();
+    /**
+     * The options for this AntiSpam client instance
+     * @type {AntiSpamClientOptions}
      */
-	constructor (options) {
-		super()
-		/**
-		 * The options for this AntiSpam client instance
-		 * @type {AntiSpamClientOptions}
-		 */
-		this.options = {
+    this.options = {
+      warnThreshold: options.warnThreshold || 3,
+      muteThreshold: options.muteThreshold || 4,
+      kickThreshold: options.kickThreshold || 5,
+      banThreshold: options.banThreshold || 7,
 
-			warnThreshold: options.warnThreshold || 3,
-			muteThreshold: options.muteThreshold || 4,
-			kickThreshold: options.kickThreshold || 5,
-			banThreshold: options.banThreshold || 7,
+      maxInterval: options.maxInterval || 2000,
+      maxDuplicatesInterval: options.maxDuplicatesInterval || 2000,
 
-			maxInterval: options.maxInterval || 2000,
-			maxDuplicatesInterval: options.maxDuplicatesInterval || 2000,
+      maxDuplicatesWarn: options.maxDuplicatesWarn || 7,
+      maxDuplicatesMute: options.maxDuplicatesMute || 9,
+      maxDuplicatesKick: options.maxDuplicatesKick || 10,
+      maxDuplicatesBan: options.maxDuplicatesBan || 11,
 
-			maxDuplicatesWarn: options.maxDuplicatesWarn || 7,
-			maxDuplicatesMute: options.maxDuplicatesMute || 9,
-			maxDuplicatesKick: options.maxDuplicatesKick || 10,
-			maxDuplicatesBan: options.maxDuplicatesBan || 11,
+      unMuteTime: options.unMuteTime * 60_000 || 300000,
 
-			unMuteTime: options.unMuteTime * 60_000 || 300000,
+      modLogsChannelName: options.modLogsChannelName || "mod-logs",
+      modLogsEnabled: options.modLogsEnabled || false,
+      modLogsMode: options.modLogsMode || "embed",
 
-			modLogsChannelName: options.modLogsChannelName || 'mod-logs',
-			modLogsEnabled: options.modLogsEnabled || false,
-			modLogsMode: options.modLogsMode || 'embed',
+      warnMessage: options.warnMessage || "{@user}, Please stop spamming.",
+      muteMessage:
+        options.muteMessage || "**{user_tag}** has been muted for spamming.",
+      kickMessage:
+        options.kickMessage || "**{user_tag}** has been kicked for spamming.",
+      banMessage:
+        options.banMessage || "**{user_tag}** has been banned for spamming.",
 
-			warnMessage: options.warnMessage || '{@user}, Please stop spamming.',
-			muteMessage: options.muteMessage || '**{user_tag}** has been muted for spamming.',
-			kickMessage: options.kickMessage || '**{user_tag}** has been kicked for spamming.',
-			banMessage: options.banMessage || '**{user_tag}** has been banned for spamming.',
+      actionInEmbed: options.actionInEmbed || false,
+      actionEmbedIn: options.actionEmbedIn || "channel",
+      actionEmbedColor: options.actionEmbedColor || "#ff0000",
 
-			errorMessages: options.errorMessages != undefined ? options.errorMessages : true,
-			kickErrorMessage: options.kickErrorMessage || 'Could not kick **{user_tag}** because of improper permissions.',
-			banErrorMessage: options.banErrorMessage || 'Could not ban **{user_tag}** because of improper permissions.',
-			muteErrorMessage: options.muteErrorMessage || 'Could not mute **{user_tag}** because of improper permissions.',
+      warnEmbedTitle: options.warnEmbedTitle || "User have been warned.",
+      kickEmbedTitle: options.kickEmbedTitle || "User have been kicked.",
+      muteEmbedTitle: options.muteEmbedTitle || "User have been muted.",
+      banEmbedTitle: options.banEmbedTitle || "User have been banned.",
 
-			ignoredMembers: options.ignoredMembers || [],
-			ignoredRoles: options.ignoredRoles || [],
-			ignoredGuilds: options.ignoredGuilds || [],
-			ignoredChannels: options.ignoredChannels || [],
-			ignoredPermissions: options.ignoredPermissions || [],
-			ignoreBots: options.ignoreBots != undefined ? options.ignoreBots : true,
+      warnEmbedDescription:
+        options.warnEmbedDescription || "You have been warned for spamming.",
+      kickEmbedDescription:
+        options.kickEmbedDescription || "You have been kicked for spamming.",
+      muteEmbedDescription:
+        options.muteEmbedDescription || "You have been muted for spamming.",
+      banEmbedDescription:
+        options.banEmbedDescription || "You have been banned for spamming.",
 
-			warnEnabled: options.warnEnabled != undefined ? options.warnEnabled : true,
-			kickEnabled: options.kickEnabled != undefined ? options.kickEnabled : true,
-			muteEnabled: options.muteEnabled != undefined ? options.muteEnabled : true,
-			banEnabled: options.banEnabled != undefined ? options.banEnabled : true,
+      warnEmbedFooter: options.warnEmbedFooter || "You have been warned.",
+      kickEmbedFooter: options.kickEmbedFooter || "You have been kicked.",
+      muteEmbedFooter: options.muteEmbedFooter || "You have been muted.",
+      banEmbedFooter: options.banEmbedFooter || "You have been banned.",
 
-			deleteMessagesAfterBanForPastDays: options.deleteMessagesAfterBanForPastDays || 1,
-			verbose: options.verbose || false,
-			debug: options.debug || false,
-			removeMessages: options.removeMessages != undefined ? options.removeMessages : true,
+      errorMessages:
+        options.errorMessages != undefined ? options.errorMessages : true,
+      kickErrorMessage:
+        options.kickErrorMessage ||
+        "Could not kick **{user_tag}** because of improper permissions.",
+      banErrorMessage:
+        options.banErrorMessage ||
+        "Could not ban **{user_tag}** because of improper permissions.",
+      muteErrorMessage:
+        options.muteErrorMessage ||
+        "Could not mute **{user_tag}** because of improper permissions.",
 
-			removeBotMessages: options.removeBotMessages || false,
-			removeBotMessagesAfter: options.removeBotMessagesAfter || 2000,
+      ignoredMembers: options.ignoredMembers || [],
+      ignoredRoles: options.ignoredRoles || [],
+      ignoredGuilds: options.ignoredGuilds || [],
+      ignoredChannels: options.ignoredChannels || [],
+      ignoredPermissions: options.ignoredPermissions || [],
+      ignoreBots: options.ignoreBots != undefined ? options.ignoreBots : true,
 
-			MultipleSanctions: options.MultipleSanctions || false,
-		}
+      warnEnabled:
+        options.warnEnabled != undefined ? options.warnEnabled : true,
+      kickEnabled:
+        options.kickEnabled != undefined ? options.kickEnabled : true,
+      muteEnabled:
+        options.muteEnabled != undefined ? options.muteEnabled : true,
+      banEnabled: options.banEnabled != undefined ? options.banEnabled : true,
 
-		/**
-		 * The cache for this AntiSpam client instance
-		 * @type {AntiSpamCache}
-		 */
-		this.cache = {
-			messages: [],
-			warnedUsers: [],
-			kickedUsers: [],
-			bannedUsers: []
-		}
+      deleteMessagesAfterBanForPastDays:
+        options.deleteMessagesAfterBanForPastDays || 1,
+      verbose: options.verbose || false,
+      debug: options.debug || false,
+      removeMessages:
+        options.removeMessages != undefined ? options.removeMessages : true,
 
-		// this.guildOptions = {}
-	}
+      removeBotMessages: options.removeBotMessages || false,
+      removeBotMessagesAfter: options.removeBotMessagesAfter || 2000,
 
-	/**
-	 * Format a string and returns it.
-	 * @ignore
-	 * @param {string|Discord.MessageEmbed} string The string to format.
-	 * @param {Discord.Message} message Context message.
-	 * @returns {string|Discord.MessageEmbed}
-	 */
-	format (string, message) {
-		if (typeof string === 'string') {
-			const content = string.replace(/{@user}/g, message.author.toString())
-				.replace(/{user_tag}/g, message.author.tag)
-				.replace(/{server_name}/g, message.guild.name)
-			return { content };
-		} else {
-			const embed = new Discord.MessageEmbed(string)
-			if (embed.description) embed.setDescription(this.format(embed.description, message))
-			if (embed.title) embed.setTitle(this.format(embed.title, message))
-			if (embed.footer && embed.footer.text) embed.footer.text = this.format(embed.footer.text, message)
-			if (embed.author && embed.author.name) embed.author.name = this.format(embed.author.name, message)
-			return { embeds: [embed] }
-		}
-	}
+      MultipleSanctions: options.MultipleSanctions || false,
+    };
 
-	/**
-	 * Logs the actions
-	 * @ignore
-	 * @param {Discord.Message} msg The message to check the channel with
-	 * @param {string} action The action to log
-	 * @param {Discord.Client} client The Discord client that will send the message
-	 */
-	log (msg, action, client) {
-		if (this.options.modLogsEnabled) {
-			const modLogChannel = client.channels.cache.get(this.options.modLogsChannelName) ||
-			msg.guild.channels.cache.find((channel) => channel.name === this.options.modLogsChannelName && channel.type === 'GUILD_TEXT')
-			if(modLogChannel) {
-				if(this.options.modLogsMode == "embed"){
-					const embed = new Discord.MessageEmbed()
-					.setAuthor(`DAS Spam detection`,'https://discord-anti-spam.js.org/img/antispam.png')
-					.setDescription(`${msg.author} *(${msg.author.id})* has been **${action}** for **spam**!`)
-					.setFooter(`DAS Anti spam`,'https://discord-anti-spam.js.org/img/antispam.png')
-					.setTimestamp()
-					.setColor('RED')
-					modLogChannel.send({embeds:[embed]})
-				}else{
-					modLogChannel.send(`${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`)
-				}
-			}
-			
-		}
-	}
+    /**
+     * The cache for this AntiSpam client instance
+     * @type {AntiSpamCache}
+     */
+    this.cache = {
+      messages: [],
+      warnedUsers: [],
+      kickedUsers: [],
+      bannedUsers: [],
+    };
 
-	/**
-	 * Delete spam messages
-	 * @ignore
-	 * @param {CachedMessage[]} messages The messages to delete
-	 * @param {Discord.Client} client The Discord client that will delete the messages
-	 * @returns {Promise<void>}
-	 */
-	async clearSpamMessages (messages, client) {
-		try {
-			messages.forEach((message) => {
-				const channel = client.channels.cache.get(message.channelID)
-				if (channel) {
-					const msg = channel.messages.cache.get(message.messageID)
-					if (msg && msg.deletable) msg.delete().catch(err => {
-						if(err && this.options.debug == true) console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`) 
-					})
-				}
-			})
-		} catch (e) {
-			if(e){
-				if (this.options.debug) {
-					console.log(`DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`);
-				}
-			}
-		}
-	}
+    // this.guildOptions = {}
+  }
 
-	/**
-	 * Ban a user.
-	 * @ignore
-	 * @param {Discord.Message} message Context message.
-	 * @param {Discord.GuildMember} member The member to ban.
-	 * @param {CachedMessage[]} [spamMessages] The spam messages.
-	 * @returns {Promise<boolean>} Whether the member could be banned.
-	 */
-	async banUser (message, member, spamMessages) {
-		if (this.options.removeMessages && spamMessages) {
-			this.clearSpamMessages(spamMessages, message.client)
-		}
-		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
-		this.cache.bannedUsers.push(message.author.id)
-		if (!member.bannable) {
-			if (this.options.verbose) {
-				console.log(`DAntiSpam (banUser#userNotBannable): ${message.author.tag} (ID: ${message.author.id}) could not be banned, insufficient permissions`)
-			}
-			if (this.options.errorMessages) {
-				let send = message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`)
-					}
-				})
-			}
-			return false
-		} else {
-			await message.member.ban({
-				reason: 'Spamming!',
-				days: this.options.deleteMessagesAfterBanForPastDays
-			}).catch(e => {
-        if (this.options.errorMessages) {
-          message.channel.send(this.format(this.options.banErrorMessage, message)).catch((e) => {
-            if (this.options.verbose) {
-              console.error(`DAntiSpam (banUser#sendSuccessMessage): ${e.message}`)
-            }
-          })
+  /**
+   * Format a string and returns it.
+   * @ignore
+   * @param {string|Discord.MessageEmbed} string The string to format.
+   * @param {Discord.Message} message Context message.
+   * @returns {string|Discord.MessageEmbed}
+   */
+  format(string, message) {
+    if (typeof string === "string") {
+      const content = string
+        .replace(/{@user}/g, message.author.toString())
+        .replace(/{user_tag}/g, message.author.tag)
+        .replace(/{server_name}/g, message.guild.name);
+      return { content };
+    } else {
+      const embed = new Discord.MessageEmbed(string);
+      if (embed.description)
+        embed.setDescription(this.format(embed.description, message));
+      if (embed.title) embed.setTitle(this.format(embed.title, message));
+      if (embed.footer && embed.footer.text)
+        embed.footer.text = this.format(embed.footer.text, message);
+      if (embed.author && embed.author.name)
+        embed.author.name = this.format(embed.author.name, message);
+      return { embeds: [embed] };
+    }
+  }
+
+  /**
+   * Logs the actions
+   * @ignore
+   * @param {Discord.Message} msg The message to check the channel with
+   * @param {string} action The action to log
+   * @param {Discord.Client} client The Discord client that will send the message
+   */
+  log(msg, action, client) {
+    if (this.options.modLogsEnabled) {
+      const modLogChannel =
+        client.channels.cache.get(this.options.modLogsChannelName) ||
+        msg.guild.channels.cache.find(
+          (channel) =>
+            channel.name === this.options.modLogsChannelName &&
+            channel.type === "GUILD_TEXT"
+        );
+      if (modLogChannel) {
+        if (this.options.modLogsMode == "embed") {
+          const embed = new Discord.MessageEmbed()
+            .setAuthor(
+              `DAS Spam detection`,
+              "https://discord-anti-spam.js.org/img/antispam.png"
+            )
+            .setDescription(
+              `${msg.author} *(${msg.author.id})* has been **${action}** for **spam**!`
+            )
+            .setFooter(
+              `DAS Anti spam`,
+              "https://discord-anti-spam.js.org/img/antispam.png"
+            )
+            .setTimestamp()
+            .setColor("RED");
+          modLogChannel.send({ embeds: [embed] });
+        } else {
+          modLogChannel.send(
+            `${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`
+          );
         }
-      })
-			if (this.options.modLogsEnabled) {
-				this.log(message, `banned`, message.client)
-			}
-			this.emit('banAdd', member)
-			return true
-		}
-	}
+      }
+    }
+  }
 
-	/**
-	 * Mute a user.
-	 * @ignore
-	 * @param {Discord.Message} message Context message.
-	 * @param {Discord.GuildMember} member The member to mute.
-	 * @param {CachedMessage[]} [spamMessages] The spam messages.
-	 * @returns {Promise<boolean>} Whether the member could be muted.
-	 */
-	async muteUser (message, member, spamMessages) {
-		if (this.options.removeMessages && spamMessages) {
-			this.clearSpamMessages(spamMessages, message.client)
-		}
-		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
-		const userCanBeMuted = message.guild.me.permissions.has('MODERATE_MEMBERS') && (message.guild.me.roles.highest.position > message.member.roles.highest.position && message.member.id !== message.guild.ownerId)
-		if (!userCanBeMuted) {
-			if (this.options.verbose) {
-				console.log(`DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions.`)
-			}
-			if (this.options.errorMessages) {
-				await message.channel
-					.send(this.format(this.options.muteErrorMessage, message))
-					.catch((e) => {
-						if (this.options.verbose) {
-							console.log(`DAntiSpam (muteUser#sendMissingPermMessage): ${e.message}`)
-						}
-					})
-			}
-			return false
-		}
-		await message.member.timeout(this.options.unMuteTime, 'Spamming')
-		if (this.options.muteMessage) {
-			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
-				if (this.options.verbose) {
-					console.error(`DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`)
-				}
-			})
-		}
-		if (this.options.modLogsEnabled) {
-			this.log(message, `muted`, message.client)
-		}
-		this.emit('muteAdd', member)
-		return true
-	}
+  /**
+   * Delete spam messages
+   * @ignore
+   * @param {CachedMessage[]} messages The messages to delete
+   * @param {Discord.Client} client The Discord client that will delete the messages
+   * @returns {Promise<void>}
+   */
+  async clearSpamMessages(messages, client) {
+    try {
+      messages.forEach((message) => {
+        const channel = client.channels.cache.get(message.channelID);
+        if (channel) {
+          const msg = channel.messages.cache.get(message.messageID);
+          if (msg && msg.deletable)
+            msg.delete().catch((err) => {
+              if (err && this.options.debug == true)
+                console.log(
+                  `DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted`
+                );
+            });
+        }
+      });
+    } catch (e) {
+      if (e) {
+        if (this.options.debug) {
+          console.log(
+            `DAntiSpam (clearSpamMessages#failed): The message(s) couldn't be deleted!`
+          );
+        }
+      }
+    }
+  }
 
-	/**
-	 * Kick a user.
-	 * @ignore
-	 * @param {Discord.Message} message Context message.
-	 * @param {Discord.GuildMember} member The member to kick.
-	 * @param {CachedMessage[]} [spamMessages] The spam messages.
-	 * @returns {Promise<boolean>} Whether the member could be kicked.
-	 */
-	async kickUser (message, member, spamMessages) {
-		if (this.options.removeMessages && spamMessages) {
-			this.clearSpamMessages(spamMessages, message.client)
-		}
-		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
-		this.cache.kickedUsers.push(message.author.id)
-		if (!member.kickable) {
-			if (this.options.verbose) {
-				console.log(`DAntiSpam (kickUser#userNotKickable): ${message.author.tag} (ID: ${message.author.id}) could not be kicked, insufficient permissions`)
-			}
-			if (this.options.errorMessages) {
-				message.channel.send(this.format(this.options.kickErrorMessage, message)).catch((e) => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`)
-					}
-				})
-			}
-			return false
-		} else {
-			await message.member.kick('Spamming!')
-			if (this.options.kickMessage) {
-				message.channel.send(this.format(this.options.kickMessage, message)).catch((e) => {
-					if (this.options.verbose) {
-						console.error(`DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`)
-					}
-				})
-			}
-			if (this.options.modLogsEnabled) {
-				this.log(message, `kicked`, message.client)
-			}
-			this.emit('kickAdd', member)
-			return true
-		}
-	}
+  /**
+   * Ban a user.
+   * @ignore
+   * @param {Discord.Message} message Context message.
+   * @param {Discord.GuildMember} member The member to ban.
+   * @param {CachedMessage[]} [spamMessages] The spam messages.
+   * @returns {Promise<boolean>} Whether the member could be banned.
+   */
+  async banUser(message, member, spamMessages) {
+    if (this.options.removeMessages && spamMessages) {
+      this.clearSpamMessages(spamMessages, message.client);
+    }
+    this.cache.messages = this.cache.messages.filter(
+      (u) => u.authorID !== message.author.id
+    );
+    this.cache.bannedUsers.push(message.author.id);
+    if (!member.bannable) {
+      if (this.options.verbose) {
+        console.log(
+          `DAntiSpam (banUser#userNotBannable): ${message.author.tag} (ID: ${message.author.id}) could not be banned, insufficient permissions`
+        );
+      }
+      if (this.options.errorMessages) {
+        let send = message.channel
+          .send(this.format(this.options.banErrorMessage, message))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (banUser#sendMissingPermMessage): ${e.message}`
+              );
+            }
+          });
+      }
+      return false;
+    } else {
+      await message.member
+        .ban({
+          reason: "Spamming!",
+          days: this.options.deleteMessagesAfterBanForPastDays,
+        })
+        .catch((e) => {
+          if (this.options.errorMessages) {
+            message.channel
+              .send(this.format(this.options.banErrorMessage, message))
+              .catch((e) => {
+                if (this.options.verbose) {
+                  console.error(
+                    `DAntiSpam (banUser#sendSuccessMessage): ${e.message}`
+                  );
+                }
+              });
+          }
+        });
+      if (this.options.modLogsEnabled) {
+        this.log(message, `banned`, message.client);
+      }
+      this.emit("banAdd", member);
+      return true;
+    }
+  }
 
-	/**
-	 * Warn a user.
-	 * @ignore
-	 * @param {Discord.Message} message Context message.
-	 * @param {Discord.GuildMember} member The member to warn.
-	 * @param {CachedMessage[]} [spamMessages] The spam messages.
-	 * @returns {Promise<boolean>} Whether the member could be warned.
-	 */
-	async warnUser (message, member, spamMessages) {
-		if (this.options.removeMessages && spamMessages) {
-			this.clearSpamMessages(spamMessages, message.client)
-		}
-		this.cache.warnedUsers.push(message.author.id)
-		this.log(message, `warned`, message.client)
-		if (this.options.warnMessage) {
-			message.channel.send(this.format(this.options.warnMessage, message)).catch((e) => {
-				if (this.options.verbose) {
-					console.error(`DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`)
-				}
-			})
-		}
-		this.emit('warnAdd', member)
-		return true
-	}
+  /**
+   * Mute a user.
+   * @ignore
+   * @param {Discord.Message} message Context message.
+   * @param {Discord.GuildMember} member The member to mute.
+   * @param {CachedMessage[]} [spamMessages] The spam messages.
+   * @returns {Promise<boolean>} Whether the member could be muted.
+   */
+  async muteUser(message, member, spamMessages) {
+    if (this.options.removeMessages && spamMessages) {
+      this.clearSpamMessages(spamMessages, message.client);
+    }
+    this.cache.messages = this.cache.messages.filter(
+      (u) => u.authorID !== message.author.id
+    );
+    const userCanBeMuted =
+      message.guild.me.permissions.has("MODERATE_MEMBERS") &&
+      message.guild.me.roles.highest.position >
+        message.member.roles.highest.position &&
+      message.member.id !== message.guild.ownerId;
+    if (!userCanBeMuted) {
+      if (this.options.verbose) {
+        console.log(
+          `DAntiSpam (kickUser#userNotMutable): ${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions.`
+        );
+      }
+      if (this.options.errorMessages) {
+        await message.channel
+          .send(this.format(this.options.muteErrorMessage, message))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.log(
+                `DAntiSpam (muteUser#sendMissingPermMessage): ${e.message}`
+              );
+            }
+          });
+      }
+      return false;
+    }
+    await message.member.timeout(this.options.unMuteTime, "Spamming");
+    if (this.options.muteMessage) {
+      await message.channel
+        .send(this.format(this.options.muteMessage, message))
+        .catch((e) => {
+          if (this.options.verbose) {
+            console.error(
+              `DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`
+            );
+          }
+        });
+    }
+    if (this.options.modLogsEnabled) {
+      this.log(message, `muted`, message.client);
+    }
+    this.emit("muteAdd", member);
+    return true;
+  }
 
-	/**
-	 * Returns the options for a Guild
-	 * @ignore
-	 * @param {Discord.Guild} guild The guild to get the options for.
-	 * @returns {Object} The options for the guild.
-	 */
+  /**
+   * Kick a user.
+   * @ignore
+   * @param {Discord.Message} message Context message.
+   * @param {Discord.GuildMember} member The member to kick.
+   * @param {CachedMessage[]} [spamMessages] The spam messages.
+   * @returns {Promise<boolean>} Whether the member could be kicked.
+   */
+  async kickUser(message, member, spamMessages) {
+    if (this.options.removeMessages && spamMessages) {
+      this.clearSpamMessages(spamMessages, message.client);
+    }
+    this.cache.messages = this.cache.messages.filter(
+      (u) => u.authorID !== message.author.id
+    );
+    this.cache.kickedUsers.push(message.author.id);
+    if (!member.kickable) {
+      if (this.options.verbose) {
+        console.log(
+          `DAntiSpam (kickUser#userNotKickable): ${message.author.tag} (ID: ${message.author.id}) could not be kicked, insufficient permissions`
+        );
+      }
+      if (this.options.errorMessages) {
+        message.channel
+          .send(this.format(this.options.kickErrorMessage, message))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (kickUser#sendMissingPermMessage): ${e.message}`
+              );
+            }
+          });
+      }
+      return false;
+    } else {
+      await message.member.kick("Spamming!");
+      if (this.options.kickMessage) {
+        message.channel
+          .send(this.format(this.options.kickMessage, message))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`
+              );
+            }
+          });
+      }
+      if (this.options.modLogsEnabled) {
+        this.log(message, `kicked`, message.client);
+      }
+      this.emit("kickAdd", member);
+      return true;
+    }
+  }
 
-// 	getOptions (guild) {
-// 		return this.guildOptions[guild.id] || this.options
-// 	}
+  /**
+   * Warn a user.
+   * @ignore
+   * @param {Discord.Message} message Context message.
+   * @param {Discord.GuildMember} member The member to warn.
+   * @param {CachedMessage[]} [spamMessages] The spam messages.
+   * @returns {Promise<boolean>} Whether the member could be warned.
+   */
+  async warnUser(message, member, spamMessages) {
+    if (this.options.removeMessages && spamMessages) {
+      this.clearSpamMessages(spamMessages, message.client);
+    }
+    this.cache.warnedUsers.push(message.author.id);
+    this.log(message, `warned`, message.client);
+    if (this.options.warnMessage) {
+      message.channel
+        .send(this.format(this.options.warnMessage, message))
+        .catch((e) => {
+          if (this.options.verbose) {
+            console.error(
+              `DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`
+            );
+          }
+        });
+    }
+    this.emit("warnAdd", member);
+    return true;
+  }
 
-	/**
-	 * Checks a message.
-	 * @param {Discord.Message} message The message to check.
-	 * @returns {Promise<boolean>} Whether the message has triggered a threshold.
-	 * @example
-	 * client.on('message', (msg) => {
-	 * 	antiSpam.message(msg);
-	 * });
-	 */
-	async message (message) {
-		const { options } = this
+  /**
+   * Returns the options for a Guild
+   * @ignore
+   * @param {Discord.Guild} guild The guild to get the options for.
+   * @returns {Object} The options for the guild.
+   */
 
-		if (
-			!message.guild ||
-			message.author.id === message.client.user.id ||
-			(message.guild.ownerId === message.author.id && !options.debug) ||
-			(options.ignoreBots && message.author.bot)
-		) {
-			return false
-		}
+  // 	getOptions (guild) {
+  // 		return this.guildOptions[guild.id] || this.options
+  // 	}
 
-		const isMemberIgnored = typeof options.ignoredMembers === 'function' ? options.ignoredMembers(message.member) : options.ignoredMembers.includes(message.author.id)
-		if (isMemberIgnored) return false
+  /**
+   * Checks a message.
+   * @param {Discord.Message} message The message to check.
+   * @returns {Promise<boolean>} Whether the message has triggered a threshold.
+   * @example
+   * client.on('message', (msg) => {
+   * 	antiSpam.message(msg);
+   * });
+   */
+  async message(message) {
+    const { options } = this;
 
-		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(message.guild) : options.ignoredGuilds.includes(message.guild.id)
-		if (isGuildIgnored) return false
+    if (
+      !message.guild ||
+      message.author.id === message.client.user.id ||
+      (message.guild.ownerId === message.author.id && !options.debug) ||
+      (options.ignoreBots && message.author.bot)
+    ) {
+      return false;
+    }
 
-		const isChannelIgnored = typeof options.ignoredChannels === 'function' ? options.ignoredChannels(message.channel) : options.ignoredChannels.includes(message.channel.id)
-		if (isChannelIgnored) return false
+    const isMemberIgnored =
+      typeof options.ignoredMembers === "function"
+        ? options.ignoredMembers(message.member)
+        : options.ignoredMembers.includes(message.author.id);
+    if (isMemberIgnored) return false;
 
-		const member = message.member || await message.guild.members.fetch(message.author)
+    const isGuildIgnored =
+      typeof options.ignoredGuilds === "function"
+        ? options.ignoredGuilds(message.guild)
+        : options.ignoredGuilds.includes(message.guild.id);
+    if (isGuildIgnored) return false;
 
-		const memberHasIgnoredRoles = typeof options.ignoredRoles === 'function'
-			? options.ignoredRoles(member.roles.cache)
-			: options.ignoredRoles.some((r) => member.roles.cache.has(r))
-		if (memberHasIgnoredRoles) return false
+    const isChannelIgnored =
+      typeof options.ignoredChannels === "function"
+        ? options.ignoredChannels(message.channel)
+        : options.ignoredChannels.includes(message.channel.id);
+    if (isChannelIgnored) return false;
 
-		if (options.ignoredPermissions.some((permission) => member.permissions.has(permission))) return false
+    const member =
+      message.member || (await message.guild.members.fetch(message.author));
 
-		const currentMessage = {
-			messageID: message.id,
-			guildID: message.guild.id,
-			authorID: message.author.id,
-			channelID: message.channel.id,
-			content: message.content,
-			sentTimestamp: message.createdTimestamp
-		}
-		this.cache.messages.push(currentMessage)
+    const memberHasIgnoredRoles =
+      typeof options.ignoredRoles === "function"
+        ? options.ignoredRoles(member.roles.cache)
+        : options.ignoredRoles.some((r) => member.roles.cache.has(r));
+    if (memberHasIgnoredRoles) return false;
 
-		const cachedMessages = this.cache.messages.filter((m) => m.authorID === message.author.id && m.guildID === message.guild.id)
+    if (
+      options.ignoredPermissions.some((permission) =>
+        member.permissions.has(permission)
+      )
+    )
+      return false;
 
-		const duplicateMatches = cachedMessages.filter((m) => m.content === message.content && (m.sentTimestamp > (currentMessage.sentTimestamp - options.maxDuplicatesInterval)))
+    const currentMessage = {
+      messageID: message.id,
+      guildID: message.guild.id,
+      authorID: message.author.id,
+      channelID: message.channel.id,
+      content: message.content,
+      sentTimestamp: message.createdTimestamp,
+    };
+    this.cache.messages.push(currentMessage);
 
+    const cachedMessages = this.cache.messages.filter(
+      (m) => m.authorID === message.author.id && m.guildID === message.guild.id
+    );
 
-		/**
-		 * Duplicate messages sent before the threshold is triggered
-		 * @type {CachedMessage[]}
-		 */
-		const spamOtherDuplicates = []
-		if (duplicateMatches.length > 0) {
-			let rowBroken = false
-			cachedMessages.sort((a, b) => b.sentTimestamp - a.sentTimestamp).forEach(element => {
-				if (rowBroken) return
-				if (element.content !== duplicateMatches[0].content) rowBroken = true
-				else spamOtherDuplicates.push(element)
-			})
-		}
+    const duplicateMatches = cachedMessages.filter(
+      (m) =>
+        m.content === message.content &&
+        m.sentTimestamp >
+          currentMessage.sentTimestamp - options.maxDuplicatesInterval
+    );
 
-		const spamMatches = cachedMessages.filter((m) => m.sentTimestamp > (Date.now() - options.maxInterval))
+    /**
+     * Duplicate messages sent before the threshold is triggered
+     * @type {CachedMessage[]}
+     */
+    const spamOtherDuplicates = [];
+    if (duplicateMatches.length > 0) {
+      let rowBroken = false;
+      cachedMessages
+        .sort((a, b) => b.sentTimestamp - a.sentTimestamp)
+        .forEach((element) => {
+          if (rowBroken) return;
+          if (element.content !== duplicateMatches[0].content) rowBroken = true;
+          else spamOtherDuplicates.push(element);
+        });
+    }
 
-		let sanctioned = false
+    const spamMatches = cachedMessages.filter(
+      (m) => m.sentTimestamp > Date.now() - options.maxInterval
+    );
 
-		const userCanBeBanned = options.banEnabled && !this.cache.bannedUsers.includes(message.author.id) && !sanctioned
-		if (userCanBeBanned && (spamMatches.length >= options.banThreshold)) {
-			this.banUser(message, member, spamMatches)
-			sanctioned = true
-		} else if (userCanBeBanned && (duplicateMatches.length >= options.maxDuplicatesBan)) {
-			this.banUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
-			sanctioned = true
-		}
+    let sanctioned = false;
 
+    const userCanBeBanned =
+      options.banEnabled &&
+      !this.cache.bannedUsers.includes(message.author.id) &&
+      !sanctioned;
+    if (userCanBeBanned && spamMatches.length >= options.banThreshold) {
+      this.banUser(message, member, spamMatches);
+      sanctioned = true;
+    } else if (
+      userCanBeBanned &&
+      duplicateMatches.length >= options.maxDuplicatesBan
+    ) {
+      this.banUser(message, member, [
+        ...duplicateMatches,
+        ...spamOtherDuplicates,
+      ]);
+      sanctioned = true;
+    }
 
-		const userCanBeMuted = options.muteEnabled && !sanctioned
-		if (userCanBeMuted && (spamMatches.length >= options.muteThreshold)) {
-			this.muteUser(message, member, spamMatches)
-			sanctioned = true
-		} else if (userCanBeMuted && (duplicateMatches.length >= options.maxDuplicatesMute)) {
-			this.muteUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
-			sanctioned = true
-		}
+    const userCanBeMuted = options.muteEnabled && !sanctioned;
+    if (userCanBeMuted && spamMatches.length >= options.muteThreshold) {
+      this.muteUser(message, member, spamMatches);
+      sanctioned = true;
+    } else if (
+      userCanBeMuted &&
+      duplicateMatches.length >= options.maxDuplicatesMute
+    ) {
+      this.muteUser(message, member, [
+        ...duplicateMatches,
+        ...spamOtherDuplicates,
+      ]);
+      sanctioned = true;
+    }
 
-		const userCanBeKicked = options.kickEnabled && !this.cache.kickedUsers.includes(message.author.id) && !sanctioned
-		if (userCanBeKicked && (spamMatches.length >= options.kickThreshold)) {
-			this.kickUser(message, member, spamMatches)
-			sanctioned = true
-		} else if (userCanBeKicked && (duplicateMatches.length >= options.maxDuplicatesKick)) {
-			this.kickUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
-			sanctioned = true
-		}
+    const userCanBeKicked =
+      options.kickEnabled &&
+      !this.cache.kickedUsers.includes(message.author.id) &&
+      !sanctioned;
+    if (userCanBeKicked && spamMatches.length >= options.kickThreshold) {
+      this.kickUser(message, member, spamMatches);
+      sanctioned = true;
+    } else if (
+      userCanBeKicked &&
+      duplicateMatches.length >= options.maxDuplicatesKick
+    ) {
+      this.kickUser(message, member, [
+        ...duplicateMatches,
+        ...spamOtherDuplicates,
+      ]);
+      sanctioned = true;
+    }
 
-		const userCanBeWarned = options.warnEnabled && !this.cache.warnedUsers.includes(message.author.id) && !sanctioned
-		if (userCanBeWarned && (spamMatches.length >= options.warnThreshold)) {
-			this.warnUser(message, member, spamMatches)
-			sanctioned = true
-		} else if (userCanBeWarned && (duplicateMatches.length >= options.maxDuplicatesWarn)) {
-			this.warnUser(message, member, [...duplicateMatches, ...spamOtherDuplicates])
-			sanctioned = true
-		}
+    const userCanBeWarned =
+      options.warnEnabled &&
+      !this.cache.warnedUsers.includes(message.author.id) &&
+      !sanctioned;
+    if (userCanBeWarned && spamMatches.length >= options.warnThreshold) {
+      this.warnUser(message, member, spamMatches);
+      sanctioned = true;
+    } else if (
+      userCanBeWarned &&
+      duplicateMatches.length >= options.maxDuplicatesWarn
+    ) {
+      this.warnUser(message, member, [
+        ...duplicateMatches,
+        ...spamOtherDuplicates,
+      ]);
+      sanctioned = true;
+    }
 
-		return sanctioned
-	}
-	/**
-	 * Checks if the user left the server to remove him from the cache!
-	 * @param {Discord.GuildMember} member The member to remove from the cache.
-	 * @returns {Promise<boolean>} Whether the member has been removed
-	 * @example
-	 * client.on('guildMemberRemove', (member) => {
-	 * 	antiSpam.userleave(member);
-	 * });
-	 */
-	async userleave (member){
-		const options = this.options
-		const isGuildIgnored = typeof options.ignoredGuilds === 'function' ? options.ignoredGuilds(member.guild) : options.ignoredGuilds.includes(member.guild.id)
-		if (isGuildIgnored) return false
+    return sanctioned;
+  }
+  /**
+   * Checks if the user left the server to remove him from the cache!
+   * @param {Discord.GuildMember} member The member to remove from the cache.
+   * @returns {Promise<boolean>} Whether the member has been removed
+   * @example
+   * client.on('guildMemberRemove', (member) => {
+   * 	antiSpam.userleave(member);
+   * });
+   */
+  async userleave(member) {
+    const options = this.options;
+    const isGuildIgnored =
+      typeof options.ignoredGuilds === "function"
+        ? options.ignoredGuilds(member.guild)
+        : options.ignoredGuilds.includes(member.guild.id);
+    if (isGuildIgnored) return false;
 
-		this.cache.bannedUsers = this.cache.bannedUsers.filter((u) => u !== member.user.id)
-		this.cache.kickedUsers = this.cache.kickedUsers.filter((u) => u !== member.user.id)
-		this.cache.warnedUsers = this.cache.warnedUsers.filter((u) => u !== member.user.id)
+    this.cache.bannedUsers = this.cache.bannedUsers.filter(
+      (u) => u !== member.user.id
+    );
+    this.cache.kickedUsers = this.cache.kickedUsers.filter(
+      (u) => u !== member.user.id
+    );
+    this.cache.warnedUsers = this.cache.warnedUsers.filter(
+      (u) => u !== member.user.id
+    );
 
-		return true
-	}
+    return true;
+  }
 
-	// /**
-	//  * Add GuildOptions for a guild to use instead of the default options.
-	//  * @param {Discord.Guild} guild The guild to add the options for.
-	//  * @param {AntiSpamClientOptions} options The options to use for the guild.
-	//  * @returns {boolean} Whether the options have been added.
-	//  */
-// 	addGuildOptions (guild, options) {
-// 		const guildId = guild.id
+  // /**
+  //  * Add GuildOptions for a guild to use instead of the default options.
+  //  * @param {Discord.Guild} guild The guild to add the options for.
+  //  * @param {AntiSpamClientOptions} options The options to use for the guild.
+  //  * @returns {boolean} Whether the options have been added.
+  //  */
+  // 	addGuildOptions (guild, options) {
+  // 		const guildId = guild.id
 
-// 		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
+  // 		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
 
-// 			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
-// 				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
+  // 			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
+  // 				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
 
-// 			}
+  // 			}
 
-// 			return true
+  // 			return true
 
-// 		} else {
+  // 		} else {
 
-// 			this.guildOptions.set(guildId, options)
-// 			return true
+  // 			this.guildOptions.set(guildId, options)
+  // 			return true
 
-// 		}
-// 	}
+  // 		}
+  // 	}
 
-	/**
-	 * Reset the cache of this AntiSpam client instance.
-	 */
-	reset () {
-		this.cache = {
-			messages: [],
-			warnedUsers: [],
-			kickedUsers: [],
-			bannedUsers: []
-		}
-	}
+  /**
+   * Reset the cache of this AntiSpam client instance.
+   */
+  reset() {
+    this.cache = {
+      messages: [],
+      warnedUsers: [],
+      kickedUsers: [],
+      bannedUsers: [],
+    };
+  }
 }
 
-module.exports = AntiSpamClient
+module.exports = AntiSpamClient;
