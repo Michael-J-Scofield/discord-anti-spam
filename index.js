@@ -263,9 +263,9 @@ class AntiSpamClient extends EventEmitter {
   /**
    * Format a string and returns it.
    * @ignore
-   * @param {string|Discord.MessageEmbed} string The string to format.
+   * @param {string} string The string to format.
    * @param {Discord.Message} message Context message.
-   * @returns {string|Discord.MessageEmbed}
+   * @returns {string}
    */
   format(string, message) {
     if (typeof string === "string") {
@@ -274,16 +274,57 @@ class AntiSpamClient extends EventEmitter {
         .replace(/{user_tag}/g, message.author.tag)
         .replace(/{server_name}/g, message.guild.name);
       return { content };
+    }
+  }
+
+  sendActionMessage(message, action) {
+    if (this.options.actionInEmbed == true) {
     } else {
-      const embed = new Discord.MessageEmbed(string);
-      if (embed.description)
-        embed.setDescription(this.format(embed.description, message));
-      if (embed.title) embed.setTitle(this.format(embed.title, message));
-      if (embed.footer && embed.footer.text)
-        embed.footer.text = this.format(embed.footer.text, message);
-      if (embed.author && embed.author.name)
-        embed.author.name = this.format(embed.author.name, message);
-      return { embeds: [embed] };
+      if (action == "warn") {
+        message.channel
+          .send(this.format(this.options.warnMessage))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
+              );
+            }
+          });
+        return true;
+      } else if (action == "kick") {
+        message.channel
+          .send(this.format(this.options.kickMessage))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
+              );
+            }
+          });
+        return true;
+      } else if (action == "mute") {
+        message.channel
+          .send(this.format(this.options.muteMessage))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
+              );
+            }
+          });
+        return true;
+      } else if (action == "ban") {
+        message.channel
+          .send(this.format(this.options.banMessage))
+          .catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
+              );
+            }
+          });
+        return true;
+      }
     }
   }
 
@@ -464,15 +505,7 @@ class AntiSpamClient extends EventEmitter {
     }
     await message.member.timeout(this.options.unMuteTime, "Spamming");
     if (this.options.muteMessage) {
-      await message.channel
-        .send(this.format(this.options.muteMessage, message))
-        .catch((e) => {
-          if (this.options.verbose) {
-            console.error(
-              `DAntiSpam (muteUser#sendSuccessMessage): ${e.message}`
-            );
-          }
-        });
+      await this.sendActionMessage(message, "mute");
     }
     if (this.options.modLogsEnabled) {
       this.log(message, `muted`, message.client);
