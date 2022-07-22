@@ -78,6 +78,8 @@ const { EventEmitter } = require("events");
  * @property {boolean} [actionInEmbed=false] Whether the action message will be sent in an embed or not.
  * @property {string} [actionEmbedIn="channel"] Whether the action message will be sent in the channel or dm. Options: 'channel' or 'dm'.
  * @property {string} [actionEmbedColor='#ff0000'] Color of the embeds of the action message.
+ * @property {string} [embedFooterIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Footer icon of the embed of the action message.
+ * @property {string} [embedTitleIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
  *
  * @property {string} [warnEmbedTitle='User has been warned'] Title of the embeds of the action message.
  * @property {string} [kickEmbedTitle='User has been kicked'] Title of the embed of the warn message.
@@ -192,6 +194,10 @@ class AntiSpamClient extends EventEmitter {
       muteEmbedTitle: options.muteEmbedTitle || "User have been muted.",
       banEmbedTitle: options.banEmbedTitle || "User have been banned.",
 
+      embedTitleIconURL:
+        options.embedTitleIconURL ||
+        "https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png",
+
       warnEmbedDescription:
         options.warnEmbedDescription || "You have been warned for spamming.",
       kickEmbedDescription:
@@ -205,6 +211,10 @@ class AntiSpamClient extends EventEmitter {
       kickEmbedFooter: options.kickEmbedFooter || "You have been kicked.",
       muteEmbedFooter: options.muteEmbedFooter || "You have been muted.",
       banEmbedFooter: options.banEmbedFooter || "You have been banned.",
+
+      embedFooterIconURL:
+        options.embedFooterIconURL ||
+        "https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png",
 
       errorMessages:
         options.errorMessages != undefined ? options.errorMessages : true,
@@ -285,6 +295,41 @@ class AntiSpamClient extends EventEmitter {
    */
   sendActionMessage(message, action) {
     if (this.options.actionInEmbed == true) {
+      if (this.options.actionEmbedIn == "channel") {
+        const embed = new Discord.MessageEmbed()
+          .setColor(this.options.actionEmbedColor)
+          .setTitle(
+            this.format(this.options[`${action}EmbedTitle`], message).content,
+            this.options.embedTitleIconURL
+          )
+          .setDescription(
+            this.format(this.options[`${action}EmbedDescription`], message)
+              .content
+          )
+          .setFooter({
+            text: this.format(this.options[`${action}EmbedFooter`], message)
+              .content,
+            iconURL: this.options.embedFooterIconURL,
+          });
+        message.channel.send({ embeds: [embed] });
+      } else {
+        const embed = new Discord.MessageEmbed()
+          .setColor(this.options.actionEmbedColor)
+          .setTitle(
+            this.format(this.options[`${action}EmbedTitle`], message).content,
+            this.options.embedTitleIconURL
+          )
+          .setDescription(
+            this.format(this.options[`${action}EmbedDescription`], message)
+              .content
+          )
+          .setFooter({
+            text: this.format(this.options[`${action}EmbedFooter`], message)
+              .content,
+            iconURL: this.options.embedFooterIconURL,
+          });
+        message.author.send({ embeds: [embed] });
+      }
     } else {
       if (this.options.actionEmbedIn == "channel") {
         if (action == "warn") {
@@ -293,7 +338,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
+                  `DAntiSpam (warnUser#sendSuccessMessage)[341]: ${e.message}`
                 );
               }
             });
@@ -304,7 +349,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
+                  `DAntiSpam (kickUser#sendSuccessMessage)[352]: ${e.message}`
                 );
               }
             });
@@ -315,7 +360,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
+                  `DAntiSpam (muteUser#sendSuccessMessage)[363]: ${e.message}`
                 );
               }
             });
@@ -326,7 +371,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
+                  `DAntiSpam (banUser#sendSuccessMessage)[374]: ${e.message}`
                 );
               }
             });
@@ -338,7 +383,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
+                  `DAntiSpam (warnUser#sendSuccessMessage)[386]: ${e.message}`
                 );
               }
             });
@@ -349,7 +394,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
+                  `DAntiSpam (kickUser#sendSuccessMessage)[397]: ${e.message}`
                 );
               }
             });
@@ -360,7 +405,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
+                  `DAntiSpam (muteUser#sendSuccessMessage)[408]: ${e.message}`
                 );
               }
             });
@@ -371,7 +416,7 @@ class AntiSpamClient extends EventEmitter {
             .catch((e) => {
               if (this.options.verbose) {
                 console.error(
-                  `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
+                  `DAntiSpam (banUser#sendSuccessMessage)[419]: ${e.message}`
                 );
               }
             });
@@ -508,6 +553,7 @@ class AntiSpamClient extends EventEmitter {
               });
           }
         });
+      await this.sendActionMessage(message, "ban");
       if (this.options.modLogsEnabled) {
         this.log(message, `banned`, message.client);
       }
@@ -556,9 +602,7 @@ class AntiSpamClient extends EventEmitter {
       return false;
     }
     await message.member.timeout(this.options.unMuteTime, "Spamming");
-    if (this.options.muteMessage) {
-      await this.sendActionMessage(message, "mute");
-    }
+    await this.sendActionMessage(message, "mute");
     if (this.options.modLogsEnabled) {
       this.log(message, `muted`, message.client);
     }
@@ -602,17 +646,7 @@ class AntiSpamClient extends EventEmitter {
       return false;
     } else {
       await message.member.kick("Spamming!");
-      if (this.options.kickMessage) {
-        message.channel
-          .send(this.format(this.options.kickMessage, message))
-          .catch((e) => {
-            if (this.options.verbose) {
-              console.error(
-                `DAntiSpam (kickUser#sendSuccessMessage): ${e.message}`
-              );
-            }
-          });
-      }
+      this.sendActionMessage(message, "kick");
       if (this.options.modLogsEnabled) {
         this.log(message, `kicked`, message.client);
       }
@@ -635,23 +669,10 @@ class AntiSpamClient extends EventEmitter {
     }
     this.cache.warnedUsers.push(message.author.id);
     this.log(message, `warned`, message.client);
-    if (this.options.warnMessage) {
-      this.sendActionMessage(message, "warn");
-    }
+    this.sendActionMessage(message, "warn");
     this.emit("warnAdd", member);
     return true;
   }
-
-  /**
-   * Returns the options for a Guild
-   * @ignore
-   * @param {Discord.Guild} guild The guild to get the options for.
-   * @returns {Object} The options for the guild.
-   */
-
-  // 	getOptions (guild) {
-  // 		return this.guildOptions[guild.id] || this.options
-  // 	}
 
   /**
    * Checks a message.
@@ -851,32 +872,6 @@ class AntiSpamClient extends EventEmitter {
 
     return true;
   }
-
-  // /**
-  //  * Add GuildOptions for a guild to use instead of the default options.
-  //  * @param {Discord.Guild} guild The guild to add the options for.
-  //  * @param {AntiSpamClientOptions} options The options to use for the guild.
-  //  * @returns {boolean} Whether the options have been added.
-  //  */
-  // 	addGuildOptions (guild, options) {
-  // 		const guildId = guild.id
-
-  // 		if (this.guildOptions.has(guildId)) { // Check if the guild already has options
-
-  // 			for ([setting, value] of options.entries()) { // If they do iterate over the settings and their values
-  // 				this.guildOptions.guildId[setting] = value // And now write them, this avoids overwriting the value set for options not mentioned.
-
-  // 			}
-
-  // 			return true
-
-  // 		} else {
-
-  // 			this.guildOptions.set(guildId, options)
-  // 			return true
-
-  // 		}
-  // 	}
 
   /**
    * Reset the cache of this AntiSpam client instance.

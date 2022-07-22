@@ -1,7 +1,7 @@
 # Ignore main files
-*.js
-*.ts
-*.d.ts
+# *.js
+# *.ts
+# *.d.ts
 
 # Ignore docs
 docs
