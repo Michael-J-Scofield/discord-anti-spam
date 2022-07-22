@@ -277,53 +277,105 @@ class AntiSpamClient extends EventEmitter {
     }
   }
 
+  /**
+   * Send action message in the channel or dm
+   * @param {Discord.Message} message
+   * @param {String} action
+   * @returns boolean.
+   */
   sendActionMessage(message, action) {
     if (this.options.actionInEmbed == true) {
     } else {
-      if (action == "warn") {
-        message.channel
-          .send(this.format(this.options.warnMessage))
-          .catch((e) => {
-            if (this.options.verbose) {
-              console.error(
-                `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
-              );
-            }
-          });
-        return true;
-      } else if (action == "kick") {
-        message.channel
-          .send(this.format(this.options.kickMessage))
-          .catch((e) => {
-            if (this.options.verbose) {
-              console.error(
-                `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
-              );
-            }
-          });
-        return true;
-      } else if (action == "mute") {
-        message.channel
-          .send(this.format(this.options.muteMessage))
-          .catch((e) => {
-            if (this.options.verbose) {
-              console.error(
-                `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
-              );
-            }
-          });
-        return true;
-      } else if (action == "ban") {
-        message.channel
-          .send(this.format(this.options.banMessage))
-          .catch((e) => {
-            if (this.options.verbose) {
-              console.error(
-                `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
-              );
-            }
-          });
-        return true;
+      if (this.options.actionEmbedIn == "channel") {
+        if (action == "warn") {
+          message.channel
+            .send(this.format(this.options.warnMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "kick") {
+          message.channel
+            .send(this.format(this.options.kickMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "mute") {
+          message.channel
+            .send(this.format(this.options.muteMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "ban") {
+          message.channel
+            .send(this.format(this.options.banMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
+                );
+              }
+            });
+        }
+      } else {
+        if (action == "warn") {
+          message.author
+            .send(this.format(this.options.warnMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (warnUser#sendSuccessMessage)[289]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "kick") {
+          message.author
+            .send(this.format(this.options.kickMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (kickUser#sendSuccessMessage)[300]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "mute") {
+          message.author
+            .send(this.format(this.options.muteMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (muteUser#sendSuccessMessage)[311]: ${e.message}`
+                );
+              }
+            });
+          return true;
+        } else if (action == "ban") {
+          message.author
+            .send(this.format(this.options.banMessage, message))
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  `DAntiSpam (banUser#sendSuccessMessage)[322]: ${e.message}`
+                );
+              }
+            });
+        }
       }
     }
   }
@@ -584,15 +636,7 @@ class AntiSpamClient extends EventEmitter {
     this.cache.warnedUsers.push(message.author.id);
     this.log(message, `warned`, message.client);
     if (this.options.warnMessage) {
-      message.channel
-        .send(this.format(this.options.warnMessage, message))
-        .catch((e) => {
-          if (this.options.verbose) {
-            console.error(
-              `DAntiSpam (warnUser#sendSuccessMessage): ${e.message}`
-            );
-          }
-        });
+      this.sendActionMessage(message, "warn");
     }
     this.emit("warnAdd", member);
     return true;
