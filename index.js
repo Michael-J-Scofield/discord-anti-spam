@@ -105,7 +105,7 @@ const { EventEmitter } = require("events");
  * @property {Discord.Snowflake|string[]|IgnoreRoleFunction} [ignoredRoles=[]] Array of role IDs or role names that are ignored. Members with one of these roles will be ignored.
  * @property {Discord.Snowflake|string[]|IgnoreGuildFunction} [ignoredGuilds=[]] Array of guild IDs or guild names that are ignored.
  * @property {Discord.Snowflake|string[]|IgnoreChannelFunction} [ignoredChannels=[]] Array of channel IDs or channel names that are ignored.
- * @property {Discord.PermissionString[]} [ignoredPermissions=[]] Users with at least one of these permissions will be ignored.
+ * @property {Discord.PermissionString[]} [ignoredPermissions=[]] Users with at least one of these permissions will be ignored. Please use the PermissionFlagsBits function. (https://discord.js.org/#/docs/discord.js/main/class/PermissionsBitField?scrollTo=s-Flags)
  * @property {boolean} [ignoreBots=true] Whether bots should be ignored.
  *
  * @property {boolean} [warnEnabled=true] Whether warn sanction is enabled.

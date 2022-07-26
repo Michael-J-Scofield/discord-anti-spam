@@ -61,10 +61,7 @@
 <p>Example of a basic bot handling spam messages using this module.</p>
 <pre class="prettyprint source lang-js"><code>const { Client, GatewayIntentBits, Partial } = require(&quot;discord.js&quot;);
 const client = new Client({
-  intents: [
-    GatewayIntentBits.FLAGS.GUILDS,
-    GatewayIntentBits.FLAGS.GUILD_MESSAGES,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
   partials: [Partials.Channel],
 });
 const AntiSpam = require(&quot;discord-anti-spam&quot;);
@@ -80,6 +77,7 @@ const antiSpam = new AntiSpam({
   unMuteTime: 60, // Time in minutes before the user will be able to send messages again.
   verbose: true, // Whether or not to log every action in the console.
   removeMessages: true, // Whether or not to remove all messages sent by the user.
+  ignoredPermissions: [PermissionFlagsBits.Administrator], // If the user has the following permissions, ignore him.
   // For more options, see the documentation:
 });
 
