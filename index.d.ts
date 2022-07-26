@@ -8,7 +8,6 @@ import {
   GuildMember,
   Message,
   DiscordAPIError,
-  MessageEmbed,
   Role,
 } from "discord.js";
 declare module "discord-anti-spam" {
