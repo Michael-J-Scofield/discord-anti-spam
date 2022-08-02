@@ -114,7 +114,7 @@ const { EventEmitter } = require("events");
  * @property {boolean} [banEnabled=true] Whether ban sanction is enabled.
  *
  * @property {number} [deleteMessagesAfterBanForPastDays=1] When a user is banned, their messages sent in the last x days will be deleted.
- * @property {boolean} [verbose=false] Extended logs from module (recommended).
+ * @property {boolean} [verbose=true] Extended logs from module (recommended).
  * @property {boolean} [debug=false] Whether to run the module in debug mode.
  * @property {boolean} [removeMessages=true] Whether to delete user messages after a sanction.
  *
