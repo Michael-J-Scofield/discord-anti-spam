@@ -427,9 +427,10 @@ class AntiSpamClient extends EventEmitter {
   /**
    * Logs the actions
    * @ignore
-   * @param {Discord.Message} msg The message to check the channel with
-   * @param {string} action The action to log
-   * @param {Discord.Client} client The Discord client that will send the message
+   * @param {Discord.Message} msg The Discord Api message.
+   * @param {string} action The action to log. "warn", "kick", "mute", "ban"
+   * @param {Discord.Client} client The Discord api client.
+   * @returns {Promise<void>} Returns a promise of void.
    */
   log(msg, action, client) {
     if (this.options.modLogsEnabled) {
@@ -469,9 +470,9 @@ class AntiSpamClient extends EventEmitter {
   /**
    * Delete spam messages
    * @ignore
-   * @param {CachedMessage[]} messages The messages to delete
-   * @param {Discord.Client} client The Discord client that will delete the messages
-   * @returns {Promise<void>}
+   * @param {CachedMessage[]} messages The cached messages to delete
+   * @param {Discord.Client} client The Discord api client.
+   * @returns {Promise<void>} The promise of the deletion.
    */
   async clearSpamMessages(messages, client) {
     try {
