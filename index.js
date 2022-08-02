@@ -289,8 +289,9 @@ class AntiSpamClient extends EventEmitter {
 
   /**
    * Send action message in the channel or dm
-   * @param {Discord.Message} message
-   * @param {String} action
+   * @ignore
+   * @param {Discord.Message} message The discord api message.
+   * @param {String} action The action which happend. "warn", "kick", "mute", "ban"
    * @returns boolean.
    */
   sendActionMessage(message, action) {
