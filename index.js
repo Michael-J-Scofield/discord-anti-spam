@@ -295,7 +295,7 @@ class AntiSpamClient extends EventEmitter {
   sendActionMessage(message, action) {
     if (this.options.actionInEmbed == true) {
       if (this.options.actionEmbedIn == "channel") {
-        const embed = new Discord.Embed()
+        const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
           .setTitle(
             this.format(this.options[`${action}EmbedTitle`], message).content,
@@ -312,7 +312,7 @@ class AntiSpamClient extends EventEmitter {
           });
         message.channel.send({ embeds: [embed] });
       } else {
-        const embed = new Discord.Embed()
+        const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
           .setTitle(
             this.format(this.options[`${action}EmbedTitle`], message).content,
