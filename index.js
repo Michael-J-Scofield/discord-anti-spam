@@ -296,7 +296,7 @@ class AntiSpamClient extends EventEmitter {
   sendActionMessage(message, action) {
     if (this.options.actionInEmbed == true) {
       if (this.options.actionEmbedIn == "channel") {
-        const embed = new Discord.MessageEmbed()
+        const embed = new Discord.Embed()
           .setColor(this.options.actionEmbedColor)
           .setTitle(
             this.format(this.options[`${action}EmbedTitle`], message).content,
@@ -313,7 +313,7 @@ class AntiSpamClient extends EventEmitter {
           });
         message.channel.send({ embeds: [embed] });
       } else {
-        const embed = new Discord.MessageEmbed()
+        const embed = new Discord.Embed()
           .setColor(this.options.actionEmbedColor)
           .setTitle(
             this.format(this.options[`${action}EmbedTitle`], message).content,
@@ -443,7 +443,7 @@ class AntiSpamClient extends EventEmitter {
         );
       if (modLogChannel) {
         if (this.options.modLogsMode == "embed") {
-          const embed = new Discord.MessageEmbed()
+          const embed = new Discord.Embed()
             .setAuthor(
               `DAS Spam detection`,
               "https://discord-anti-spam.js.org/img/antispam.png"
