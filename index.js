@@ -266,15 +266,13 @@ class AntiSpamClient extends EventEmitter {
       kickedUsers: [],
       bannedUsers: [],
     };
-
-    // this.guildOptions = {}
   }
 
   /**
    * Format a string and returns it.
    * @ignore
    * @param {string} string The string to format.
-   * @param {Discord.Message} message Context message.
+   * @param {Discord.Message} message The Discord api message.
    * @returns {string}
    */
   format(string, message) {
@@ -290,7 +288,7 @@ class AntiSpamClient extends EventEmitter {
   /**
    * Send action message in the channel or dm
    * @ignore
-   * @param {Discord.Message} message The discord api message.
+   * @param {Discord.Message} message The Discord api message.
    * @param {String} action The action which happend. "warn", "kick", "mute", "ban"
    * @returns boolean.
    */
