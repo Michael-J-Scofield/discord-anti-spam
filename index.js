@@ -578,7 +578,9 @@ class AntiSpamClient extends EventEmitter {
       (u) => u.authorID !== message.author.id
     );
     const userCanBeMuted =
-      message.guild.members.me.permissions.has("MODERATE_MEMBERS") &&
+      message.guild.members.me.permissions.has(
+        Discord.PermissionFlagsBits.ModerateMembers
+      ) &&
       message.guild.members.me.roles.highest.position >
         message.member.roles.highest.position &&
       message.member.id !== message.guild.ownerId;
