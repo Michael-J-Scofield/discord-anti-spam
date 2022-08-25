@@ -29,23 +29,31 @@ const { EventEmitter } = require("events");
  * Emitted when a member gets warned.
  * @event AntiSpamClient#warnAdd
  * @property {Discord.GuildMember} member The member that was warned.
+ * @property {Discord.TextChannel} channel The channel that the spam messages was sent in.
+ * @property {Discord.Message} message The message that was sent as last. Could be used to find the guild object etc..
  */
 
 /**
  * Emitted when a member gets kicked.
  * @event AntiSpamClient#kickAdd
  * @property {Discord.GuildMember} member The member that was kicked.
+ * @property {Discord.TextChannel} channel The channel that the spam messages was sent in.
+ * @property {Discord.Message} message The message that was sent as last. Could be used to find the guild object etc..
  */
 
 /**
  * Emitted when a member gets muted.
  * @event AntiSpamClient#muteAdd
  * @property {Discord.GuildMember} member The member that was muted.
+ * @property {Discord.TextChannel} channel The channel that the spam messages was sent in.
+ * @property {Discord.Message} message The message that was sent as last. Could be used to find the guild object etc..
  */
 /**
  * Emitted when a member gets banned.
  * @event AntiSpamClient#banAdd
  * @property {Discord.GuildMember} member The member that was banned.
+ * @property {Discord.TextChannel} channel The channel that the spam messages was sent in.
+ * @property {Discord.Message} message The message that was sent as last. Could be used to find the guild object etc..
  */
 
 /**
@@ -557,7 +565,7 @@ class AntiSpamClient extends EventEmitter {
       if (this.options.modLogsEnabled) {
         this.log(message, `banned`, message.client);
       }
-      this.emit("banAdd", member);
+      this.emit("banAdd", member, message.channel, message);
       return true;
     }
   }
@@ -608,7 +616,7 @@ class AntiSpamClient extends EventEmitter {
     if (this.options.modLogsEnabled) {
       this.log(message, `muted`, message.client);
     }
-    this.emit("muteAdd", member);
+    this.emit("muteAdd", member, message.channel, message);
     return true;
   }
 
@@ -652,7 +660,7 @@ class AntiSpamClient extends EventEmitter {
       if (this.options.modLogsEnabled) {
         this.log(message, `kicked`, message.client);
       }
-      this.emit("kickAdd", member);
+      this.emit("kickAdd", member, message.channel, message);
       return true;
     }
   }
@@ -672,7 +680,7 @@ class AntiSpamClient extends EventEmitter {
     this.cache.warnedUsers.push(message.author.id);
     this.log(message, `warned`, message.client);
     this.sendActionMessage(message, "warn");
-    this.emit("warnAdd", member);
+    this.emit("warnAdd", member, message.channel, message);
     return true;
   }
 
