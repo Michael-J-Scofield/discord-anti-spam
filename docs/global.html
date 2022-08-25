@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#addGuildOptions">addGuildOptions</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AntiSpamClient.html">AntiSpamClient</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#sendActionMessage">sendActionMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AntiSpamClient.html#userleave">userleave</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:banAdd">banAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:kickAdd">kickAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:muteAdd">muteAdd</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="AntiSpamClient.html#event:warnAdd">warnAdd</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
 </nav>
 
 <div id="main">
@@ -928,9 +928,6 @@
             
                 
 <span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>Discord.MessageEmbed</code></span>
 
 
             
@@ -970,9 +967,6 @@
             
                 
 <span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>Discord.MessageEmbed</code></span>
 
 
             
@@ -1012,9 +1006,6 @@
             
                 
 <span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>Discord.MessageEmbed</code></span>
 
 
             
@@ -1054,9 +1045,6 @@
             
                 
 <span class="param-type"><code>string</code></span>
-|
-
-<span class="param-type"><code>Discord.MessageEmbed</code></span>
 
 
             
@@ -1081,6 +1069,669 @@
             
 
             <td class="description last"><p>Message that will be sent in the channel when someone is banned.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>actionInEmbed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>boolean</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether the action message will be sent in an embed or not.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>actionEmbedIn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "channel"
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether the action message will be sent in the channel or dm. Options: 'channel' or 'dm'.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>actionEmbedColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '#ff0000'
+                
+                </td>
+            
+
+            <td class="description last"><p>Color of the embeds of the action message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>embedFooterIconURL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'
+                
+                </td>
+            
+
+            <td class="description last"><p>Footer icon of the embed of the action message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>embedTitleIconURL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'
+                
+                </td>
+            
+
+            <td class="description last"><p>Icon of the embeds of the action message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>warnEmbedTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'User has been warned'
+                
+                </td>
+            
+
+            <td class="description last"><p>Title of the embeds of the action message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>kickEmbedTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'User has been kicked'
+                
+                </td>
+            
+
+            <td class="description last"><p>Title of the embed of the warn message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteEmbedTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'User has been muted'
+                
+                </td>
+            
+
+            <td class="description last"><p>Title of the embed of the mute message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banEmbedTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'User has been banned'
+                
+                </td>
+            
+
+            <td class="description last"><p>Title of the embed of the ban message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>warnEmbedDescription</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been warned for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Description of the embed of the warn message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>kickEmbedDescription</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been kicked for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Description of the embed of the kick message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteEmbedDescription</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been muted for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Description of the embed of the mute message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banEmbedDescription</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been banned for spamming.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Description of the embed of the ban message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>warnEmbedFooter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been warned.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Footer of the embed of the warn message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>kickEmbedFooter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been kicked.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Footer of the embed of the kick message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>muteEmbedFooter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been muted.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Footer of the embed of the mute message.</p></td>
+        </tr>
+
+        
+
+    
+
+        <tr>
+            
+                <td class="name"><code>banEmbedFooter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'You have been banned.'
+                
+                </td>
+            
+
+            <td class="description last"><p>Footer of the embed of the ban message.</p></td>
         </tr>
 
         
@@ -1455,7 +2106,7 @@
                 </td>
             
 
-            <td class="description last"><p>Users with at least one of these permissions will be ignored.</p></td>
+            <td class="description last"><p>Users with at least one of these permissions will be ignored. Please use the PermissionFlagsBits function. (https://discord.js.org/#/docs/discord.js/main/class/PermissionsBitField?scrollTo=s-Flags)</p></td>
         </tr>
 
         
@@ -2782,7 +3433,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
