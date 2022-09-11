@@ -442,27 +442,23 @@ class AntiSpamClient extends EventEmitter {
    */
   log(msg, action, client) {
     if (this.options.modLogsEnabled) {
-      const modLogChannel =
-        client.channels.cache.get(this.options.modLogsChannelName) ||
-        msg.guild.channels.cache.find(
-          (channel) =>
-            channel.name === this.options.modLogsChannelName &&
-            channel.type === "GUILD_TEXT"
-        );
+      const modLogChannel = client.channels.fetch(
+        this.options.modLogsChannelName
+      );
       if (modLogChannel) {
         if (this.options.modLogsMode == "embed") {
-          const embed = new Discord.Embed()
-            .setAuthor(
-              `DAS Spam detection`,
-              "https://discord-anti-spam.js.org/img/antispam.png"
-            )
+          const embed = new Discord.EmbedBuilder()
+            .setAuthor({
+              name: "DAS Spam Detection",
+              iconURL: "https://discord-anti-spam.js.org/img/antispam.png",
+            })
             .setDescription(
               `${msg.author} *(${msg.author.id})* has been **${action}** for **spam**!`
             )
-            .setFooter(
-              `DAS Anti spam`,
-              "https://discord-anti-spam.js.org/img/antispam.png"
-            )
+            .setFooter({
+              text: "DAS Spam Detection",
+              iconURL: "https://discord-anti-spam.js.org/img/antispam.png",
+            })
             .setTimestamp()
             .setColor("RED");
           modLogChannel.send({ embeds: [embed] });
@@ -471,6 +467,8 @@ class AntiSpamClient extends EventEmitter {
             `${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`
           );
         }
+      } else {
+        console.log("DAS: Mod log channel not found.");
       }
     }
   }
