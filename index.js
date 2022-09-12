@@ -74,7 +74,7 @@ const { EventEmitter } = require("events");
  * @property {number} [maxDuplicatesBan=11] Amount of duplicate messages that trigger a ban.
  *
  * @property {number} [unMuteTime='0'] Time in minutes to wait until unmuting a user.
- * @property {string|Discord.Snowflake} [modLogsChannelName='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
+ * @property {string|Discord.Snowflake} [modLogsChannel='mod-logs'] Name or ID of the channel in which moderation logs will be sent.
  * @property {boolean} [modLogsEnabled=false] Whether moderation logs are enabled.
  * @property {string} [modLogsMode='embed'] Whether send moderations logs in an discord embed or normal message! Options: 'embed' or 'message".
  *
@@ -181,7 +181,7 @@ class AntiSpamClient extends EventEmitter {
 
       unMuteTime: options.unMuteTime * 60_000 || 300000,
 
-      modLogsChannelName: options.modLogsChannelName || "mod-logs",
+      modLogsChannel: options.modLogsChannel || "mod-logs",
       modLogsEnabled: options.modLogsEnabled || false,
       modLogsMode: options.modLogsMode || "embed",
 
@@ -440,11 +440,21 @@ class AntiSpamClient extends EventEmitter {
    * @param {Discord.Client} client The Discord api client.
    * @returns {Promise<void>} Returns a promise of void.
    */
-  log(msg, action, client) {
+  async log(msg, action, client) {
     if (this.options.modLogsEnabled) {
-      const modLogChannel = client.channels.fetch(
-        this.options.modLogsChannelName
-      );
+      const modLogChannel =
+        client.channels.cache.get(this.options.modLogsChannel) ||
+        msg.guild.channels.cache.find(
+          (channel) =>
+            channel.name == this.options.modLogsChannel &&
+            channel.type == Discord.ChannelType.GuildText
+        ) ||
+        msg.guild.channels.cache.find(
+          (channel) =>
+            channel.id == this.options.modLogsChannel &&
+            channel.type == Discord.ChannelType.GuildText
+        );
+
       if (modLogChannel) {
         if (this.options.modLogsMode == "embed") {
           const embed = new Discord.EmbedBuilder()
@@ -460,15 +470,33 @@ class AntiSpamClient extends EventEmitter {
               iconURL: "https://discord-anti-spam.js.org/img/antispam.png",
             })
             .setTimestamp()
-            .setColor("RED");
-          modLogChannel.send({ embeds: [embed] });
+            .setColor("Red");
+          modLogChannel.send({ embeds: [embed] }).catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                "DAntiSpam (log#noMessageSent): The mod log message could not be sent."
+              );
+            }
+          });
         } else {
-          modLogChannel.send(
-            `${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`
-          );
+          modLogChannel
+            .send(
+              `${msg.author}*(${msg.author.id})* has been **${action}** for **spam**.`
+            )
+            .catch((e) => {
+              if (this.options.verbose) {
+                console.error(
+                  "DAntiSpam (log#noMessageSent): The mod log message could not be sent."
+                );
+              }
+            });
         }
       } else {
-        console.log("DAS: Mod log channel not found.");
+        if (this.options.debug || this.options.verbose) {
+          console.log(
+            `DAntiSpam (log#ChannelNotFound): The mod log channel was not found.`
+          );
+        }
       }
     }
   }
