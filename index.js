@@ -245,6 +245,8 @@ class AntiSpamClient extends EventEmitter {
 
       warnEnabled:
         options.warnEnabled != undefined ? options.warnEnabled : true,
+      ipwarnEnabled:
+        options.ipwarnEnabled != undefined ? options.ipwarnEnabled : false,
       kickEnabled:
         options.kickEnabled != undefined ? options.kickEnabled : true,
       muteEnabled:
@@ -785,6 +787,16 @@ class AntiSpamClient extends EventEmitter {
         m.sentTimestamp >
           currentMessage.sentTimestamp - options.maxDuplicatesInterval
     );
+ if (this.options.ipwarnEnabled == true) {
+ let regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+ if (message.content.match(regex)) {
+  message.delete();
+  message.channel.send(`${message.author} Don't post IP's in chat!`);
+ };
+ } else {
+   return;
+ };
+    
 
     /**
      * Duplicate messages sent before the threshold is triggered
