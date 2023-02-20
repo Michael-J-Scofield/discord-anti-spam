@@ -29,7 +29,7 @@
   "author": "Michael Scofield",
   "license": "MIT",
   "devDependencies": {
-    "jsdoc": "^3.6.3",
+    "jsdoc": "^4.0.2",
     "minami": "Androz2091/minami"
   },
   "dependencies": {
