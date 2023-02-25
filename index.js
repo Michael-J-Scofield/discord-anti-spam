@@ -488,6 +488,28 @@ class AntiSpamClient extends EventEmitter {
               );
             }
           });
+        } else if (this.options.modLogsMode == "embed" && this.options.customEmbedEnabled == "true") {
+          const embed = new Discord.EmbedBuilder()
+            .setAuthor({
+              name: `${this.options.logsEmbedAuthorName}`,
+              iconURL: `${this.options.logsEmbedAuthorURL}`,
+            })
+            .setDescription(
+              `${this.options.logsEmbedDescription}`
+            )
+            .setFooter({
+              text: `${this.options.logsEmbedFooterText}`,
+              iconURL: `${this.options.logsEmbedFooterURL}`,
+            })
+            .setTimestamp()
+            .setColor(this.options.logsEmbedColor);
+          modLogChannel.send({ embeds: [embed] }).catch((e) => {
+            if (this.options.verbose) {
+              console.error(
+                "DAntiSpam (log#noMessageSent): The mod log message could not be sent."
+              );
+            }
+          });
         } else {
           modLogChannel
             .send(
