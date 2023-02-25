@@ -249,6 +249,7 @@ class AntiSpamClient extends EventEmitter {
       logsEmbedColor: options.logsEmbedColor || "Red",
       logsEmbedFooterText: options.logsEmbedFooterText || "DAS Spam Detection",
       logsEmbedFooterURL: options.logsEMbedFooterURL || "https://discord-anti-spam.js.org/img/antipam.png",
+      customEmbedEnabled: options.customEmbedEnabled || "false",
 
       warnEnabled:
         options.warnEnabled != undefined ? options.warnEnabled : true,
