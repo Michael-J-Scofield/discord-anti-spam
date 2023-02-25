@@ -242,6 +242,13 @@ class AntiSpamClient extends EventEmitter {
       ignoredChannels: options.ignoredChannels || [],
       ignoredPermissions: options.ignoredPermissions || [],
       ignoreBots: options.ignoreBots != undefined ? options.ignoreBots : true,
+      
+      logsEmbedAuthorName: options.logsEmbedAuthorName || "DAS Spam Detection",
+      logsEmbedAuthorURL: options.logsEmbedAuthorURL || "https://discord-anti-spam.js.org/img/antipam.png",
+      logsEmbedDescription: options.logsEmbedDescription || "${message.author} *(${message.author.id})* has been **${action}** for **spam**!",
+      logsEmbedColor: options.logsEmbedColor || "Red",
+      logsEmbedFooterText: options.logsEmbedFooterText || "DAS Spam Detection",
+      logsEmbedFooterURL: options.logsEMbedFooterURL || "https://discord-anti-spam.js.org/img/antipam.png",
 
       warnEnabled:
         options.warnEnabled != undefined ? options.warnEnabled : true,
