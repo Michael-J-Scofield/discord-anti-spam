@@ -102,6 +102,14 @@ declare module "discord-anti-spam" {
     kickErrorMessage?: string;
     banErrorMessage?: string;
     muteErrorMessage?: string;
+    
+    logsEmbedAuthorName?: string;
+    logsEmbedAuthorURL?: string;
+    logsEmbedDescription?: string;
+    logsEmbedColor?: string;
+    logsEmbedFooterText?: string;
+    logsEmbedFooterURL?: string;
+
 
     ignoredMembers?: Snowflake[] | ((user: User) => boolean);
     ignoredRoles?: (Snowflake | string)[] | ((role: Role) => boolean);
@@ -114,6 +122,7 @@ declare module "discord-anti-spam" {
     kickEnabled?: boolean;
     banEnabled?: boolean;
     muteEnabled?: boolean;
+    ipwarnEnabled?: boolean;
 
     deleteMessagesAfterBanForPastDays?: number;
     verbose?: boolean;
