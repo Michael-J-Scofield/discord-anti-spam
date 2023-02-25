@@ -78,6 +78,7 @@ declare module "discord-anti-spam" {
     banMessage?: string;
 
     actionInEmbed?: boolean;
+    customEmbedEnabled: boolean;
     actionEmbedIn?: "channel" | "dm";
     actionEmbedColor?: string;
     embedFooterIconURL?: string;
