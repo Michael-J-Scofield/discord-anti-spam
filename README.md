@@ -42,7 +42,7 @@ const antiSpam = new AntiSpam({
   ipwarnEnabled: false, //whether to delete ip addresses in channels or not.
   ignoredPermissions: [PermissionFlagsBits.Administrator], // If the user has the following permissions, ignore him.
   // For more options, see the documentation:
-  
+  customEmbedEnabled: "false", //false by default
   logsEmbedAuthorName: "DAS Spam Detection", //custom author text for logs embed
   logsEmbedAuthorURL: "https://discord-anti-spam.js.org/img/antispam.png", //custom author URL for logs embed
   logsEmbedDescription: "${msg.author} has been **${action}** for **spam**!", //custom description for logs embed
