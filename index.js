@@ -209,6 +209,8 @@ class AntiSpamClient extends EventEmitter {
         options.embedTitleIconURL ||
         "https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png",
 
+      embedAuthorInsteadOfTitle: options.embedAuthorInsteadOfTitle || false,
+
       warnEmbedDescription:
         options.warnEmbedDescription || "You have been warned for spamming.",
       kickEmbedDescription:
