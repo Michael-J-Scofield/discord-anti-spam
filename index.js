@@ -310,36 +310,53 @@ class AntiSpamClient extends EventEmitter {
       if (this.options.actionEmbedIn == "channel") {
         const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
-          .setTitle(
-            this.format(this.options[`${action}EmbedTitle`], message).content,
-            this.options.embedTitleIconURL
-          )
           .setDescription(
-            this.format(this.options[`${action}EmbedDescription`], message)
+            this.format(this.options[`${action}EmbedDescription`])
               .content
           )
           .setFooter({
-            text: this.format(this.options[`${action}EmbedFooter`], message)
+        	text: this.format(this.options[`${action}EmbedFooter`])
               .content,
             iconURL: this.options.embedFooterIconURL,
           });
+        if(this.options.embedAuthorInsteadOfTitle){
+        	embed.setAuthor({
+				name:this.format(this.options[`${action}EmbedTitle`]),
+				iconURL:this.format(this.options.embedAuthorIconURL)
+			})
+        }
+		else  
+		{
+            embed.setTitle(
+            	this.format(this.options[`${action}EmbedTitle`], message).content
+            )
+        }
         message.channel.send({ embeds: [embed] });
       } else {
         const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
-          .setTitle(
-            this.format(this.options[`${action}EmbedTitle`], message).content,
-            this.options.embedTitleIconURL
-          )
           .setDescription(
-            this.format(this.options[`${action}EmbedDescription`], message)
+            this.format(this.options[`${action}EmbedDescription`])
               .content
           )
           .setFooter({
-            text: this.format(this.options[`${action}EmbedFooter`], message)
+            text: this.format(this.options[`${action}EmbedFooter`])
               .content,
             iconURL: this.options.embedFooterIconURL,
           });
+
+		  if(this.options.embedAuthorInsteadOfTitle){
+        	embed.setAuthor({
+				name:this.format(this.options[`${action}EmbedTitle`]),
+				iconURL:this.format(this.options.embedAuthorIconURL)
+			})
+        }
+		else  
+		{
+            embed.setTitle(
+            	this.format(this.options[`${action}EmbedTitle`], message).content
+            )
+        }
         message.author.send({ embeds: [embed] });
       }
     } else {
