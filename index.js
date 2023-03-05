@@ -89,6 +89,8 @@ const { EventEmitter } = require("events");
  * @property {string} [embedFooterIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Footer icon of the embed of the action message.
  * 
  * @property {string} [embedAuthorIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
+ * 
+ * @property {boolean} [embedAuthorInsteadOfTitle=false] Whether the embed author will be used instead of the title. **(For the author text, use the *action*EmbedTitle option)**
  *
  * @property {string} [warnEmbedTitle='User has been warned'] Title of the embeds of the action message.
  * @property {string} [kickEmbedTitle='User has been kicked'] Title of the embed of the warn message.
