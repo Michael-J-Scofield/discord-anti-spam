@@ -87,7 +87,8 @@ const { EventEmitter } = require("events");
  * @property {string} [actionEmbedIn="channel"] Whether the action message will be sent in the channel or dm. Options: 'channel' or 'dm'.
  * @property {string} [actionEmbedColor='#ff0000'] Color of the embeds of the action message.
  * @property {string} [embedFooterIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Footer icon of the embed of the action message.
- * @property {string} [embedTitleIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
+ * 
+ * @property {string} [embedAuthorIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
  *
  * @property {string} [warnEmbedTitle='User has been warned'] Title of the embeds of the action message.
  * @property {string} [kickEmbedTitle='User has been kicked'] Title of the embed of the warn message.
