@@ -295,7 +295,7 @@ class AntiSpamClient extends EventEmitter {
         .replace(/{user_tag}/g, message.author.tag)
         .replace(/{server_name}/g, message.guild.name)
         .replace(/{bot_user_avatar}/g, message.client.user.displayAvatarURL())
-        .replace(/{user_avatar}/g, message.author.displayAvatarURL())
+        .replace(/{user_avatar}/g, message.author.displayAvatarURL());
       return { content };
     }
   }
