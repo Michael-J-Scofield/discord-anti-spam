@@ -87,7 +87,10 @@ const { EventEmitter } = require("events");
  * @property {string} [actionEmbedIn="channel"] Whether the action message will be sent in the channel or dm. Options: 'channel' or 'dm'.
  * @property {string} [actionEmbedColor='#ff0000'] Color of the embeds of the action message.
  * @property {string} [embedFooterIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Footer icon of the embed of the action message.
- * @property {string} [embedTitleIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
+ * 
+ * @property {string} [embedAuthorIconURL='https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png'] Icon of the embeds of the action message.
+ * 
+ * @property {boolean} [embedAuthorInsteadOfTitle=false] Whether the embed author will be used instead of the title. **(For the author text, use the *action*EmbedTitle option)**
  *
  * @property {string} [warnEmbedTitle='User has been warned'] Title of the embeds of the action message.
  * @property {string} [kickEmbedTitle='User has been kicked'] Title of the embed of the warn message.
@@ -206,6 +209,8 @@ class AntiSpamClient extends EventEmitter {
         options.embedTitleIconURL ||
         "https://raw.githubusercontent.com/Michael-J-Scofield/discord-anti-spam/master/docs/img/antispam.png",
 
+      embedAuthorInsteadOfTitle: options.embedAuthorInsteadOfTitle || false,
+
       warnEmbedDescription:
         options.warnEmbedDescription || "You have been warned for spamming.",
       kickEmbedDescription:
@@ -288,7 +293,9 @@ class AntiSpamClient extends EventEmitter {
       const content = string
         .replace(/{@user}/g, message.author.toString())
         .replace(/{user_tag}/g, message.author.tag)
-        .replace(/{server_name}/g, message.guild.name);
+        .replace(/{server_name}/g, message.guild.name)
+        .replace(/{bot_user_avatar}/g, message.client.user.displayAvatarURL())
+        .replace(/{user_avatar}/g, message.author.displayAvatarURL());
       return { content };
     }
   }
@@ -305,36 +312,53 @@ class AntiSpamClient extends EventEmitter {
       if (this.options.actionEmbedIn == "channel") {
         const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
-          .setTitle(
-            this.format(this.options[`${action}EmbedTitle`], message).content,
-            this.options.embedTitleIconURL
-          )
           .setDescription(
-            this.format(this.options[`${action}EmbedDescription`], message)
+            this.format(this.options[`${action}EmbedDescription`])
               .content
           )
           .setFooter({
-            text: this.format(this.options[`${action}EmbedFooter`], message)
+        	text: this.format(this.options[`${action}EmbedFooter`])
               .content,
             iconURL: this.options.embedFooterIconURL,
           });
+        if(this.options.embedAuthorInsteadOfTitle){
+        	embed.setAuthor({
+				name:this.format(this.options[`${action}EmbedTitle`]),
+				iconURL:this.format(this.options.embedAuthorIconURL)
+			})
+        }
+		else  
+		{
+            embed.setTitle(
+            	this.format(this.options[`${action}EmbedTitle`], message).content
+            )
+        }
         message.channel.send({ embeds: [embed] });
       } else {
         const embed = new Discord.EmbedBuilder()
           .setColor(this.options.actionEmbedColor)
-          .setTitle(
-            this.format(this.options[`${action}EmbedTitle`], message).content,
-            this.options.embedTitleIconURL
-          )
           .setDescription(
-            this.format(this.options[`${action}EmbedDescription`], message)
+            this.format(this.options[`${action}EmbedDescription`])
               .content
           )
           .setFooter({
-            text: this.format(this.options[`${action}EmbedFooter`], message)
+            text: this.format(this.options[`${action}EmbedFooter`])
               .content,
             iconURL: this.options.embedFooterIconURL,
           });
+
+		  if(this.options.embedAuthorInsteadOfTitle){
+        	embed.setAuthor({
+				name:this.format(this.options[`${action}EmbedTitle`]),
+				iconURL:this.format(this.options.embedAuthorIconURL)
+			})
+        }
+		else  
+		{
+            embed.setTitle(
+            	this.format(this.options[`${action}EmbedTitle`], message).content
+            )
+        }
         message.author.send({ embeds: [embed] });
       }
     } else {
