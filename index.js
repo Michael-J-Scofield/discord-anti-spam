@@ -120,6 +120,7 @@ const { EventEmitter } = require("events");
  * @property {boolean} [kickEnabled=true] Whether kick sanction is enabled.
  * @property {boolean} [muteEnabled=true] Whether mute sanction is enabled.
  * @property {boolean} [banEnabled=true] Whether ban sanction is enabled.
+ * @property {boolean} [ipwarnEnabled=false] Whether warn sanction is enabled.
  *
  * @property {number} [deleteMessagesAfterBanForPastDays=1] When a user is banned, their messages sent in the last x days will be deleted.
  * @property {boolean} [verbose=true] Extended logs from module (recommended).
