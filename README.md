@@ -39,6 +39,7 @@ const antiSpam = new AntiSpam({
   unMuteTime: 60, // Time in minutes before the user will be able to send messages again.
   verbose: true, // Whether or not to log every action in the console.
   removeMessages: true, // Whether or not to remove all messages sent by the user.
+  ipwarnEnabled: false, //whether to delete ip addresses in channels or not.
   ignoredPermissions: [PermissionFlagsBits.Administrator], // If the user has the following permissions, ignore him.
   // For more options, see the documentation:
 });

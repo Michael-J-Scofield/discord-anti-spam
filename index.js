@@ -120,6 +120,7 @@ const { EventEmitter } = require("events");
  * @property {boolean} [kickEnabled=true] Whether kick sanction is enabled.
  * @property {boolean} [muteEnabled=true] Whether mute sanction is enabled.
  * @property {boolean} [banEnabled=true] Whether ban sanction is enabled.
+ * @property {boolean} [ipwarnEnabled=false] Whether warn sanction is enabled.
  *
  * @property {number} [deleteMessagesAfterBanForPastDays=1] When a user is banned, their messages sent in the last x days will be deleted.
  * @property {boolean} [verbose=true] Extended logs from module (recommended).
@@ -245,6 +246,8 @@ class AntiSpamClient extends EventEmitter {
 
       warnEnabled:
         options.warnEnabled != undefined ? options.warnEnabled : true,
+      ipwarnEnabled:
+        options.ipwarnEnabled != undefined ? options.ipwarnEnabled : false,
       kickEnabled:
         options.kickEnabled != undefined ? options.kickEnabled : true,
       muteEnabled:
@@ -785,6 +788,16 @@ class AntiSpamClient extends EventEmitter {
         m.sentTimestamp >
           currentMessage.sentTimestamp - options.maxDuplicatesInterval
     );
+ if (this.options.ipwarnEnabled == true) {
+ let regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+ if (message.content.match(regex)) {
+  message.delete();
+  message.channel.send(`${message.author} Don't post IP's in chat!`);
+ };
+ } else {
+   return;
+ };
+    
 
     /**
      * Duplicate messages sent before the threshold is triggered
