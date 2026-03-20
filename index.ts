@@ -1049,6 +1049,16 @@ export default class AntiSpamClient extends EventEmitter {
   async message(message: Discord.Message): Promise<boolean> {
     const { options } = this;
 
+    // 期限切れメッセージを削除してキャッシュの無制限増加を防止
+    const now = Date.now();
+    const maxAge = Math.max(
+      this.options.maxInterval || 2000,
+      this.options.maxDuplicatesInterval || 2000
+    );
+    this.cache.messages = this.cache.messages.filter(
+      (msg) => now - msg.sentTimestamp < maxAge
+    );
+
     if (
       !message.guild ||
       message.author.id === message.client.user.id ||
